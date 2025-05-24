@@ -23,9 +23,9 @@ public class Provincia {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String nombre;
-	
+
 	@OneToMany(mappedBy = "provincia", fetch = FetchType.LAZY)
 	private List<Localidad> localidades = new ArrayList<>();
 

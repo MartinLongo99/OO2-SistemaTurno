@@ -29,13 +29,13 @@ public class Usuario {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	
+
 	private String email;
 	private String password;
-	
+
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Contacto contacto;
-    
+
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 

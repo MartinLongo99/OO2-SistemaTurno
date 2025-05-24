@@ -19,9 +19,9 @@ public class Localidad {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String nombre;
-	
+
 	@ManyToOne
 	private Provincia provincia;
 

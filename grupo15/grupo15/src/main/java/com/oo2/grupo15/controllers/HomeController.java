@@ -25,7 +25,7 @@ public class HomeController {
 		mV.addObject("name", name);
 		return mV;
 	}
-	
+
 	@GetMapping("/hello/{name}")
 	public ModelAndView helloParams2(
 			@PathVariable("name") String name) {
@@ -33,10 +33,10 @@ public class HomeController {
 		mV.addObject(mV);
 		return mV;
 	}
-	
+
 	@GetMapping("/")
 	public RedirectView redirectToHomeIndex(){
 		return new RedirectView(ViewRouteHelper.ROUTE_INDEX);
 	}
-	
+
 }

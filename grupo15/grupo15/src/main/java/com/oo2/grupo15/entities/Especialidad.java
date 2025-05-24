@@ -22,10 +22,10 @@ public class Especialidad{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String nombreEspecialidad;
-	
+
     @ManyToMany(mappedBy = "especialidades", fetch = FetchType.LAZY)
     private Set<Profesional> profesionales = new HashSet<>();
-	
+
 }

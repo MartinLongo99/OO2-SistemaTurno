@@ -19,9 +19,9 @@ public class Direccion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String calleYAltura;
-	
+
 	@ManyToOne
 	private Localidad localidad;
 
