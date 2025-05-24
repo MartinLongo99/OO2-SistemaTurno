@@ -1,6 +1,12 @@
 package com.oo2.grupo15.entities;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,6 +33,12 @@ public class Usuario {
 	private String email;
 	private String password;
 	
-    @OneToOne(cascade = CascadeType.ALL)
-    private Contacto contacto;
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Contacto contacto;
+    
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 }
