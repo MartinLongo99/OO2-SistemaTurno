@@ -2,13 +2,14 @@ package com.oo2.grupo15.repositories;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.oo2.grupo15.entities.Localidad;
 
-@Repository
+@Repository("localidadRepository")
 public interface ILocalidadRepository extends JpaRepository<Localidad, Serializable> {
-    List<Localidad> findByNombre(String nombre);
+	public abstract Optional<Localidad> findByNombre(String nombre);
 }

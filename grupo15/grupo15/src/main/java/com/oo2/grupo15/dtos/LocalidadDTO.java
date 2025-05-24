@@ -7,14 +7,12 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class LocalidadDTO {
 
-	private int id;
+    private int id;
 
-	private String nombre;
+    private String nombre;
 
-	public LocalidadDTO(int id, String nombre) {
-		this.setId(id);
-		this.nombre = nombre;
-	}
-
-
+    public LocalidadDTO(int id, String nombre) {
+        this.setId(id);
+        this.nombre = nombre;
+    }
 }

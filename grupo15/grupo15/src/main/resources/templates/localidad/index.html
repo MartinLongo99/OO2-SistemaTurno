@@ -1,12 +1,16 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Localidades</title>
-</head>
-<body>
-    <h1>Localidades en la provincia de "<span th:text="${provincia}"></span>"</h1>
-    <ul>
-        <li th:each="loc : ${localidades}" th:text="${loc.nombre}"></li>
-    </ul>
-</body>
-</html>
+<table>
+	<thead>
+		<tr>
+			<th>Nombre</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr th:each="localidad : ${localidades}">
+			<td><span th:text="${localidad.nombre}" /></td>
+		</tr>
+	</tbody>
+</table>
+<form action="#" th:action="@{/localidades/}" th:object="${localidad}" method="post">
+	<p>Nombre: <input type="text" th:field="*{nombre}" /></p>
+	<input type="submit" />
+</form>
