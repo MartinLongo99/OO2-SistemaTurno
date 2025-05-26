@@ -22,8 +22,8 @@ public class LocalidadService implements ILocalidadService{
     }
 
     @Override
-    public List<LocalidadDTO> getAll() { // Cambia el tipo de retorno
-        return localidadRepository.findAll()
+    public List<LocalidadDTO> getAll() {
+        return localidadRepository.findAllWithProvincia() // Usa el nuevo método
                                 .stream()
                                 .map(localidad -> modelMapper.map(localidad, LocalidadDTO.class))
                                 .collect(Collectors.toList());

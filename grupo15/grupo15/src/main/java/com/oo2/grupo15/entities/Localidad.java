@@ -23,8 +23,7 @@ public class Localidad {
 
     private String nombre;
 
-    // Si la provincia puede ser null, deberías añadir (optional = true)
-    // O si no la necesitas en la vista, asegúrate de que no cause problemas si es null
+
     @ManyToOne(fetch = FetchType.LAZY) // Considera Lazy para evitar cargar la provincia si no se usa
     private Provincia provincia;
 
