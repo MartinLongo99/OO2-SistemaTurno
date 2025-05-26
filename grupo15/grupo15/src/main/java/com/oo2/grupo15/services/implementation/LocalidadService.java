@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors; // Necesario para el stream
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.oo2.grupo15.dtos.LocalidadDTO;
@@ -36,7 +37,7 @@ public class LocalidadService implements ILocalidadService{
     }
 
     @Override
-    public boolean remove(int id) {
+    public boolean delete(int id) {
         try {
             localidadRepository.deleteById(id);
             return true;
@@ -44,4 +45,12 @@ public class LocalidadService implements ILocalidadService{
             return false;
         }
     }
+    
+    public List<LocalidadDTO> getLocalidadesByProvincia(int provinciaId) {
+        return localidadRepository.findByProvinciaId(provinciaId,Sort.by("Nombre")) // 
+                                .stream()
+                                .map(localidad -> modelMapper.map(localidad, LocalidadDTO.class))
+                                .collect(Collectors.toList());
+    }
+
 }

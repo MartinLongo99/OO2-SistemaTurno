@@ -13,10 +13,10 @@ public class LocalidadDTO {
 
     private String nombre;
     
-    private Provincia provincia;
+    private ProvinciaDTO provincia;
 
-    public LocalidadDTO(int id, String nombre, Provincia provincia) {
-        this.setId(id);
+    public LocalidadDTO(int id, String nombre, ProvinciaDTO provincia) {
+        this.id = id;
         this.nombre = nombre;
         this.provincia = provincia;
     }

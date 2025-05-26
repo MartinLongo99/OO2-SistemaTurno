@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,6 @@ public interface ILocalidadRepository extends JpaRepository<Localidad, Serializa
 
     @Query("SELECT l FROM Localidad l JOIN FETCH l.provincia")
     List<Localidad> findAllWithProvincia(); 
+    
+    List<Localidad> findByProvinciaId(int provinciaId, Sort nombre);
 }
