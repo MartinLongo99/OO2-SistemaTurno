@@ -18,5 +18,5 @@ public interface ILocalidadRepository extends JpaRepository<Localidad, Serializa
     @Query("SELECT l FROM Localidad l JOIN FETCH l.provincia")
     List<Localidad> findAllWithProvincia(); 
     
-    List<Localidad> findByProvinciaId(int provinciaId, Sort nombre);
+    List<Localidad> findByProvinciaIdOrderByNombreAsc(int provinciaId);
 }
