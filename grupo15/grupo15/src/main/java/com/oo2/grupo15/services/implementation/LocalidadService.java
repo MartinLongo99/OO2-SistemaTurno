@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors; // Necesario para el stream
 
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.oo2.grupo15.dtos.LocalidadDTO;
@@ -20,14 +19,6 @@ public class LocalidadService implements ILocalidadService{
 
     public LocalidadService(ILocalidadRepository localidadRepository) {
         this.localidadRepository = localidadRepository;
-    }
-
-    @Override
-    public List<LocalidadDTO> getAll() {
-        return localidadRepository.findAllWithProvincia() // Usa el nuevo método
-                                .stream()
-                                .map(localidad -> modelMapper.map(localidad, LocalidadDTO.class))
-                                .collect(Collectors.toList());
     }
 
     @Override
