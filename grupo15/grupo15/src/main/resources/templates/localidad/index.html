@@ -3,9 +3,11 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <title>Turnito - Gestión de Localidades</title> <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <title>Turnito - Gestión de Direcciones</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <link href="css/styles.css" rel="stylesheet" />
         <style>
+            /* Tu CSS existente */
             body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
             .container { max-width: 960px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
             h1, h2 { text-align: center; color: #333; margin-bottom: 25px; }
@@ -23,10 +25,10 @@
     </head>
     <body>
         <div class="container">
-            <h1>Turnito - Gestión de Localidades</h1>
+            <h1>Turnito - Gestión de Direcciones</h1>
 
             <div class="section-card">
-                <h2>Filtrar Localidades</h2>
+                <h2>Filtrar Direcciones</h2>
                 <div class="mb-3">
                     <label for="selectProvincia" class="form-label">Seleccione una Provincia:</label>
                     <select class="form-select" id="selectProvincia">
@@ -36,149 +38,145 @@
                                 th:text="${provincia.nombre}"></option>
                     </select>
                 </div>
-            </div>
 
-			<div class="section-card">
-			                <h2>Listado de Localidades</h2>
-			                <div style="max-height: 250px; overflow-y: auto;">
-			                    <table class="table table-striped">
-			                        <thead>
-			                            <tr>
-			                                <th>Localidad</th>
-			                                <th>Provincia</th>
-			                                <th>Eliminar</th> </tr>
-			                        </thead>
-			                        <tbody id="tablaLocalidadesBody">
-			                            <tr>
-			                                <td colspan="3">Seleccione una provincia o elija "Todas las Provincias" para comenzar.</td>
-			                            </tr>
-			                        </tbody>
-			                    </table>
-			                </div>
-			            </div>
+                <div class="mb-3">
+                    <label for="selectLocalidad" class="form-label">Seleccione una Localidad:</label>
+                    <select class="form-select" id="selectLocalidad">
+                        <option value="0">-- Todas las Localidades --</option>
+                        </select>
+                </div>
+            </div>
 
             <div class="section-card">
-                <h2>Agregar Nueva Localidad</h2>
-                <form action="#" th:action="@{/localidades/}" th:object="${localidad}" method="post">
-                    <div class="mb-3">
-                        <label for="nombreLocalidad" class="form-label">Nombre:</label>
-                        <input type="text" class="form-control" id="nombreLocalidad" th:field="*{nombre}" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="nuevaProvincia" class="form-label">Provincia:</label>
-                        <select class="form-select" id="nuevaProvincia" th:field="*{provincia.id}">
-                            <option value="">Seleccione una Provincia</option>
-                            <option th:each="provincia : ${provincias}"
-                                    th:value="${provincia.id}"
-                                    th:text="${provincia.nombre}"></option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Localidad</button>
-                </form>
+                <h2>Listado de Direcciones</h2>
+                <div style="max-height: 250px; overflow-y: auto;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Direccion</th>
+                                <th>Localidad</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaDireccionesBody">
+                            <tr>
+                                <td colspan="2">Seleccione una provincia y luego una localidad para ver las direcciones.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-		        <script>
-		            document.addEventListener('DOMContentLoaded', function() {
-		                const selectProvincia = document.getElementById('selectProvincia');
-		                const tablaLocalidadesBody = document.getElementById('tablaLocalidadesBody');
+        </div> 
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const selectProvincia = document.getElementById('selectProvincia');
+                const selectLocalidad = document.getElementById('selectLocalidad');
+                const tablaDireccionesBody = document.getElementById('tablaDireccionesBody');
 
-		                // Cargar localidades al inicio.
-		                cargarLocalidades(selectProvincia.value);
+                // --- Funciones para Cargar Datos ---
 
-		                selectProvincia.addEventListener('change', function() {
-		                    const provinciaId = this.value;
-		                    cargarLocalidades(provinciaId);
-		                });
+                // Carga las localidades en el selectLocalidad según la provincia seleccionada
+                function cargarSelectLocalidades(provinciaId) {
+                    selectLocalidad.innerHTML = '<option value="0">-- Todas las Localidades --</option>'; // Resetear select de localidades
+                    tablaDireccionesBody.innerHTML = `<tr><td colspan="2">Seleccione una localidad para ver las direcciones.</td></tr>`; // Limpiar tabla de direcciones
 
-		                function cargarLocalidades(provinciaId) {
-		                    tablaLocalidadesBody.innerHTML = ''; // Limpiar la tabla
+                    if (provinciaId === '0') { // Si se selecciona "Todas las Provincias"
+                        return; // No se cargan localidades en el select, solo se muestra el mensaje inicial
+                    }
 
-		                    let url = `/localidades/porProvincia?provinciaId=${provinciaId}`;
+                    let url = `/localidades/porProvincia?provinciaId=${provinciaId}`;
 
-		                    fetch(url)
-		                        .then(response => {
-		                            if (!response.ok) {
-		                                throw new Error('Network response was not ok ' + response.statusText);
-		                            }
-		                            return response.json();
-		                        })
-		                        .then(data => {
-		                            if (data.length === 0) {
-		                                const row = document.createElement('tr');
-		                                row.innerHTML = `<td colspan="3">No hay localidades para esta provincia.</td>`; // Colspan 3
-		                                tablaLocalidadesBody.appendChild(row);
-		                            } else {
-		                                data.forEach(localidad => {
-		                                    const row = document.createElement('tr');
-		                                    // Asegúrate de que el 'id' de la localidad está disponible
-		                                    row.innerHTML = `
-		                                        <td>${localidad.nombre}</td>
-		                                        <td>${localidad.provincia ? localidad.provincia.nombre : 'N/A'}</td>
-												<td>
-												                                        <button class="btn btn-danger btn-sm btn-delete-localidad" data-id="${localidad.id}">
-												                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash text-white" viewBox="0 0 16 16">
-												                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-												                                                <path d="M14.5 3a1 1 0 0 1-1 1H13V9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-												                                            </svg>
-												                                        </button>
-												                                    </td>
-		                                    `;
-		                                    tablaLocalidadesBody.appendChild(row);
-		                                });
-		                                // Después de llenar la tabla, attach event listeners a los botones de eliminar
-		                                attachDeleteEventListeners();
-		                            }
-		                        })
-		                        .catch(error => {
-		                            console.error('Error al cargar localidades:', error);
-		                            const row = document.createElement('tr');
-		                            row.innerHTML = `<td colspan="3" class="text-danger">Error al cargar localidades.</td>`; // Colspan 3
-		                            tablaLocalidadesBody.appendChild(row);
-		                        });
-		                }
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.length === 0) {
+                                let option = document.createElement('option');
+                                option.value = '0'; // Valor 0 para indicar que no hay localidades
+                                option.textContent = 'No hay localidades para esta provincia';
+                                selectLocalidad.appendChild(option);
+                            } else {
+                                data.forEach(localidad => {
+                                    let option = document.createElement('option');
+                                    option.value = localidad.id;
+                                    option.textContent = localidad.nombre;
+                                    selectLocalidad.appendChild(option);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar localidades para el select:', error);
+                            let option = document.createElement('option');
+                            option.value = '0';
+                            option.textContent = 'Error al cargar localidades';
+                            selectLocalidad.appendChild(option);
+                        });
+                }
 
-		                // Función para adjuntar eventos a los botones de eliminar
-		                function attachDeleteEventListeners() {
-		                    document.querySelectorAll('.btn-delete-localidad').forEach(button => {
-		                        button.addEventListener('click', function() {
-		                            const localidadId = this.dataset.id; // Obtiene el ID del atributo data-id
-		                            if (confirm('¿Estás seguro de que quieres eliminar esta localidad?')) {
-		                                deleteLocalidad(localidadId);
-		                            }
-		                        });
-		                    });
-		                }
+                // Carga las direcciones según la localidad seleccionada
+                function cargarDirecciones(localidadId) {
+                    tablaDireccionesBody.innerHTML = ''; // Limpiar la tabla de direcciones
 
-		                // Función para enviar la solicitud DELETE al backend
-		                function deleteLocalidad(id) {
-		                    fetch(`/localidades/${id}`, {
-		                        method: 'DELETE', // Método DELETE
-		                        headers: {
-		                            'Content-Type': 'application/json'
-		                            // Si usas CSRF, necesitarías agregar un header X-CSRF-TOKEN
-		                        }
-		                    })
-		                    .then(response => {
-		                        if (response.ok) {
-		                            alert('Localidad eliminada exitosamente.');
-		                            // Recargar las localidades para que la tabla se actualice
-		                            cargarLocalidades(selectProvincia.value);
-		                        } else {
-		                            // Leer el mensaje de error del backend si lo hay
-		                            response.text().then(text => {
-		                                alert('Error al eliminar localidad: ' + text);
-		                            });
-		                        }
-		                    })
-		                    .catch(error => {
-		                        console.error('Error en la solicitud de eliminación:', error);
-		                        alert('Error de conexión al intentar eliminar la localidad.');
-		                    });
-		                }
-		            });
-		        </script>
-		        </body>
-		
+                    if (localidadId === '0') {
+                        tablaDireccionesBody.innerHTML = `<tr><td colspan="2">Seleccione una localidad para ver las direcciones.</td></tr>`;
+                        return;
+                    }
+
+                    let url = `/localidades/porLocalidad?localidadId=${localidadId}`;
+
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.length === 0) {
+                                let row = document.createElement('tr');
+                                row.innerHTML = `<td colspan="2">No hay direcciones para esta localidad.</td>`;
+                                tablaDireccionesBody.appendChild(row);
+                            } else {
+                                data.forEach(direccion => {
+                                    let row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <td>${direccion.calleYAltura}</td>
+                                        <td>${direccion.localidad ? direccion.localidad.nombre : 'N/A'}</td>
+                                    `;
+                                    tablaDireccionesBody.appendChild(row);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar direcciones:', error);
+                            let row = document.createElement('tr');
+                            row.innerHTML = `<td colspan="2" class="text-danger">Error al cargar direcciones.</td>`;
+                            tablaDireccionesBody.appendChild(row);
+                        });
+                }
+                
+                // --- Event Listeners ---
+
+                // Al cargar la página, inicializa los selects y tablas
+                cargarSelectLocalidades(selectProvincia.value);
+
+                // Cuando cambia la provincia, actualiza el select de localidades y limpia la tabla de direcciones
+                selectProvincia.addEventListener('change', function() {
+                    const provinciaId = this.value;
+                    cargarSelectLocalidades(provinciaId);
+                });
+
+                // Cuando cambia la localidad, carga las direcciones
+                selectLocalidad.addEventListener('change', function() {
+                    const localidadId = this.value;
+                    cargarDirecciones(localidadId);
+                });
+            });
+        </script>
+    </body>
 </html>

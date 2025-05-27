@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.oo2.grupo15.dtos.DireccionDTO;
 import com.oo2.grupo15.dtos.LocalidadDTO;
 import com.oo2.grupo15.helpers.ViewRouteHelper;
+import com.oo2.grupo15.services.IDireccionService;
 import com.oo2.grupo15.services.ILocalidadService;
 import com.oo2.grupo15.services.IProvinciaService;
 
@@ -31,17 +33,20 @@ public class LocalidadController {
 
 	private ILocalidadService localidadService;
 	private IProvinciaService provinciaService;
+	private IDireccionService direccionService;
 	
-	public LocalidadController(ILocalidadService localidadService, IProvinciaService provinciaService) {
+	public LocalidadController(ILocalidadService localidadService, IProvinciaService provinciaService,IDireccionService direccionService) {
 		this.localidadService = localidadService;
 		this.provinciaService = provinciaService;
+		this.direccionService = direccionService;
 	}
 
 	@GetMapping("/")
     public ModelAndView index(){
 		ModelAndView mAV = new ModelAndView(ViewRouteHelper.LOCALIDAD_INDEX);
 		mAV.addObject("provincias", provinciaService.getAll()); 
-        mAV.addObject("localidades", List.of()); 
+        mAV.addObject("localidades", List.of());
+        mAV.addObject("direcciones", List.of());
         mAV.addObject("localidad", new LocalidadDTO());
         return mAV;
     }
@@ -53,6 +58,15 @@ public class LocalidadController {
             return List.of(); 
         }
         return localidadService.getLocalidadesByProvincia(provinciaId);
+    }
+    
+    @GetMapping("/porLocalidad")
+    @ResponseBody 
+    public List<DireccionDTO> getDireccionesByLocalidad(@RequestParam("localidadId") int localidadId) {
+        if (localidadId == 0) { 
+            return List.of(); 
+        }
+        return direccionService.getDireccionesByLocalidad(localidadId);
     }
     
     @DeleteMapping("/{id}") // Mapea a /localidades/{id} con método DELETE
