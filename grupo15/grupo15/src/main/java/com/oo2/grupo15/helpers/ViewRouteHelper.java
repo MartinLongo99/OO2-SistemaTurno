@@ -8,9 +8,9 @@ public class ViewRouteHelper {
 	//REDIRECT
 	public final static String HELLO = "home/hello";
 	public final static String ROUTE_INDEX = "/index";
-	public final static String LOCALIDAD_ROOT = "/localidad/";
+	public final static String LUGAR_ROOT = "/lugar/";
 	
-	public final static String LOCALIDAD_INDEX = "localidad/index";
-	public final static String LOCALIDAD_FORM = "localidad/form";
-	public final static String LOCALIDAD_NEW = "localidad/new";
+	public final static String LUGAR_INDEX = "lugar/index";
+	public final static String LUGAR_FORM = "lugar/form";
+	public final static String LUGAR_NEW = "lugar/new";
 }
