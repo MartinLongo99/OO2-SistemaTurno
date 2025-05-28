@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <title>Turnito - Gestión de Direcciones</title>
+        <title>Turnito - Gestión de Lugares</title>
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <link href="css/styles.css" rel="stylesheet" />
         <style>
@@ -25,10 +25,10 @@
     </head>
     <body>
         <div class="container">
-            <h1>Turnito - Gestión de Direcciones</h1>
+            <h1>Turnito - Gestión de Lugares</h1>
 
             <div class="section-card">
-                <h2>Filtrar Direcciones</h2>
+                <h2>Filtrar Lugares</h2>
                 <div class="mb-3">
                     <label for="selectProvincia" class="form-label">Seleccione una Provincia:</label>
                     <select class="form-select" id="selectProvincia">
@@ -48,18 +48,19 @@
             </div>
 
             <div class="section-card">
-                <h2>Listado de Direcciones</h2>
+                <h2>Listado de Lugares</h2>
                 <div style="max-height: 250px; overflow-y: auto;">
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th>Lugar</th>
                                 <th>Direccion</th>
-                                <th>Localidad</th>
+								<th>Localidad</th>
                             </tr>
                         </thead>
-                        <tbody id="tablaDireccionesBody">
+                        <tbody id="tablaLugaresBody">
                             <tr>
-                                <td colspan="2">Seleccione una provincia y luego una localidad para ver las direcciones.</td>
+                                <td colspan="3">Seleccione una provincia y luego una localidad para ver los lugares.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -72,20 +73,20 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const selectProvincia = document.getElementById('selectProvincia');
                 const selectLocalidad = document.getElementById('selectLocalidad');
-                const tablaDireccionesBody = document.getElementById('tablaDireccionesBody');
+                const tablaLugaresBody = document.getElementById('tablaLugaresBody');
 
                 // --- Funciones para Cargar Datos ---
 
                 // Carga las localidades en el selectLocalidad según la provincia seleccionada
                 function cargarSelectLocalidades(provinciaId) {
                     selectLocalidad.innerHTML = '<option value="0">-- Todas las Localidades --</option>'; // Resetear select de localidades
-                    tablaDireccionesBody.innerHTML = `<tr><td colspan="2">Seleccione una localidad para ver las direcciones.</td></tr>`; // Limpiar tabla de direcciones
+                    tablaLugaresBody.innerHTML = `<tr><td colspan="3">Seleccione una localidad para ver los lugares.</td></tr>`; // Limpiar tabla de lugares
 
                     if (provinciaId === '0') { // Si se selecciona "Todas las Provincias"
                         return; // No se cargan localidades en el select, solo se muestra el mensaje inicial
                     }
 
-                    let url = `/localidades/porProvincia?provinciaId=${provinciaId}`;
+                    let url = `/lugares/porProvincia?provinciaId=${provinciaId}`;
 
                     fetch(url)
                         .then(response => {
@@ -118,16 +119,16 @@
                         });
                 }
 
-                // Carga las direcciones según la localidad seleccionada
-                function cargarDirecciones(localidadId) {
-                    tablaDireccionesBody.innerHTML = ''; // Limpiar la tabla de direcciones
+                // Carga los lugares según la localidad seleccionada
+                function cargarLugares(localidadId) {
+                    tablaLugaresBody.innerHTML = ''; // Limpiar la tabla de lugares
 
                     if (localidadId === '0') {
-                        tablaDireccionesBody.innerHTML = `<tr><td colspan="2">Seleccione una localidad para ver las direcciones.</td></tr>`;
+                        tablaLugaresBody.innerHTML = `<tr><td colspan="3">Seleccione una localidad para ver los lugares.</td></tr>`;
                         return;
                     }
 
-                    let url = `/localidades/porLocalidad?localidadId=${localidadId}`;
+                    let url = `/lugares/porLocalidad?localidadId=${localidadId}`;
 
                     fetch(url)
                         .then(response => {
@@ -139,24 +140,25 @@
                         .then(data => {
                             if (data.length === 0) {
                                 let row = document.createElement('tr');
-                                row.innerHTML = `<td colspan="2">No hay direcciones para esta localidad.</td>`;
-                                tablaDireccionesBody.appendChild(row);
+                                row.innerHTML = `<td colspan="3">No hay lugares para esta localidad.</td>`;
+                                tablaLugaresBody.appendChild(row);
                             } else {
-                                data.forEach(direccion => {
+                                data.forEach(lugar => {
                                     let row = document.createElement('tr');
                                     row.innerHTML = `
-                                        <td>${direccion.calleYAltura}</td>
-                                        <td>${direccion.localidad ? direccion.localidad.nombre : 'N/A'}</td>
+                                        <td>${lugar.nombre}</td>
+										<td>${lugar.direccion ? lugar.direccion.calleYAltura : 'N/A'}</td>
+                                        <td>${lugar.direccion.localidad ? lugar.direccion.localidad.nombre : 'N/A'}</td>
                                     `;
-                                    tablaDireccionesBody.appendChild(row);
+                                    tablaLugaresBody.appendChild(row);
                                 });
                             }
                         })
                         .catch(error => {
-                            console.error('Error al cargar direcciones:', error);
+                            console.error('Error al cargar lugares:', error);
                             let row = document.createElement('tr');
-                            row.innerHTML = `<td colspan="2" class="text-danger">Error al cargar direcciones.</td>`;
-                            tablaDireccionesBody.appendChild(row);
+                            row.innerHTML = `<td colspan="3" class="text-danger">Error al cargar lugares.</td>`;
+                            tablaLugaresBody.appendChild(row);
                         });
                 }
                 
@@ -165,16 +167,16 @@
                 // Al cargar la página, inicializa los selects y tablas
                 cargarSelectLocalidades(selectProvincia.value);
 
-                // Cuando cambia la provincia, actualiza el select de localidades y limpia la tabla de direcciones
+                // Cuando cambia la provincia, actualiza el select de localidades y limpia la tabla de lugares
                 selectProvincia.addEventListener('change', function() {
                     const provinciaId = this.value;
                     cargarSelectLocalidades(provinciaId);
                 });
 
-                // Cuando cambia la localidad, carga las direcciones
+                // Cuando cambia la localidad, carga las lugares
                 selectLocalidad.addEventListener('change', function() {
                     const localidadId = this.value;
-                    cargarDirecciones(localidadId);
+                    cargarLugares(localidadId);
                 });
             });
         </script>
