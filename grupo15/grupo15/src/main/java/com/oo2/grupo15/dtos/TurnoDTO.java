@@ -17,4 +17,5 @@ public class TurnoDTO {
     private boolean estado;
     private Long servicioLugarId;
     private Long solicitanteId;
+    
 }

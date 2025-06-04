@@ -2,6 +2,7 @@ package com.oo2.grupo15.services.implementation;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,24 +27,30 @@ public class TurnoService implements ITurnoService {
     @Autowired
     private ISolicitanteRepository solicitanteRepository;
 
+    private ModelMapper modelMapper = new ModelMapper();
+
     @Override
-    public Turno crearTurno(TurnoDTO dto) {
+    public TurnoDTO crearTurno(TurnoDTO dto) {
         Turno turno = new Turno();
         turno.setFechaHora(dto.getFechaHora());
         turno.setEstado(dto.isEstado());
         turno.setServicioLugar(servicioLugarRepository.findById(dto.getServicioLugarId()).orElseThrow());
         turno.setSolicitante(solicitanteRepository.findById(dto.getSolicitanteId()).orElseThrow());
-        return turnoRepository.save(turno);
+        
+        Turno saved = turnoRepository.save(turno);
+        return modelMapper.map(saved, TurnoDTO.class);
     }
 
     @Override
-    public Turno actualizarTurno(Long id, TurnoDTO dto) {
+    public TurnoDTO actualizarTurno(Long id, TurnoDTO dto) {
         Turno turno = turnoRepository.findById(id).orElseThrow();
         turno.setFechaHora(dto.getFechaHora());
         turno.setEstado(dto.isEstado());
         turno.setServicioLugar(servicioLugarRepository.findById(dto.getServicioLugarId()).orElseThrow());
         turno.setSolicitante(solicitanteRepository.findById(dto.getSolicitanteId()).orElseThrow());
-        return turnoRepository.save(turno);
+
+        Turno updated = turnoRepository.save(turno);
+        return modelMapper.map(updated, TurnoDTO.class);
     }
 
     @Override
@@ -52,12 +59,15 @@ public class TurnoService implements ITurnoService {
     }
 
     @Override
-    public List<Turno> obtenerTodos() {
-        return turnoRepository.findAll();
+    public List<TurnoDTO> obtenerTodos() {
+        return turnoRepository.findAll()
+                .stream()
+                .map(turno -> modelMapper.map(turno, TurnoDTO.class))
+                .toList();
     }
 
     @Override
-    public Turno obtenerPorId(Long id) {
-        return turnoRepository.findById(id).orElseThrow();
+    public TurnoDTO obtenerPorId(Long id) {
+        return modelMapper.map(turnoRepository.findById(id).orElseThrow(), TurnoDTO.class);
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.oo2.grupo15.dtos.TurnoDTO;
-import com.oo2.grupo15.entities.Turno;
 import com.oo2.grupo15.services.ITurnoService;
 
 @RestController
@@ -17,12 +16,12 @@ public class TurnoController {
     private ITurnoService turnoService;
 
     @PostMapping
-    public ResponseEntity<Turno> crear(@RequestBody TurnoDTO dto) {
+    public ResponseEntity<TurnoDTO> crear(@RequestBody TurnoDTO dto) {
         return ResponseEntity.ok(turnoService.crearTurno(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Turno> actualizar(@PathVariable Long id, @RequestBody TurnoDTO dto) {
+    public ResponseEntity<TurnoDTO> actualizar(@PathVariable Long id, @RequestBody TurnoDTO dto) {
         return ResponseEntity.ok(turnoService.actualizarTurno(id, dto));
     }
 
@@ -33,12 +32,12 @@ public class TurnoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Turno>> listar() {
+    public ResponseEntity<List<TurnoDTO>> listar() {
         return ResponseEntity.ok(turnoService.obtenerTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Turno> obtener(@PathVariable Long id) {
+    public ResponseEntity<TurnoDTO> obtener(@PathVariable Long id) {
         return ResponseEntity.ok(turnoService.obtenerPorId(id));
     }
 }
