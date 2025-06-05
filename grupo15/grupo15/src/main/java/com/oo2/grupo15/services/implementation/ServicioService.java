@@ -22,11 +22,10 @@ public class ServicioService implements IServicioService {
         ServicioDTO dto = new ServicioDTO();
         dto.setId(servicio.getId());
         dto.setNombre(servicio.getNombre());
-        dto.setEstado(servicio.isEstado());
         dto.setDuracionMinutos(servicio.getDuracionMinutos());
+        dto.setEstado(servicio.isEstado());
         dto.setHorarioInicio(servicio.getHorarioInicio());
         dto.setHorarioFin(servicio.getHorarioFin());
-        dto.setDiasSemana(servicio.getDiasSemana());
         return dto;
     }
 
@@ -34,11 +33,10 @@ public class ServicioService implements IServicioService {
         Servicio servicio = new Servicio();
         servicio.setId(dto.getId());
         servicio.setNombre(dto.getNombre());
-        servicio.setEstado(dto.isEstado());
         servicio.setDuracionMinutos(dto.getDuracionMinutos());
+        servicio.setEstado(dto.isEstado());
         servicio.setHorarioInicio(dto.getHorarioInicio());
         servicio.setHorarioFin(dto.getHorarioFin());
-        servicio.setDiasSemana(dto.getDiasSemana());
         return servicio;
     }
 

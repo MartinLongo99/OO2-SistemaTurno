@@ -9,12 +9,12 @@
     <link href="/css/styles.css" rel="stylesheet" />
 </head>
 <body>
+
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container px-5">
         <a class="navbar-brand" href="/">Turnito</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -30,12 +30,38 @@
 
 <!-- Contenido -->
 <div class="container px-4 px-lg-5 mt-5">
-    <h1 class="mb-4">Listado de Servicios</h1>
 
+    <h1 class="mb-4">Gestión de Servicios</h1>
+
+    <!-- Formulario -->
+    <div class="card mb-4">
+        <div class="card-header">Agregar / Editar Servicio</div>
+        <div class="card-body">
+            <form id="formServicio">
+                <input type="hidden" id="servicioId" />
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <input type="text" class="form-control" id="descripcion" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Duración (minutos)</label>
+                    <input type="number" class="form-control" id="duracionMinutos" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="reset" class="btn btn-secondary" onclick="resetForm()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Servicios disponibles</h5>
-            <span id="contadorServicios" class="badge bg-primary">0 servicios encontrados</span>
+            <span id="contadorServicios" class="badge bg-primary">0 servicios</span>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -46,10 +72,11 @@
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Duración</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody id="tablaServicios">
-                    <tr><td colspan="4" class="text-center">Cargando servicios...</td></tr>
+                    <tr><td colspan="5" class="text-center">Cargando servicios...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -65,38 +92,78 @@
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-	document.addEventListener("DOMContentLoaded", cargarServicios);
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarServicios();
+        document.getElementById("formServicio").addEventListener("submit", guardarServicio);
+    });
 
-	function cargarServicios() {
-	    const tbody = document.getElementById("tablaServicios");
-	    fetch("/servicios/api")
-	        .then(res => {
-	            if (!res.ok) throw new Error("Error al cargar servicios");
-	            return res.json();
-	        })
-	        .then(servicios => {
-	            document.getElementById("contadorServicios").textContent = `${servicios.length} servicios encontrados`;
-	            tbody.innerHTML = "";
-	            if (servicios.length === 0) {
-	                tbody.innerHTML = "<tr><td colspan='4' class='text-center'>No hay servicios registrados.</td></tr>";
-	                return;
-	            }
-	            servicios.forEach(serv => {
-	                const fila = `
-	                    <tr>
-	                        <td>${serv.id}</td>
-	                        <td>${serv.nombre}</td>
-	                        <td>${serv.descripcion}</td>
-	                        <td>${serv.duracion} min</td>
-	                    </tr>`;
-	                tbody.innerHTML += fila;
-	            });
-	        })
-	        .catch(error => {
-	            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error: ${error.message}</td></tr>`;
-	        });
-	}
+    function cargarServicios() {
+        const tbody = document.getElementById("tablaServicios");
+        fetch("/servicios/api")
+            .then(res => res.json())
+            .then(servicios => {
+                document.getElementById("contadorServicios").textContent = `${servicios.length} servicios`;
+                tbody.innerHTML = "";
+                if (servicios.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='5' class='text-center'>No hay servicios registrados.</td></tr>";
+                    return;
+                }
+                servicios.forEach(serv => {
+                    const fila = `
+                        <tr>
+                            <td>${serv.id}</td>
+                            <td>${serv.nombre}</td>
+                            <td>${serv.descripcion || ''}</td>
+                            <td>${serv.duracionMinutos} min</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="cargarEnFormulario(${JSON.stringify(serv).replace(/"/g, '&quot;')})">Editar</button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarServicio(${serv.id})">Eliminar</button>
+                            </td>
+                        </tr>`;
+                    tbody.innerHTML += fila;
+                });
+            });
+    }
 
+    function guardarServicio(e) {
+        e.preventDefault();
+        const id = document.getElementById("servicioId").value;
+        const data = {
+            nombre: document.getElementById("nombre").value,
+            descripcion: document.getElementById("descripcion").value,
+            duracionMinutos: parseInt(document.getElementById("duracionMinutos").value)
+        };
+        const url = id ? `/servicios/api/${id}` : "/servicios/api";
+        const method = id ? "PUT" : "POST";
+
+        fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+            .then(() => {
+                cargarServicios();
+                resetForm();
+            });
+    }
+
+    function eliminarServicio(id) {
+        if (!confirm("¿Estás seguro de eliminar este servicio?")) return;
+        fetch(`/servicios/api/${id}`, { method: "DELETE" })
+            .then(() => cargarServicios());
+    }
+
+    function cargarEnFormulario(serv) {
+        document.getElementById("servicioId").value = serv.id;
+        document.getElementById("nombre").value = serv.nombre;
+        document.getElementById("descripcion").value = serv.descripcion || '';
+        document.getElementById("duracionMinutos").value = serv.duracionMinutos;
+    }
+
+    function resetForm() {
+        document.getElementById("formServicio").reset();
+        document.getElementById("servicioId").value = "";
+    }
 </script>
 </body>
 </html>
