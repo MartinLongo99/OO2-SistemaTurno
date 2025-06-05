@@ -61,6 +61,18 @@
                     <label for="fin" class="form-label">Horario Fin</label>
                     <input type="time" class="form-control" id="fin" required>
                 </div>
+                <div class="mb-3">
+                    <label for="diasSemana" class="form-label">Días de la semana</label>
+                    <select class="form-select" id="diasSemana" multiple required>
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary">Guardar</button>
                 <button type="reset" class="btn btn-secondary ms-2">Limpiar</button>
             </form>
@@ -78,11 +90,11 @@
                 <table class="table table-striped table-hover">
                     <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nombre</th>
                         <th>Duración</th>
                         <th>Estado</th>
                         <th>Horario</th>
+                        <th>Días</th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
@@ -108,14 +120,19 @@
 
         document.getElementById("formServicio").addEventListener("submit", function (e) {
             e.preventDefault();
+
+            const diasSemana = Array.from(document.getElementById("diasSemana").selectedOptions).map(opt => opt.value);
+
             const servicio = {
                 id: document.getElementById("id").value || null,
                 nombre: document.getElementById("nombre").value,
                 duracionMinutos: parseInt(document.getElementById("duracion").value),
                 estado: document.getElementById("estado").value === "true",
                 horarioInicio: document.getElementById("inicio").value,
-                horarioFin: document.getElementById("fin").value
+                horarioFin: document.getElementById("fin").value,
+                diasSemana: diasSemana
             };
+
             const method = servicio.id ? "PUT" : "POST";
             const url = servicio.id ? `/servicios/api/${servicio.id}` : "/servicios/api";
             fetch(url, {
@@ -144,13 +161,14 @@
                 document.getElementById("contadorServicios").textContent = `${servicios.length} servicios`;
                 tbody.innerHTML = "";
                 servicios.forEach(serv => {
+                    const dias = serv.diasSemana ? serv.diasSemana.join(", ") : "";
                     const fila = `
                         <tr>
-                            <td>${serv.id}</td>
                             <td>${serv.nombre}</td>
                             <td>${serv.duracionMinutos} min</td>
                             <td>${serv.estado ? "Activo" : "Inactivo"}</td>
                             <td>${serv.horarioInicio} - ${serv.horarioFin}</td>
+                            <td>${dias}</td>
                             <td>
                                 <button class="btn btn-sm btn-warning" onclick='editar(${JSON.stringify(serv)})'>Editar</button>
                                 <button class="btn btn-sm btn-danger" onclick='eliminar(${serv.id})'>Eliminar</button>
@@ -171,6 +189,12 @@
         document.getElementById("estado").value = serv.estado;
         document.getElementById("inicio").value = serv.horarioInicio;
         document.getElementById("fin").value = serv.horarioFin;
+
+        const selectDias = document.getElementById("diasSemana");
+        Array.from(selectDias.options).forEach(option => {
+            option.selected = serv.diasSemana?.includes(option.value);
+        });
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
