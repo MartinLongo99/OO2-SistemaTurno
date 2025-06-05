@@ -37,8 +37,9 @@ public class Servicio {
     private LocalTime horarioFin;
 
     @ElementCollection(targetClass = DayOfWeek.class)
-    @CollectionTable(name = "servicio_dias_semana", joinColumns = @jakarta.persistence.JoinColumn(name = "servicio_id"))
     @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "servicio_dias_semana")
     private Set<DayOfWeek> diasSemana = new HashSet<>();
+
 
 }

@@ -31,24 +31,27 @@ public class ServicioController {
 
     @GetMapping("/new")
     public String nuevo(Model model) {
-        ServicioDTO dto = new ServicioDTO();
-        model.addAttribute("servicio", dto);
+        model.addAttribute("servicio", new ServicioDTO());
         model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
         return ViewRouteHelper.SERVICIO_FORM;
     }
 
     @PostMapping("/save")
-    public String save(
-            @ModelAttribute("servicio") ServicioDTO dto,
-            @RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados) {
+    public String save(@ModelAttribute("servicio") ServicioDTO dto,
+                       @RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados) {
 
-        // ✅ Corrige: Convertimos a Set explícitamente
         Set<String> dias = diasSeleccionados != null
                 ? diasSeleccionados.stream().map(String::toUpperCase).collect(Collectors.toSet())
                 : Set.of();
 
         dto.setDiasSemana(dias);
-        servicioService.save(dto);
+
+        if (dto.getId() != null) {
+            servicioService.update(dto.getId(), dto);
+        } else {
+            servicioService.save(dto);
+        }
+
         return "redirect:/servicio/index";
     }
 

@@ -83,11 +83,11 @@
         diasSemana: diasSemana
       };
 
-      const response = await fetch('/servicios/api', {
-        method: data.id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+	  const response = await fetch('/servicios/api', {
+	    method: 'POST', // <--- CAMBIO ACÁ
+	    headers: { 'Content-Type': 'application/json' },
+	    body: JSON.stringify(data)
+	  });
 
       if (response.ok) {
         alert('Servicio guardado correctamente.');
