@@ -65,37 +65,38 @@
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", cargarServicios);
+	document.addEventListener("DOMContentLoaded", cargarServicios);
 
-    function cargarServicios() {
-        const tbody = document.getElementById("tablaServicios");
-        fetch("/servicios")
-            .then(res => {
-                if (!res.ok) throw new Error("Error al cargar servicios");
-                return res.json();
-            })
-            .then(servicios => {
-                document.getElementById("contadorServicios").textContent = `${servicios.length} servicios encontrados`;
-                tbody.innerHTML = "";
-                if (servicios.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='4' class='text-center'>No hay servicios registrados.</td></tr>";
-                    return;
-                }
-                servicios.forEach(serv => {
-                    const fila = `
-                        <tr>
-                            <td>${serv.id}</td>
-                            <td>${serv.nombre}</td>
-                            <td>${serv.descripcion}</td>
-                            <td>${serv.duracion} min</td>
-                        </tr>`;
-                    tbody.innerHTML += fila;
-                });
-            })
-            .catch(error => {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error: ${error.message}</td></tr>`;
-            });
-    }
+	function cargarServicios() {
+	    const tbody = document.getElementById("tablaServicios");
+	    fetch("/servicios/api")
+	        .then(res => {
+	            if (!res.ok) throw new Error("Error al cargar servicios");
+	            return res.json();
+	        })
+	        .then(servicios => {
+	            document.getElementById("contadorServicios").textContent = `${servicios.length} servicios encontrados`;
+	            tbody.innerHTML = "";
+	            if (servicios.length === 0) {
+	                tbody.innerHTML = "<tr><td colspan='4' class='text-center'>No hay servicios registrados.</td></tr>";
+	                return;
+	            }
+	            servicios.forEach(serv => {
+	                const fila = `
+	                    <tr>
+	                        <td>${serv.id}</td>
+	                        <td>${serv.nombre}</td>
+	                        <td>${serv.descripcion}</td>
+	                        <td>${serv.duracion} min</td>
+	                    </tr>`;
+	                tbody.innerHTML += fila;
+	            });
+	        })
+	        .catch(error => {
+	            tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error: ${error.message}</td></tr>`;
+	        });
+	}
+
 </script>
 </body>
 </html>
