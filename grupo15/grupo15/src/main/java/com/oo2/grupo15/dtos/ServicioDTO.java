@@ -1,7 +1,6 @@
 package com.oo2.grupo15.dtos;
 
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
