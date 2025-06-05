@@ -1,12 +1,11 @@
 package com.oo2.grupo15.controllers;
 
 import java.time.DayOfWeek;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,8 @@ public class ServicioController {
     @Autowired
     private IServicioService servicioService;
 
-    @GetMapping("/index")
+    // 🌐 Vista tradicional
+    @GetMapping
     public String index(Model model) {
         List<ServicioDTO> servicios = servicioService.findAll();
         model.addAttribute("servicios", servicios);
@@ -40,8 +40,11 @@ public class ServicioController {
     public String save(@ModelAttribute("servicio") ServicioDTO dto,
                        @RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados) {
 
-        Set<String> dias = diasSeleccionados != null
-                ? diasSeleccionados.stream().map(String::toUpperCase).collect(Collectors.toSet())
+        Set<DayOfWeek> dias = diasSeleccionados != null
+                ? diasSeleccionados.stream()
+                    .map(String::toUpperCase)
+                    .map(DayOfWeek::valueOf)
+                    .collect(Collectors.toSet())
                 : Set.of();
 
         dto.setDiasSemana(dias);
@@ -52,7 +55,7 @@ public class ServicioController {
             servicioService.save(dto);
         }
 
-        return "redirect:/servicio/index";
+        return "redirect:/servicios";
     }
 
     @GetMapping("/edit/{id}")
@@ -66,6 +69,37 @@ public class ServicioController {
     @GetMapping("/delete/{id}")
     public String eliminar(@PathVariable Long id) {
         servicioService.delete(id);
-        return "redirect:/servicio/index";
+        return "redirect:/servicios";
+    }
+
+    // 🚀 ENDPOINTS API PARA JAVASCRIPT
+    @GetMapping("/api")
+    @ResponseBody
+    public List<ServicioDTO> listarServicios() {
+        return servicioService.findAll();
+    }
+
+    @GetMapping("/api/{id}")
+    @ResponseBody
+    public ServicioDTO buscarPorId(@PathVariable Long id) {
+        return servicioService.findById(id);
+    }
+
+    @PostMapping("/api")
+    @ResponseBody
+    public ResponseEntity<ServicioDTO> guardarServicioDesdeAPI(@RequestBody ServicioDTO dto) {
+        if (dto.getId() != null) {
+            servicioService.update(dto.getId(), dto);
+        } else {
+            servicioService.save(dto);
+        }
+        return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping("/api/{id}")
+    @ResponseBody
+    public ResponseEntity<Void> eliminarDesdeAPI(@PathVariable Long id) {
+        servicioService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }

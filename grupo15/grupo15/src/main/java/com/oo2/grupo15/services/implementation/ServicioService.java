@@ -56,13 +56,9 @@ public class ServicioService implements IServicioService {
         servicioRepository.deleteById(id);
     }
 
-    // ---------- Métodos auxiliares de mapeo ----------
+    // ---------- Conversión Entity <-> DTO ----------
 
     private ServicioDTO convertToDTO(Servicio servicio) {
-        Set<String> dias = servicio.getDiasSemana().stream()
-            .map(d -> capitalize(d.name()))
-            .collect(Collectors.toSet());
-
         return new ServicioDTO(
             servicio.getId(),
             servicio.getNombre(),
@@ -70,7 +66,7 @@ public class ServicioService implements IServicioService {
             servicio.isEstado(),
             servicio.getHorarioInicio() != null ? servicio.getHorarioInicio().toString() : null,
             servicio.getHorarioFin() != null ? servicio.getHorarioFin().toString() : null,
-            dias
+            servicio.getDiasSemana()
         );
     }
 
@@ -89,44 +85,8 @@ public class ServicioService implements IServicioService {
             servicio.setHorarioFin(LocalTime.parse(dto.getHorarioFin()));
         }
 
-        if (dto.getDiasSemana() != null && !dto.getDiasSemana().isEmpty()) {
-            Set<DayOfWeek> dias = dto.getDiasSemana().stream()
-                .map(this::toDayOfWeek)
-                .collect(Collectors.toSet());
-            servicio.setDiasSemana(dias);
-        } else {
-            servicio.setDiasSemana(Collections.emptySet());
-        }
+        servicio.setDiasSemana(dto.getDiasSemana() != null ? dto.getDiasSemana() : Collections.emptySet());
 
         return servicio;
-    }
-
-    // ---------- Utilidades ----------
-
-    private static final Map<String, DayOfWeek> DIAS_MAP = Map.ofEntries(
-    	    Map.entry("LUNES", DayOfWeek.MONDAY),
-    	    Map.entry("MARTES", DayOfWeek.TUESDAY),
-    	    Map.entry("MIÉRCOLES", DayOfWeek.WEDNESDAY),
-    	    Map.entry("MIERCOLES", DayOfWeek.WEDNESDAY), // por si no viene con tilde
-    	    Map.entry("JUEVES", DayOfWeek.THURSDAY),
-    	    Map.entry("VIERNES", DayOfWeek.FRIDAY),
-    	    Map.entry("SÁBADO", DayOfWeek.SATURDAY),
-    	    Map.entry("SABADO", DayOfWeek.SATURDAY),
-    	    Map.entry("DOMINGO", DayOfWeek.SUNDAY)
-    	);
-
-    	private DayOfWeek toDayOfWeek(String dia) {
-    	    return DIAS_MAP.get(dia.toUpperCase());
-    	}
-
-
-    private String capitalize(String diaEnum) {
-        String lower = diaEnum.toLowerCase();
-        String capitalized = Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
-        switch (capitalized) {
-            case "Miercoles": return "Miércoles";
-            case "Sabado": return "Sábado";
-            default: return capitalized;
-        }
     }
 }

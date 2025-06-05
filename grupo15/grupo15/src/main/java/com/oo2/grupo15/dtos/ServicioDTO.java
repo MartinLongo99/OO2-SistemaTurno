@@ -1,5 +1,6 @@
 package com.oo2.grupo15.dtos;
 
+import java.time.DayOfWeek;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,5 @@ public class ServicioDTO {
     private boolean estado;
     private String horarioInicio;
     private String horarioFin;
-    private Set<String> diasSemana;  // String para JSON (ej: "MONDAY", "TUESDAY")
+    private Set<DayOfWeek> diasSemana; //DayOfWeek directamente
 }
-
-
