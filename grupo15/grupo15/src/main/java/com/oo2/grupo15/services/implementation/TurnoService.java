@@ -1,6 +1,5 @@
 package com.oo2.grupo15.services.implementation;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -17,7 +16,7 @@ import com.oo2.grupo15.repositories.ISolicitanteRepository;
 import com.oo2.grupo15.services.ITurnoService;
 
 @Service
-public class TurnoService implements ITurnoService {
+public abstract class TurnoService implements ITurnoService {
 
     @Autowired
     private ITurnoRepository turnoRepository;
@@ -37,7 +36,7 @@ public class TurnoService implements ITurnoService {
         turno.setEstado(dto.isEstado());
         turno.setServicioLugar(servicioLugarRepository.findById(dto.getServicioLugarId()).orElseThrow());
         turno.setSolicitante(solicitanteRepository.findById(dto.getSolicitanteId()).orElseThrow());
-        
+
         Turno saved = turnoRepository.save(turno);
         return modelMapper.map(saved, TurnoDTO.class);
     }
@@ -70,18 +69,5 @@ public class TurnoService implements ITurnoService {
     @Override
     public TurnoDTO obtenerPorId(Long id) {
         return modelMapper.map(turnoRepository.findById(id).orElseThrow(), TurnoDTO.class);
-    }
-    
-    @Override
-    public List<TurnoDTO> obtenerTurnosEntreFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
-        return turnoRepository.findByFechaHoraBetweenOrderByFechaHoraAsc(fechaInicio, fechaFin)
-                .stream()
-                .map(turno -> {
-                    TurnoDTO dto = modelMapper.map(turno, TurnoDTO.class);
-                    dto.setServicioLugarId(turno.getServicioLugar().getId());
-                    dto.setSolicitanteId(turno.getSolicitante().getId());
-                    return dto;
-                })
-                .toList();
     }
 }
