@@ -16,7 +16,7 @@ import com.oo2.grupo15.repositories.ISolicitanteRepository;
 import com.oo2.grupo15.services.ITurnoService;
 
 @Service
-public class TurnoService implements ITurnoService {
+public abstract class TurnoService implements ITurnoService {
 
     @Autowired
     private ITurnoRepository turnoRepository;
@@ -36,7 +36,7 @@ public class TurnoService implements ITurnoService {
         turno.setEstado(dto.isEstado());
         turno.setServicioLugar(servicioLugarRepository.findById(dto.getServicioLugarId()).orElseThrow());
         turno.setSolicitante(solicitanteRepository.findById(dto.getSolicitanteId()).orElseThrow());
-        
+
         Turno saved = turnoRepository.save(turno);
         return modelMapper.map(saved, TurnoDTO.class);
     }

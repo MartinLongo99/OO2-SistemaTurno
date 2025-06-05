@@ -1,43 +1,50 @@
 package com.oo2.grupo15.controllers;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.oo2.grupo15.dtos.TurnoDTO;
-import com.oo2.grupo15.services.ITurnoService;
+import com.oo2.grupo15.repositories.ITurnoRepository;
 
-@RestController
+@Controller
 @RequestMapping("/turnos")
 public class TurnoController {
 
     @Autowired
-    private ITurnoService turnoService;
-
-    @PostMapping
-    public ResponseEntity<TurnoDTO> crear(@RequestBody TurnoDTO dto) {
-        return ResponseEntity.ok(turnoService.crearTurno(dto));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<TurnoDTO> actualizar(@PathVariable Long id, @RequestBody TurnoDTO dto) {
-        return ResponseEntity.ok(turnoService.actualizarTurno(id, dto));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        turnoService.eliminarTurno(id);
-        return ResponseEntity.noContent().build();
-    }
+    private ITurnoRepository turnoRepository;
 
     @GetMapping
-    public ResponseEntity<List<TurnoDTO>> listar() {
-        return ResponseEntity.ok(turnoService.obtenerTodos());
+    public String index() {
+        return "turno/index";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TurnoDTO> obtener(@PathVariable Long id) {
-        return ResponseEntity.ok(turnoService.obtenerPorId(id));
+    // Endpoint simplificado que solo retorna IDs y fechas
+    @GetMapping("/disponibilidad")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> verificarDisponibilidad(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin) {
+
+        List<Object[]> resultados = turnoRepository.buscarTurnosSimplificados(fechaInicio, fechaFin);
+        List<Map<String, Object>> turnos = new ArrayList<>();
+
+        for (Object[] resultado : resultados) {
+            Map<String, Object> turno = new HashMap<>();
+            turno.put("id", resultado[0]);
+            turno.put("fechaHora", resultado[1]);
+            turno.put("estado", resultado[2]);
+
+            turnos.add(turno);
+        }
+
+        return ResponseEntity.ok(turnos);
     }
 }
