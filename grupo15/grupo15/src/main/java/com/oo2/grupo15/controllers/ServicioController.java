@@ -16,7 +16,7 @@ import com.oo2.grupo15.services.IServicioService;
 import com.oo2.grupo15.helpers.ViewRouteHelper;
 
 @Controller
-@RequestMapping("/servicio")
+@RequestMapping("/servicios")
 public class ServicioController {
 
     @Autowired
