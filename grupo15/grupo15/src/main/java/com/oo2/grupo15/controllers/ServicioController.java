@@ -22,7 +22,7 @@ public class ServicioController {
         return "servicio/index"; // templates/servicio/index.html
     }
 
-    // API para obtener todos los servicios
+    
     @GetMapping("/api")
     @ResponseBody
     public List<ServicioDTO> getAll() {
