@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,6 +37,8 @@ public class Servicio {
     private LocalTime horarioFin;
 
     @ElementCollection(targetClass = DayOfWeek.class)
+    @CollectionTable(name = "servicio_dias_semana", joinColumns = @jakarta.persistence.JoinColumn(name = "servicio_id"))
     @Enumerated(EnumType.STRING)
     private Set<DayOfWeek> diasSemana = new HashSet<>();
+
 }

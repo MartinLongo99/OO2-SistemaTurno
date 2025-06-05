@@ -1,212 +1,166 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="Gestión de Servicios" />
-    <title>Servicios</title>
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-    <link href="/css/styles.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Servicios</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
 </head>
 <body>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container px-5">
-        <a class="navbar-brand" href="/">Turnito</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/turnos">Turnos</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/servicios">Servicios</a></li>
-                <li class="nav-item"><a class="nav-link" href="/lugares">Lugares</a></li>
-            </ul>
-        </div>
+  <div class="container py-5">
+    <h2>Formulario de Servicio</h2>
+    <form id="formServicio">
+      <input type="hidden" id="id" name="id"/>
+
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" required/>
+      </div>
+
+      <div class="mb-3">
+        <label for="duracionMinutos" class="form-label">Duración (minutos)</label>
+        <input type="number" class="form-control" id="duracionMinutos" name="duracionMinutos" required/>
+      </div>
+
+      <div class="mb-3">
+        <label for="estado" class="form-label">Estado</label>
+        <select class="form-select" id="estado" name="estado">
+          <option value="true">Activo</option>
+          <option value="false">Inactivo</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="horarioInicio" class="form-label">Horario Inicio</label>
+        <input type="time" class="form-control" id="horarioInicio" name="horarioInicio" required/>
+      </div>
+
+      <div class="mb-3">
+        <label for="horarioFin" class="form-label">Horario Fin</label>
+        <input type="time" class="form-control" id="horarioFin" name="horarioFin" required/>
+      </div>
+
+      <div class="mb-3">
+        <label for="diasSemana" class="form-label">Días de la semana</label>
+        <select multiple class="form-select" id="diasSemana" name="diasSemana" required>
+          <option value="LUNES">Lunes</option>
+          <option value="MARTES">Martes</option>
+          <option value="MIÉRCOLES">Miércoles</option>
+          <option value="JUEVES">Jueves</option>
+          <option value="VIERNES">Viernes</option>
+          <option value="SÁBADO">Sábado</option>
+          <option value="DOMINGO">Domingo</option>
+        </select>
+        <div class="form-text">Usá Ctrl (o Cmd en Mac) para seleccionar varios días.</div>
+      </div>
+
+      <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="reset" class="btn btn-secondary">Limpiar</button>
+      </div>
+    </form>
+
+    <hr/>
+
+    <div id="listaServicios">
+      <!-- Aquí se cargarán los servicios desde JavaScript -->
     </div>
-</nav>
+  </div>
 
-<!-- Contenido -->
-<div class="container px-4 px-lg-5 mt-5">
-    <h1 class="mb-4">Gestión de Servicios</h1>
+  <script>
+    document.getElementById('formServicio').addEventListener('submit', async function (e) {
+      e.preventDefault();
 
-    <!-- Formulario -->
-    <div class="card mb-4">
-        <div class="card-header">Agregar / Editar Servicio</div>
-        <div class="card-body">
-            <form id="formServicio">
-                <input type="hidden" id="id" />
-                <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="nombre" required>
-                </div>
-                <div class="mb-3">
-                    <label for="duracion" class="form-label">Duración (minutos)</label>
-                    <input type="number" class="form-control" id="duracion" required>
-                </div>
-                <div class="mb-3">
-                    <label for="estado" class="form-label">Estado</label>
-                    <select class="form-select" id="estado">
-                        <option value="true">Activo</option>
-                        <option value="false">Inactivo</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="inicio" class="form-label">Horario Inicio</label>
-                    <input type="time" class="form-control" id="inicio" required>
-                </div>
-                <div class="mb-3">
-                    <label for="fin" class="form-label">Horario Fin</label>
-                    <input type="time" class="form-control" id="fin" required>
-                </div>
-                <div class="mb-3">
-                    <label for="diasSemana" class="form-label">Días de la semana</label>
-                    <select class="form-select" id="diasSemana" multiple required>
-                        <option value="Lunes">Lunes</option>
-                        <option value="Martes">Martes</option>
-                        <option value="Miércoles">Miércoles</option>
-                        <option value="Jueves">Jueves</option>
-                        <option value="Viernes">Viernes</option>
-                        <option value="Sábado">Sábado</option>
-                        <option value="Domingo">Domingo</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <button type="reset" class="btn btn-secondary ms-2">Limpiar</button>
-            </form>
-        </div>
-    </div>
+      const diasSemana = Array.from(document.getElementById('diasSemana').selectedOptions).map(opt => opt.value);
 
-    <!-- Tabla -->
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Servicios disponibles</h5>
-            <span id="contadorServicios" class="badge bg-primary">0 servicios</span>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Duración</th>
-                        <th>Estado</th>
-                        <th>Horario</th>
-                        <th>Días</th>
-                        <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody id="tablaServicios">
-                    <tr><td colspan="6" class="text-center">Cargando servicios...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+      const data = {
+        id: document.getElementById('id').value || null,
+        nombre: document.getElementById('nombre').value,
+        duracionMinutos: document.getElementById('duracionMinutos').value,
+        estado: document.getElementById('estado').value === 'true',
+        horarioInicio: document.getElementById('horarioInicio').value,
+        horarioFin: document.getElementById('horarioFin').value,
+        diasSemana: diasSemana
+      };
 
-<!-- Footer -->
-<footer class="py-5 bg-dark mt-5">
-    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Turnito 2023</p></div>
-</footer>
+      const response = await fetch('/servicios/api', {
+        method: data.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
+      if (response.ok) {
+        alert('Servicio guardado correctamente.');
+        this.reset();
         cargarServicios();
-
-        document.getElementById("formServicio").addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            const diasSemana = Array.from(document.getElementById("diasSemana").selectedOptions).map(opt => opt.value);
-
-            const servicio = {
-                id: document.getElementById("id").value || null,
-                nombre: document.getElementById("nombre").value,
-                duracionMinutos: parseInt(document.getElementById("duracion").value),
-                estado: document.getElementById("estado").value === "true",
-                horarioInicio: document.getElementById("inicio").value,
-                horarioFin: document.getElementById("fin").value,
-                diasSemana: diasSemana
-            };
-
-            const method = servicio.id ? "PUT" : "POST";
-            const url = servicio.id ? `/servicios/api/${servicio.id}` : "/servicios/api";
-            fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(servicio)
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Error al guardar");
-                return res.json();
-            })
-            .then(() => {
-                this.reset();
-                document.getElementById("id").value = "";
-                cargarServicios();
-            })
-            .catch(err => alert("Error: " + err.message));
-        });
+      } else {
+        alert('Error al guardar el servicio.');
+      }
     });
 
-    function cargarServicios() {
-        const tbody = document.getElementById("tablaServicios");
-        fetch("/servicios/api")
-            .then(res => res.json())
-            .then(servicios => {
-                document.getElementById("contadorServicios").textContent = `${servicios.length} servicios`;
-                tbody.innerHTML = "";
-                servicios.forEach(serv => {
-                    const dias = serv.diasSemana ? serv.diasSemana.join(", ") : "";
-                    const fila = `
-                        <tr>
-                            <td>${serv.nombre}</td>
-                            <td>${serv.duracionMinutos} min</td>
-                            <td>${serv.estado ? "Activo" : "Inactivo"}</td>
-                            <td>${serv.horarioInicio} - ${serv.horarioFin}</td>
-                            <td>${dias}</td>
-                            <td>
-                                <button class="btn btn-sm btn-warning" onclick='editar(${JSON.stringify(serv)})'>Editar</button>
-                                <button class="btn btn-sm btn-danger" onclick='eliminar(${serv.id})'>Eliminar</button>
-                            </td>
-                        </tr>`;
-                    tbody.innerHTML += fila;
-                });
-            })
-            .catch(() => {
-                tbody.innerHTML = "<tr><td colspan='6' class='text-center text-danger'>Error al cargar servicios</td></tr>";
-            });
+    async function cargarServicios() {
+      const res = await fetch('/servicios/api');
+      const servicios = await res.json();
+      const contenedor = document.getElementById('listaServicios');
+
+      contenedor.innerHTML = `
+        <h4>Servicios disponibles</h4>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Duración</th>
+              <th>Estado</th>
+              <th>Horario</th>
+              <th>Días</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${servicios.map(s => `
+              <tr>
+                <td>${s.nombre}</td>
+                <td>${s.duracionMinutos} min</td>
+                <td>${s.estado ? 'Activo' : 'Inactivo'}</td>
+                <td>${s.horarioInicio} - ${s.horarioFin}</td>
+                <td>${(s.diasSemana || []).join(', ')}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" onclick="editarServicio(${s.id})">Editar</button>
+                  <button class="btn btn-danger btn-sm" onclick="eliminarServicio(${s.id})">Eliminar</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <p class="text-end"><strong>${servicios.length} servicio(s)</strong></p>
+      `;
     }
 
-    function editar(serv) {
-        document.getElementById("id").value = serv.id;
-        document.getElementById("nombre").value = serv.nombre;
-        document.getElementById("duracion").value = serv.duracionMinutos;
-        document.getElementById("estado").value = serv.estado;
-        document.getElementById("inicio").value = serv.horarioInicio;
-        document.getElementById("fin").value = serv.horarioFin;
+    async function editarServicio(id) {
+      const res = await fetch(`/servicios/api/${id}`);
+      const servicio = await res.json();
 
-        const selectDias = document.getElementById("diasSemana");
-        Array.from(selectDias.options).forEach(option => {
-            option.selected = serv.diasSemana?.includes(option.value);
-        });
+      document.getElementById('id').value = servicio.id;
+      document.getElementById('nombre').value = servicio.nombre;
+      document.getElementById('duracionMinutos').value = servicio.duracionMinutos;
+      document.getElementById('estado').value = servicio.estado.toString();
+      document.getElementById('horarioInicio').value = servicio.horarioInicio;
+      document.getElementById('horarioFin').value = servicio.horarioFin;
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      const opciones = document.getElementById('diasSemana').options;
+      for (let opt of opciones) {
+        opt.selected = (servicio.diasSemana || []).includes(opt.value);
+      }
     }
 
-    function eliminar(id) {
-        if (!confirm("¿Eliminar este servicio?")) return;
-        fetch(`/servicios/api/${id}`, { method: "DELETE" })
-            .then(res => {
-                if (!res.ok) throw new Error("Error al eliminar");
-                cargarServicios();
-            })
-            .catch(err => alert("Error: " + err.message));
+    async function eliminarServicio(id) {
+      if (!confirm('¿Estás seguro de eliminar este servicio?')) return;
+      const res = await fetch(`/servicios/api/${id}`, { method: 'DELETE' });
+      if (res.ok) cargarServicios();
+      else alert('Error al eliminar el servicio.');
     }
-</script>
+
+    cargarServicios();
+  </script>
 </body>
 </html>
