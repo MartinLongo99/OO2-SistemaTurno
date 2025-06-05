@@ -1,5 +1,6 @@
 package com.oo2.grupo15.services.implementation;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -69,5 +70,18 @@ public class TurnoService implements ITurnoService {
     @Override
     public TurnoDTO obtenerPorId(Long id) {
         return modelMapper.map(turnoRepository.findById(id).orElseThrow(), TurnoDTO.class);
+    }
+    
+    @Override
+    public List<TurnoDTO> obtenerTurnosEntreFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+        return turnoRepository.findByFechaHoraBetweenOrderByFechaHoraAsc(fechaInicio, fechaFin)
+                .stream()
+                .map(turno -> {
+                    TurnoDTO dto = modelMapper.map(turno, TurnoDTO.class);
+                    dto.setServicioLugarId(turno.getServicioLugar().getId());
+                    dto.setSolicitanteId(turno.getSolicitante().getId());
+                    return dto;
+                })
+                .toList();
     }
 }

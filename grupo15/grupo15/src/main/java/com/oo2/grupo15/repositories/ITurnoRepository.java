@@ -4,7 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import com.oo2.grupo15.entities.Turno;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface ITurnoRepository extends JpaRepository<Turno, Long> {
-    // Agregá métodos custom si los necesitás
+    // Método para buscar turnos entre dos fechas
+    List<Turno> findByFechaHoraBetweenOrderByFechaHoraAsc(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 }
