@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Gestión de Servicios" />
+    <title>Servicios</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link href="/css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container px-5">
+        <a class="navbar-brand" href="/">Turnito</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/turnos">Turnos</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/servicios">Servicios</a></li>
+                <li class="nav-item"><a class="nav-link" href="/lugares">Lugares</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido -->
+<div class="container px-4 px-lg-5 mt-5">
+    <h1 class="mb-4">Listado de Servicios</h1>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Servicios disponibles</h5>
+            <span id="contadorServicios" class="badge bg-primary">0 servicios encontrados</span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Duración</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tablaServicios">
+                    <tr><td colspan="4" class="text-center">Cargando servicios...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="py-5 bg-dark mt-5">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Turnito 2023</p></div>
+</footer>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", cargarServicios);
+
+    function cargarServicios() {
+        const tbody = document.getElementById("tablaServicios");
+        fetch("/servicios")
+            .then(res => {
+                if (!res.ok) throw new Error("Error al cargar servicios");
+                return res.json();
+            })
+            .then(servicios => {
+                document.getElementById("contadorServicios").textContent = `${servicios.length} servicios encontrados`;
+                tbody.innerHTML = "";
+                if (servicios.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='4' class='text-center'>No hay servicios registrados.</td></tr>";
+                    return;
+                }
+                servicios.forEach(serv => {
+                    const fila = `
+                        <tr>
+                            <td>${serv.id}</td>
+                            <td>${serv.nombre}</td>
+                            <td>${serv.descripcion}</td>
+                            <td>${serv.duracion} min</td>
+                        </tr>`;
+                    tbody.innerHTML += fila;
+                });
+            })
+            .catch(error => {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Error: ${error.message}</td></tr>`;
+            });
+    }
+</script>
+</body>
+</html>
