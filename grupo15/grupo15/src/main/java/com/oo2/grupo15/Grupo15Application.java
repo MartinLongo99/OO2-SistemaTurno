@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Grupo15Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Grupo15Application.class, args);
+		SpringApplication.run(Grupo15Application.class, args );
 	}
 
 }
