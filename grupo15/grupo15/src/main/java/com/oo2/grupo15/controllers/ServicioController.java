@@ -27,12 +27,33 @@ public class ServicioController {
 		return ViewRouteHelper.SERVICIO_INDEX;
 	}
 
-	@GetMapping("/todos")
-	public ModelAndView all() {
-		ModelAndView mAV = new ModelAndView(ViewRouteHelper.SERVICIO_ALL);
-		mAV.addObject("servicios", servicioService.getAll());
-		return mAV;
-	}
+	 @GetMapping("/todos")
+	    public ModelAndView all(
+	            @RequestParam(name = "nombre", required = false) String nombre,
+	            @RequestParam(name = "estado", required = false) Boolean estado, 
+	            @RequestParam(name = "duracion", required = false) Integer duracion
+	    ) {
+	        ModelAndView mAV = new ModelAndView(ViewRouteHelper.SERVICIO_ALL);
+	        List<ServicioDTO> servicios;
+
+	        if (nombre != null && !nombre.isEmpty()) {
+	            servicios = servicioService.findByNombre(nombre);
+	        } else if (estado != null) { 
+	            servicios = servicioService.findByEstado(estado);
+	        } else if (duracion != null) { 
+	            servicios = servicioService.findByDuracionMinutos(duracion);
+	        } else {
+	            servicios = servicioService.getAll();
+	        }
+
+	        mAV.addObject("servicios", servicios);
+
+	        mAV.addObject("filtroNombre", nombre);
+	        mAV.addObject("filtroEstado", estado);
+	        mAV.addObject("filtroDuracion", duracion);
+
+	        return mAV;
+	    }
 
 	@GetMapping("/new")
 	public String nuevo(Model model) {
