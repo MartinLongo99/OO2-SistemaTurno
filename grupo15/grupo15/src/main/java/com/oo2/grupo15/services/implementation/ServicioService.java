@@ -1,6 +1,5 @@
 package com.oo2.grupo15.services.implementation;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,6 +38,28 @@ public class ServicioService implements IServicioService {
     			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
     			.collect(Collectors.toList());
     }
+    
+    
+    public List<ServicioDTO> findByNombre(String nombre){
+    	return servicioRepository.findByNombre(nombre)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
+    
+    public List<ServicioDTO> findByEstado(boolean estado){
+    	return servicioRepository.findByEstado(estado)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
+    
+    public List<ServicioDTO> findByDuracionMinutos(int duracion){
+    	return servicioRepository.findByDuracionMinutos(duracion)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
 
     @Override
     public ServicioDTO findById(Long id) {
@@ -66,9 +87,18 @@ public class ServicioService implements IServicioService {
     }
 
     @Override
-    public void delete(Long id) {
+    public boolean delete(Long id) {
         servicioRepository.deleteById(id);
+        return false;
     }
+
+    // Agregar este método a ServicioService.java
+    @Override
+    public Servicio findEntityById(Long id) {
+        return servicioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Servicio no encontrado con ID: " + id));
+    }
+
 
 
     private ServicioDTO convertToDTO(Servicio servicio) {
@@ -103,4 +133,3 @@ public class ServicioService implements IServicioService {
         return servicio;
     }
 }
-
