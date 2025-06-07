@@ -42,7 +42,6 @@ public class Usuario {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 
-
 	public String getEmail() {
 		return email;
 	}

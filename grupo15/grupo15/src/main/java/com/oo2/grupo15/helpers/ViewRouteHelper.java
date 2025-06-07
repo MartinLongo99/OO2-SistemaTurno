@@ -20,4 +20,6 @@ public class ViewRouteHelper {
 	public final static String SERVICIO_NEW = "servicio/new";
 
 	public final static String SERVICIO_ALL = "servicio/all";
+	
+	public final static String USUARIO_INDEX = "usuario/index";
 }

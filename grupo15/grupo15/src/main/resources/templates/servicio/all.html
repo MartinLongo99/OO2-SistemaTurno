@@ -3,97 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todos los Servicios</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Turnito - Todos los Servicios</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { padding-top: 20px; background-color: #f8f9fa; }
-        .container { max-width: 900px; /* Aumenta el ancho para el formulario */ background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1, h2 { text-align: center; margin-bottom: 30px; color: #343a40; }
-        .table th { background-color: #007bff; color: white; }
-        .btn-back { margin-bottom: 20px; }
-        .filter-form {
-            background-color: #f0f8ff; /* Un color de fondo suave para el formulario */
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border: 1px solid #e0efff;
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
         }
-        .filter-form h3 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #007bff;
+
+        .page-header {
+            background: linear-gradient(135deg, #4a6bfd 0%, #2541b2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
             text-align: center;
         }
-        .filter-group {
-            margin-bottom: 15px;
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
         }
-        .filter-group label {
-            font-weight: bold;
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 20px;
+            position: relative;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2541b2;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header h2 i {
+            margin-right: 12px;
+            font-size: 1.7rem;
+            color: #4a6bfd;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #4a6bfd;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border: none;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:hover {
+            background-color: #f6f9ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+
+        .badge-active {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-inactive {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-day {
+            background-color: #e9f0ff;
+            color: #4a6bfd;
+            margin-right: 5px;
             margin-bottom: 5px;
-            display: block;
+            display: inline-block;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            background-color: #4a6bfd;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .btn-back i {
+            margin-right: 8px;
+        }
+
+        .btn-back:hover {
+            background-color: #2541b2;
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+        .services-count {
+            font-weight: 600;
+            color: #4a6bfd;
+            text-align: right;
+            margin-top: 15px;
+        }
+
+        footer {
+            background-color: #212529;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 30px 0;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="/servicios" class="btn btn-secondary btn-back">← Volver a Gestión de Servicios (Formulario)</a>
-        <h1>Todos los Servicios Disponibles</h1>
-
-        <div class="filter-form">
-            <h3><i class="bi bi-funnel-fill"></i> Filtrar Servicios</h3>
-            <form action="/servicios/todos" method="get" class="form-row align-items-end">
-                <div class="col-md-4 filter-group">
-                    <label for="nombre">Nombre:</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre" th:value="${filtroNombre}" placeholder="Buscar por nombre">
-                </div>
-                <div class="col-md-3 filter-group">
-                    <label for="estado">Estado:</label>
-                    <select class="form-control" id="estado" name="estado">
-                        <option value="">-- Seleccionar --</option>
-                        <option value="true" th:selected="${filtroEstado != null AND filtroEstado eq true}">Activo</option>
-                        <option value="false" th:selected="${filtroEstado != null AND filtroEstado eq false}">Inactivo</option>
-                    </select>
-                </div>
-                <div class="col-md-3 filter-group">
-                    <label for="duracion">Duración (min):</label>
-                    <input type="number" class="form-control" id="duracion" name="duracion" th:value="${filtroDuracion}" placeholder="Buscar por duración">
-                </div>
-                <div class="col-md-2 filter-group d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary mr-2"><i class="bi bi-search"></i> Buscar</button>
-                    <a href="/servicios/todos" class="btn btn-info"><i class="bi bi-x-circle"></i> Limpiar</a>
-                </div>
-            </form>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Duracion</th>
-                        <th>Horario de Inicio</th>
-						<th>Horario de Finalizacion</th>
-						<th>Estado</th>
-						<th>Dias de Atencion</th>
-                        </tr>
-                </thead>
-                <tbody>
-                    <tr th:if="${servicios.empty}">
-                        <td colspan="6" class="text-center text-muted">No hay servicios registrados con los filtros aplicados.</td>
-                    </tr>
-                    <tr th:each="servicio : ${servicios}">
-                        <td th:text="${servicio.nombre}">Nombre del Servicio</td>
-                        <td th:text="${servicio.duracionMinutos}">Duracion</td>
-                        <td th:text="${servicio.horarioInicio}">Inicio</td>
-						<td th:text="${servicio.horarioFin}">Finalizacion</td>
-						<td th:text="${servicio.estado ? 'Activo' : 'Inactivo'}">Estado</td> <td th:text="${servicio.getDiasSemanaFormateados()}">Dias</td> </tr>
-                </tbody>
-            </table>
+    <div class="page-header">
+        <div class="container">
+            <h1>Todos los Servicios</h1>
+            <p>Listado completo de servicios disponibles en el sistema</p>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <div class="container">
+        <a href="/servicios" class="btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Volver a Gestión de Servicios
+        </a>
+
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="bi bi-list-check"></i> Listado de Servicios</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Duración</th>
+                                <th>Horario</th>
+                                <th>Estado</th>
+                                <th>Días de atención</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${servicios.empty}">
+                                <td colspan="5" class="empty-message">
+                                    <div class="text-center py-4">
+                                        <i class="bi bi-clipboard-x fs-1 text-muted"></i>
+                                        <p class="mt-3">No hay servicios registrados en el sistema.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:each="servicio : ${servicios}">
+                                <td>
+                                    <span class="fw-medium" th:text="${servicio.nombre}">Nombre del Servicio</span>
+                                </td>
+                                <td>
+                                    <span th:text="${servicio.duracionMinutos}">30</span> minutos
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-clock me-2 text-primary"></i>
+                                        <span th:text="${servicio.horarioInicio}">09:00</span> -
+                                        <span th:text="${servicio.horarioFin}">18:00</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:if="${servicio.estado}" class="badge badge-active">
+                                        <i class="bi bi-check-circle me-1"></i> Activo
+                                    </span>
+                                    <span th:unless="${servicio.estado}" class="badge badge-inactive">
+                                        <i class="bi bi-x-circle me-1"></i> Inactivo
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="dias-badges">
+                                        <span th:each="dia : ${#strings.arraySplit(servicio.getDiasSemanaFormateados, ', ')}"
+                                              class="badge badge-day">
+                                            <i class="bi bi-calendar-day me-1"></i>
+                                            <span th:text="${dia}">Lunes</span>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="services-count" th:if="${!servicios.empty}">
+                    <i class="bi bi-clipboard-check me-1"></i>
+                    <span th:text="${servicios.size()}">0</span> servicio(s) registrado(s)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-3">Turnito</h5>
+                    <p class="text-white-50">Sistema integral de gestión de turnos para profesionales y negocios.</p>
+                </div>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-3">Enlaces rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-white-50">Inicio</a></li>
+                        <li><a href="/lugares/" class="text-white-50">Lugares</a></li>
+                        <!-- Agrega más enlaces si es necesario -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
