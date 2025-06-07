@@ -16,13 +16,13 @@ import com.oo2.grupo15.services.IProvinciaService;
 
 @Controller
 @RequestMapping("/lugares")
-public class LocalidadController {
+public class LugarController {
 
 	private ILocalidadService localidadService;
 	private IProvinciaService provinciaService;
 	private ILugarService lugarService;
 
-	public LocalidadController(ILocalidadService localidadService, IProvinciaService provinciaService,
+	public LugarController(ILocalidadService localidadService, IProvinciaService provinciaService,
 			ILugarService lugarService) {
 		this.localidadService = localidadService;
 		this.provinciaService = provinciaService;
@@ -40,8 +40,8 @@ public class LocalidadController {
 	
     @GetMapping("/todos")
     public ModelAndView mostrarTodosLosLugares() {
-        ModelAndView mAV = new ModelAndView(ViewRouteHelper.LUGAR_ALL); // Usar una constante para la vista
-        List<LugarDTO> lstLugares = lugarService.getAll(); // Obtener todos los lugares
+        ModelAndView mAV = new ModelAndView(ViewRouteHelper.LUGAR_ALL); 
+        List<LugarDTO> lstLugares = lugarService.getAll(); 
         mAV.addObject("lugares", lstLugares);
         return mAV;
     }

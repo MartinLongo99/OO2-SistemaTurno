@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Turnito - Gestión de Lugares</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
     <style>
         body {
@@ -149,7 +146,7 @@
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
-            margin-top: 20px;
+            /* margin-top: 20px; Este se moverá al button-group */
         }
         
         .btn-back i {
@@ -196,6 +193,37 @@
             color: #dc3545;
         }
         
+        /* Añadido para el espaciado entre botones si van juntos */
+        .button-group {
+            display: flex;
+            gap: 15px; /* Espacio entre los botones */
+            margin-top: 30px;
+            justify-content: center; /* Centra los botones */
+            flex-wrap: wrap; /* Permite que los botones se envuelvan en pantallas pequeñas */
+        }
+
+        /* Estilo para el nuevo botón "Ver Todos los Lugares" */
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            background-color: #007bff; /* Color azul estándar de Bootstrap */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-action i {
+            margin-right: 8px;
+        }
+        
+        .btn-action:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        
         @media (max-width: 768px) {
             .page-header {
                 padding: 30px 0;
@@ -208,11 +236,14 @@
             .card-header h2 {
                 font-size: 1.3rem;
             }
+            .button-group {
+                flex-direction: column; /* Apila los botones en pantallas pequeñas */
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="page-header">
         <div class="container">
             <h1>Gestión de Lugares</h1>
@@ -221,7 +252,6 @@
     </div>
     
     <div class="container">
-        <!-- Card de filtros -->
         <div class="card">
             <div class="card-header">
                 <h2><i class="bi bi-funnel-fill"></i> Filtrar Lugares</h2>
@@ -247,7 +277,6 @@
             </div>
         </div>
         
-        <!-- Card de listado de lugares -->
         <div class="card">
             <div class="card-header">
                 <h2><i class="bi bi-geo-alt-fill"></i> Listado de Lugares</h2>
@@ -274,13 +303,17 @@
             </div>
         </div>
         
-        <!-- Botón para volver -->
-        <a href="/" class="btn-back">
-            <i class="bi bi-arrow-left-circle"></i> Volver a Inicio
-        </a>
+        <div class="button-group">
+            <a href="/lugares/todos" class="btn-action">
+                <i class="bi bi-list-ul"></i> Ver Todos los Lugares
+            </a>
+
+            <a href="/" class="btn-back">
+                <i class="bi bi-arrow-left-circle"></i> Volver a Inicio
+            </a>
+        </div>
     </div>
     
-    <!-- Bootstrap core JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -437,11 +470,6 @@
             selectLocalidad.addEventListener('change', function() {
                 const localidadId = this.value;
                 cargarLugares(localidadId);
-        	// Botón "Ver todos los lugares"
-				    document.getElementById('btnVerTodos').addEventListener('click', function() {
-				    window.location.href = '/lugares/todos';
-				});
-
             });
         });
     </script>
