@@ -11,4 +11,13 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class Solicitante extends Usuario {
+    private boolean pago;
+
+    public boolean isPago() {
+        return pago;
+    }
+
+    public void setPago(boolean pago) {
+        this.pago = pago;
+    }
 }
