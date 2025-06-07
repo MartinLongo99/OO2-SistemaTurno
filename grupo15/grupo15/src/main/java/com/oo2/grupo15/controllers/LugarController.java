@@ -16,13 +16,13 @@ import com.oo2.grupo15.services.IProvinciaService;
 
 @Controller
 @RequestMapping("/lugares")
-public class LocalidadController {
+public class LugarController {
 
 	private ILocalidadService localidadService;
 	private IProvinciaService provinciaService;
 	private ILugarService lugarService;
 
-	public LocalidadController(ILocalidadService localidadService, IProvinciaService provinciaService,
+	public LugarController(ILocalidadService localidadService, IProvinciaService provinciaService,
 			ILugarService lugarService) {
 		this.localidadService = localidadService;
 		this.provinciaService = provinciaService;
