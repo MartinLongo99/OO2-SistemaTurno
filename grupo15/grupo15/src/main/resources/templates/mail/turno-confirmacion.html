@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmación de Turno</title>
+</head>
+<body>
+    <h1>¡Hola <span th:text="${solicitante.contacto.nombre}"></span>!</h1>
+    <p>Tu turno ha sido confirmado exitosamente.</p>
+    <p>Detalles del turno:</p>
+    <ul>
+        <li>**Servicio:** <span th:text="${servicioLugar.lugar.nombre}"></span></li>
+        <li>**Fecha:** <span th:text="${fechaHora}"></span></li>
+        <li>**Profesional:** <span th:text="${profesional.contacto.nombre}"></span></li>
+    </ul>
+    <p>¡Te esperamos!</p>
+    <p>Saludos cordiales,<br/>El equipo de Turnito</p>
+</body>
+</html>
