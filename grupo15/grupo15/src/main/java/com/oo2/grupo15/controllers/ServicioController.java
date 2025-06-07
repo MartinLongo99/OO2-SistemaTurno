@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.oo2.grupo15.dtos.ServicioDTO;
 import com.oo2.grupo15.services.IServicioService;
@@ -18,88 +19,89 @@ import com.oo2.grupo15.helpers.ViewRouteHelper;
 @RequestMapping("/servicios")
 public class ServicioController {
 
-    @Autowired
-    private IServicioService servicioService;
+	@Autowired
+	private IServicioService servicioService;
 
-    // 🌐 Vista tradicional
-    @GetMapping
-    public String index(Model model) {
-        List<ServicioDTO> servicios = servicioService.findAll();
-        model.addAttribute("servicios", servicios);
-        return ViewRouteHelper.SERVICIO_INDEX;
-    }
+	@GetMapping
+	public String index(Model model) {
+		return ViewRouteHelper.SERVICIO_INDEX;
+	}
 
-    @GetMapping("/new")
-    public String nuevo(Model model) {
-        model.addAttribute("servicio", new ServicioDTO());
-        model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
-        return ViewRouteHelper.SERVICIO_FORM;
-    }
+	@GetMapping("/todos")
+	public ModelAndView all() {
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.SERVICIO_ALL);
+		mAV.addObject("servicios", servicioService.getAll());
+		return mAV;
+	}
 
-    @PostMapping("/save")
-    public String save(@ModelAttribute("servicio") ServicioDTO dto,
-                       @RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados) {
+	@GetMapping("/new")
+	public String nuevo(Model model) {
+		model.addAttribute("servicio", new ServicioDTO());
+		model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
+		return ViewRouteHelper.SERVICIO_FORM;
+	}
 
-        Set<DayOfWeek> dias = diasSeleccionados != null
-                ? diasSeleccionados.stream()
-                    .map(String::toUpperCase)
-                    .map(DayOfWeek::valueOf)
-                    .collect(Collectors.toSet())
-                : Set.of();
+	@PostMapping("/save")
+	public String save(@ModelAttribute("servicio") ServicioDTO dto,
+			@RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados) {
 
-        dto.setDiasSemana(dias);
+		Set<DayOfWeek> dias = diasSeleccionados != null ? diasSeleccionados.stream().map(String::toUpperCase)
+				.map(DayOfWeek::valueOf).collect(Collectors.toSet()) : Set.of();
 
-        if (dto.getId() != null) {
-            servicioService.update(dto.getId(), dto);
-        } else {
-            servicioService.save(dto);
-        }
+		dto.setDiasSemana(dias);
 
-        return "redirect:/servicios";
-    }
+		if (dto.getId() != null) {
+			servicioService.update(dto.getId(), dto);
+		} else {
+			servicioService.save(dto);
+		}
 
-    @GetMapping("/edit/{id}")
-    public String editar(@PathVariable Long id, Model model) {
-        ServicioDTO servicio = servicioService.findById(id);
-        model.addAttribute("servicio", servicio);
-        model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
-        return ViewRouteHelper.SERVICIO_FORM;
-    }
+		return "redirect:/servicios";
+	}
 
-    @GetMapping("/delete/{id}")
-    public String eliminar(@PathVariable Long id) {
-        servicioService.delete(id);
-        return "redirect:/servicios";
-    }
+	@GetMapping("/edit/{id}")
+	public String editar(@PathVariable Long id, Model model) {
+		ServicioDTO servicio = servicioService.findById(id);
+		model.addAttribute("servicio", servicio);
+		model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
+		return ViewRouteHelper.SERVICIO_FORM;
+	}
 
-    // 🚀 ENDPOINTS API PARA JAVASCRIPT
-    @GetMapping("/api")
-    @ResponseBody
-    public List<ServicioDTO> listarServicios() {
-        return servicioService.findAll();
-    }
+	@GetMapping("/delete/{id}")
+	public String eliminar(@PathVariable Long id) {
+		servicioService.delete(id);
+		return "redirect:/servicios";
+	}
 
-    @GetMapping("/api/{id}")
-    @ResponseBody
-    public ServicioDTO buscarPorId(@PathVariable Long id) {
-        return servicioService.findById(id);
-    }
+	// 🚀 ENDPOINTS API PARA JAVASCRIPT
+	@GetMapping("/api")
+	@ResponseBody
+	public List<ServicioDTO> listarServicios() {
+		return servicioService.findAll();
+	}
 
-    @PostMapping("/api")
-    @ResponseBody
-    public ResponseEntity<ServicioDTO> guardarServicioDesdeAPI(@RequestBody ServicioDTO dto) {
-        if (dto.getId() != null) {
-            servicioService.update(dto.getId(), dto);
-        } else {
-            servicioService.save(dto);
-        }
-        return ResponseEntity.ok(dto);
-    }
+	@GetMapping("/api/{id}")
+	@ResponseBody
+	public ServicioDTO buscarPorId(@PathVariable Long id) {
+		return servicioService.findById(id);
+	}
 
-    @DeleteMapping("/api/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> eliminarDesdeAPI(@PathVariable Long id) {
-        servicioService.delete(id);
-        return ResponseEntity.ok().build();
-    }
+	@PostMapping("/api")
+	@ResponseBody
+	public ResponseEntity<ServicioDTO> guardarServicioDesdeAPI(@RequestBody ServicioDTO dto) {
+		if (dto.getId() != null) {
+			servicioService.update(dto.getId(), dto);
+		} else {
+			servicioService.save(dto);
+		}
+		return ResponseEntity.ok(dto);
+	}
+
+	@DeleteMapping("/api/{id}")
+	@ResponseBody
+	public ResponseEntity<Void> eliminarDesdeAPI(@PathVariable Long id) {
+		servicioService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+
 }

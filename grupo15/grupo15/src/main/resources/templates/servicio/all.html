@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos los Servicios</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; background-color: #f8f9fa; }
+        .container { max-width: 800px; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; margin-bottom: 30px; color: #343a40; }
+        .table th { background-color: #007bff; color: white; }
+        .btn-back { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/servicios" class="btn btn-secondary btn-back">← Volver a Gestión de Servicios</a>
+        <h1>Todos los Lugares Disponibles</h1>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Duracion</th>
+                        <th>Horario de Inicio</th>
+						<th>Horario de Finalizacion</th>
+						<th>Estado</th>
+						<th>Dias de atencion</th>
+                        </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${servicios.empty}">
+                        <td colspan="6">No hay servicios registrados.</td>
+                    </tr>
+                    <tr th:each="servicio : ${servicios}">
+                        <td th:text="${servicio.nombre}">Nombre del Servicio</td>
+                        <td th:text="${servicio.duracionMinutos}">Duracion</td>
+                        <td th:text="${servicio.horarioInicio}">Inicio</td>
+						<td th:text="${servicio.horarioFin}">Finalizacion</td>
+						<td th:text="${servicio.estado}">Estado</td>
+						<td th:text="${servicio.getDiasSemanaFormateados}">Dias</td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

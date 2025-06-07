@@ -10,5 +10,5 @@ public interface IServicioService {
     ServicioDTO save(ServicioDTO servicioDTO);
     ServicioDTO update(Long id, ServicioDTO servicioDTO);
     void delete(Long id);
+    List<ServicioDTO> getAll();
 }
-
