@@ -14,8 +14,7 @@ import java.util.List;
 public class ProfesionalDTO {
     private Long id;
     private String email;
-    private String nombre;
-    private String apellido;
     private String matricula;
+    private ContactoDTO contacto;
     private List<String> especialidades;
 }
