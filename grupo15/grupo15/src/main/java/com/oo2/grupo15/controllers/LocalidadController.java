@@ -40,8 +40,8 @@ public class LocalidadController {
 	
     @GetMapping("/todos")
     public ModelAndView mostrarTodosLosLugares() {
-        ModelAndView mAV = new ModelAndView(ViewRouteHelper.LUGAR_ALL); // Usar una constante para la vista
-        List<LugarDTO> lstLugares = lugarService.getAll(); // Obtener todos los lugares
+        ModelAndView mAV = new ModelAndView(ViewRouteHelper.LUGAR_ALL); 
+        List<LugarDTO> lstLugares = lugarService.getAll(); 
         mAV.addObject("lugares", lstLugares);
         return mAV;
     }

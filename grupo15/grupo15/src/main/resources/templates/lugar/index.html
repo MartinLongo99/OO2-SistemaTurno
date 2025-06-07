@@ -437,12 +437,13 @@
             selectLocalidad.addEventListener('change', function() {
                 const localidadId = this.value;
                 cargarLugares(localidadId);
+				});
         	// Botón "Ver todos los lugares"
 				    document.getElementById('btnVerTodos').addEventListener('click', function() {
 				    window.location.href = '/lugares/todos';
 				});
 
-            });
+            
         });
     </script>
 </body>
