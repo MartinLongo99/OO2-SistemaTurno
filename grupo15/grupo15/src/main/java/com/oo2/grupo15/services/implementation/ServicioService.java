@@ -1,6 +1,5 @@
 package com.oo2.grupo15.services.implementation;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,9 +65,18 @@ public class ServicioService implements IServicioService {
     }
 
     @Override
-    public void delete(Long id) {
+    public boolean delete(Long id) {
         servicioRepository.deleteById(id);
+        return false;
     }
+
+    // Agregar este método a ServicioService.java
+    @Override
+    public Servicio findEntityById(Long id) {
+        return servicioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Servicio no encontrado con ID: " + id));
+    }
+
 
 
     private ServicioDTO convertToDTO(Servicio servicio) {
@@ -103,4 +111,3 @@ public class ServicioService implements IServicioService {
         return servicio;
     }
 }
-
