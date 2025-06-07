@@ -54,6 +54,10 @@ public class TurnoService implements ITurnoService {
         Turno saved = turnoRepository.save(turno);
         return modelMapper.map(saved, TurnoDTO.class);
     }
+    public boolean tieneTurnosActivos(Long usuarioId) {
+        // Asumiendo que tienes un método en tu repositorio que cuenta turnos activos
+        return turnoRepository.countBySolicitanteIdAndEstadoActivo(usuarioId) > 0;
+    }
 
     @Override
     public TurnoDTO actualizarTurno(Long id, TurnoDTO dto) {
