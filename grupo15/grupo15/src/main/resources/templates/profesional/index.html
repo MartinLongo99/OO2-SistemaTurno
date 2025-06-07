@@ -36,7 +36,7 @@
             resultadoDiv.innerHTML = "";
 
             try {
-                const response = await fetch(`/profesionales/api/buscar?matricula=${matricula}`);
+                const response = await fetch(`/profesionales/api/buscar?matricula=${encodeURIComponent(matricula)}`);
                 if (!response.ok) {
                     if (response.status === 404) {
                         resultadoDiv.innerHTML = `<div class="alert alert-warning">No se encontró un profesional con esa matrícula.</div>`;
@@ -46,20 +46,32 @@
                     return;
                 }
 
-                const profesional = await response.json();
-                resultadoDiv.innerHTML = `
-                    <div class="card">
-                        <div class="card-header">
-                            Información del Profesional
+                const profesionales = await response.json();
+
+                if (profesionales.length === 0) {
+                    resultadoDiv.innerHTML = `<div class="alert alert-warning">No se encontró un profesional con esa matrícula.</div>`;
+                    return;
+                }
+
+                let html = '';
+                profesionales.forEach(profesional => {
+                    html += `
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                Información del Profesional
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Nombre:</strong> ${profesional.contacto?.nombre || 'N/D'}</p>
+                                <p><strong>Apellido:</strong> ${profesional.contacto?.apellido || 'N/D'}</p>
+                                <p><strong>Matrícula:</strong> ${profesional.matricula}</p>
+                                <p><strong>Email:</strong> ${profesional.email}</p>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <p><strong>Nombre:</strong> ${profesional.nombre}</p>
-                            <p><strong>Apellido:</strong> ${profesional.apellido}</p>
-                            <p><strong>Matrícula:</strong> ${profesional.matricula}</p>
-                            <p><strong>Email:</strong> ${profesional.email}</p>
-                        </div>
-                    </div>
-                `;
+                    `;
+                });
+
+                resultadoDiv.innerHTML = html;
+
             } catch (err) {
                 resultadoDiv.innerHTML = `<div class="alert alert-danger">Ocurrió un error: ${err.message}</div>`;
             }
