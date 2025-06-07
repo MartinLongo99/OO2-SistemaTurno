@@ -11,4 +11,5 @@ import com.oo2.grupo15.entities.Lugar;
 @Repository("lugarRepository")
 public interface ILugarRepository extends JpaRepository<Lugar, Serializable>{
 	List<Lugar> findByDireccionLocalidadId(int localidadId);
+	List<Lugar> findByNombre(String nombre);
 }

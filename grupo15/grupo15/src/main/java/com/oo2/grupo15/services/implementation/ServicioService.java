@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,47 @@ public class ServicioService implements IServicioService {
 
     @Autowired
     private IServicioRepository servicioRepository;
+    
+	private ModelMapper modelMapper = new ModelMapper();
 
-    @Override
+    public ServicioService(IServicioRepository servicioRepository) {
+		this.servicioRepository = servicioRepository;
+	}
+
+	@Override
     public List<ServicioDTO> findAll() {
         return servicioRepository.findAll().stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
+    }
+    
+    public List<ServicioDTO> getAll(){
+    	return servicioRepository.findAll()
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
+    
+    
+    public List<ServicioDTO> findByNombre(String nombre){
+    	return servicioRepository.findByNombre(nombre)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
+    
+    public List<ServicioDTO> findByEstado(boolean estado){
+    	return servicioRepository.findByEstado(estado)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
+    
+    public List<ServicioDTO> findByDuracionMinutos(int duracion){
+    	return servicioRepository.findByDuracionMinutos(duracion)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
     }
 
     @Override
@@ -56,7 +92,6 @@ public class ServicioService implements IServicioService {
         servicioRepository.deleteById(id);
     }
 
-    // ---------- Conversión Entity <-> DTO ----------
 
     private ServicioDTO convertToDTO(Servicio servicio) {
         return new ServicioDTO(
@@ -90,3 +125,4 @@ public class ServicioService implements IServicioService {
         return servicio;
     }
 }
+

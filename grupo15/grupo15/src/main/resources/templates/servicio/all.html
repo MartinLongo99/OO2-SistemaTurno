@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos los Servicios</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; background-color: #f8f9fa; }
+        .container { max-width: 900px; /* Aumenta el ancho para el formulario */ background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; margin-bottom: 30px; color: #343a40; }
+        .table th { background-color: #007bff; color: white; }
+        .btn-back { margin-bottom: 20px; }
+        .filter-form {
+            background-color: #f0f8ff; /* Un color de fondo suave para el formulario */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #e0efff;
+        }
+        .filter-form h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-align: center;
+        }
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/servicios" class="btn btn-secondary btn-back">← Volver a Gestión de Servicios (Formulario)</a>
+        <h1>Todos los Servicios Disponibles</h1>
+
+        <div class="filter-form">
+            <h3><i class="bi bi-funnel-fill"></i> Filtrar Servicios</h3>
+            <form action="/servicios/todos" method="get" class="form-row align-items-end">
+                <div class="col-md-4 filter-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" th:value="${filtroNombre}" placeholder="Buscar por nombre">
+                </div>
+                <div class="col-md-3 filter-group">
+                    <label for="estado">Estado:</label>
+                    <select class="form-control" id="estado" name="estado">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="true" th:selected="${filtroEstado != null AND filtroEstado eq true}">Activo</option>
+                        <option value="false" th:selected="${filtroEstado != null AND filtroEstado eq false}">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-md-3 filter-group">
+                    <label for="duracion">Duración (min):</label>
+                    <input type="number" class="form-control" id="duracion" name="duracion" th:value="${filtroDuracion}" placeholder="Buscar por duración">
+                </div>
+                <div class="col-md-2 filter-group d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary mr-2"><i class="bi bi-search"></i> Buscar</button>
+                    <a href="/servicios/todos" class="btn btn-info"><i class="bi bi-x-circle"></i> Limpiar</a>
+                </div>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Duracion</th>
+                        <th>Horario de Inicio</th>
+						<th>Horario de Finalizacion</th>
+						<th>Estado</th>
+						<th>Dias de Atencion</th>
+                        </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${servicios.empty}">
+                        <td colspan="6" class="text-center text-muted">No hay servicios registrados con los filtros aplicados.</td>
+                    </tr>
+                    <tr th:each="servicio : ${servicios}">
+                        <td th:text="${servicio.nombre}">Nombre del Servicio</td>
+                        <td th:text="${servicio.duracionMinutos}">Duracion</td>
+                        <td th:text="${servicio.horarioInicio}">Inicio</td>
+						<td th:text="${servicio.horarioFin}">Finalizacion</td>
+						<td th:text="${servicio.estado ? 'Activo' : 'Inactivo'}">Estado</td> <td th:text="${servicio.getDiasSemanaFormateados()}">Dias</td> </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+</body>
+</html>

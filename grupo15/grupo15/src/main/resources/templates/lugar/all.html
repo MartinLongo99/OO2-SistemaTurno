@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos los Lugares</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; background-color: #f8f9fa; }
+        .container { max-width: 800px; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; margin-bottom: 30px; color: #343a40; }
+        .table th { background-color: #007bff; color: white; }
+        .btn-back { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/lugares/" class="btn btn-secondary btn-back">← Volver a Gestión de Lugares</a>
+        <h1>Todos los Lugares Disponibles</h1>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Dirección</th>
+                        <th>Localidad</th>
+						<th>Provincia</th>
+                        </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${lugares.empty}">
+                        <td colspan="4">No hay lugares registrados.</td>
+                    </tr>
+                    <tr th:each="lugar : ${lugares}">
+                        <td th:text="${lugar.nombre}">Nombre del Lugar</td>
+                        <td th:text="${lugar.direccion.calleYAltura}">Dirección</td>
+                        <td th:text="${lugar.direccion.localidad.nombre}">Localidad</td>
+						<td th:text="${lugar.direccion.localidad.provincia.nombre}">Provincia</td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
