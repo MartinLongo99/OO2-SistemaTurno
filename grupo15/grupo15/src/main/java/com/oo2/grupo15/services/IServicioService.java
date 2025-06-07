@@ -14,4 +14,10 @@ public interface IServicioService {
 
     // Método adicional para obtener la entidad directamente
     Servicio findEntityById(Long id);
+
+    List<ServicioDTO> findByNombre(String nombre);
+
+    List<ServicioDTO> findByEstado(Boolean estado);
+
+    List<ServicioDTO> findByDuracionMinutos(Integer duracion);
 }
