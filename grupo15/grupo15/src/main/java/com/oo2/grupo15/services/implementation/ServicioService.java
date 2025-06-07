@@ -56,7 +56,6 @@ public class ServicioService implements IServicioService {
         servicioRepository.deleteById(id);
     }
 
-    // ---------- Conversión Entity <-> DTO ----------
 
     private ServicioDTO convertToDTO(Servicio servicio) {
         return new ServicioDTO(
@@ -90,3 +89,4 @@ public class ServicioService implements IServicioService {
         return servicio;
     }
 }
+

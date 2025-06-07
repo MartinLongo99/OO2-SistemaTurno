@@ -9,3 +9,4 @@ import com.oo2.grupo15.entities.Servicio;
 public interface IServicioRepository extends JpaRepository<Servicio, Long> {
 }
 
+

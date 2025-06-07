@@ -11,6 +11,7 @@ public class ViewRouteHelper {
 	public final static String LUGAR_ROOT = "/lugar/";
 	
 	public final static String LUGAR_INDEX = "lugar/index";
+	public final static String LUGAR_ALL = "lugar/all";
 	public final static String LUGAR_FORM = "lugar/form";
 	public final static String LUGAR_NEW = "lugar/new";
 	
@@ -18,4 +19,5 @@ public class ViewRouteHelper {
 	public final static String SERVICIO_FORM = "servicio/form";
 	public final static String SERVICIO_NEW = "servicio/new";
 
+	public final static String SERVICIO_ALL = "servicio/all";
 }

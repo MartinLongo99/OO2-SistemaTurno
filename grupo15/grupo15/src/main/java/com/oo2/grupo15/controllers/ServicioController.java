@@ -28,6 +28,12 @@ public class ServicioController {
         model.addAttribute("servicios", servicios);
         return ViewRouteHelper.SERVICIO_INDEX;
     }
+    @GetMapping("/")
+	  public ModelAndView all() {
+		  ModelAndView mAV = new ModelAndView(ViewRouteHelper.SERVICIO_ALL);
+		  mAV.addObject("servicios", servicioService.getAll());
+		  return mAV;
+	  }
 
     @GetMapping("/new")
     public String nuevo(Model model) {
@@ -102,4 +108,5 @@ public class ServicioController {
         servicioService.delete(id);
         return ResponseEntity.ok().build();
     }
+
 }

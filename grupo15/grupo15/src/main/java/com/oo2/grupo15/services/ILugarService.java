@@ -5,4 +5,6 @@ import com.oo2.grupo15.dtos.LugarDTO;
 
 public interface ILugarService {
 	List<LugarDTO> getLugaresByLocalidad(int localidadId);
+	List<LugarDTO> getLugaresByNombre(String nombre);
+	List<LugarDTO> getAll();
 }
