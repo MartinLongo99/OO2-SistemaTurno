@@ -35,8 +35,7 @@ public class UsuarioService implements IUsuarioService {
 			guardado.getId(),
 			guardado.getContacto() != null ? guardado.getContacto().getNombre() : null,
 			guardado.getEmail(),
-			guardado.getPassword(),
-			false
+			guardado.getPassword()
 		);
 	}
 		
@@ -48,8 +47,7 @@ public class UsuarioService implements IUsuarioService {
 						usuario.getId(),
 						usuario.getContacto() != null ? usuario.getContacto().getNombre() : null,
 						usuario.getEmail(),
-						usuario.getPassword(),
-						false
+						usuario.getPassword()
 				))
 				.collect(Collectors.toList());
 				
@@ -68,8 +66,7 @@ public class UsuarioService implements IUsuarioService {
 				usuario.getId(),
 				usuario.getContacto() != null ? usuario.getContacto().getNombre() : null,
 				usuario.getEmail(),
-				usuario.getPassword(),
-				false
+				usuario.getPassword()
 		);
 	
 	}	
@@ -94,8 +91,7 @@ public class UsuarioService implements IUsuarioService {
 			actualizado.getId(),
 			actualizado.getContacto() != null ? actualizado.getContacto().getNombre() : null,
 			actualizado.getEmail(),
-			actualizado.getPassword(),
-			false
+			actualizado.getPassword()
 		);	
 	}
 	

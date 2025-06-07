@@ -17,15 +17,13 @@ public class UsuarioDTO {
 	
 	private String password;
 	
-	private boolean estaActivo;
 
-	public UsuarioDTO(Long id, String nombre, String email, String password, boolean estaActivo) {
+	public UsuarioDTO(Long id, String nombre, String email, String password) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.email = email;
 		this.password = password;
-		this.estaActivo = estaActivo;
 	}
 	
 	
