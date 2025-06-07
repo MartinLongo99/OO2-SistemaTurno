@@ -46,19 +46,24 @@ public class ServicioService implements IServicioService {
     			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
     			.collect(Collectors.toList());
     }
-    
-    public List<ServicioDTO> findByEstado(boolean estado){
-    	return servicioRepository.findByEstado(estado)
-    			.stream()
-    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
-    			.collect(Collectors.toList());
+
+    @Override
+    public List<ServicioDTO> findByEstado(Boolean estado) {
+        // Si el repositorio usa boolean primitivo, necesitas una conversión segura
+        boolean estadoValue = (estado != null) ? estado : false;
+
+        return servicioRepository.findByEstado(estadoValue)
+                .stream()
+                .map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+                .collect(Collectors.toList());
     }
     
-    public List<ServicioDTO> findByDuracionMinutos(int duracion){
-    	return servicioRepository.findByDuracionMinutos(duracion)
-    			.stream()
-    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
-    			.collect(Collectors.toList());
+    @Override
+    public List<ServicioDTO> findByDuracionMinutos(Integer duracion) {
+        return servicioRepository.findByDuracionMinutos(duracion)
+            .stream()
+            .map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+            .collect(Collectors.toList());
     }
 
     @Override
