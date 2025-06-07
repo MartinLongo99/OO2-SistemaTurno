@@ -1,186 +1,449 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestión de Lugares - Turnito</title>
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
-    <link href="/css/styles.css" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Turnito - Gestión de Lugares</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #4a6bfd 0%, #2541b2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: none;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2541b2;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header h2 i {
+            margin-right: 12px;
+            font-size: 1.7rem;
+            color: #4a6bfd;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        .form-select, .form-control {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #dfe3e9;
+            font-size: 1rem;
+            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-select:focus, .form-control:focus {
+            border-color: #4a6bfd;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(74, 107, 253, 0.25);
+        }
+        
+        .table-container {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background-color: #4a6bfd;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border: none;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tbody tr:hover {
+            background-color: #f6f9ff;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            background-color: #4a6bfd;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn-back i {
+            margin-right: 8px;
+        }
+        
+        .btn-back:hover {
+            background-color: #2541b2;
+            transform: translateY(-2px);
+        }
+        
+        .scroll-table {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+        
+        .scroll-table::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .scroll-table::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+        
+        .scroll-table::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 8px;
+        }
+        
+        .scroll-table::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .text-danger {
+            color: #dc3545;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 30px 0;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card-header h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container px-5">
-        <a class="navbar-brand" href="/">Turnito</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
-            </ul>
+    <!-- Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Gestión de Lugares</h1>
+            <p>Busca y encuentra lugares disponibles para tus reservas</p>
         </div>
     </div>
-</nav>
-
-<!-- Page content -->
-<div class="container px-5 my-5">
-    <div class="card mb-4">
-        <div class="card-header text-center">
-            <h3 class="m-0">Gestión de Lugares</h3>
-        </div>
-        <div class="card-body">
-            <div class="mb-4">
-                <h5>Filtrar por Provincia y Localidad</h5>
-				<div class="mb-4 text-end">
-				    <button id="btnVerTodos" class="btn btn-outline-primary">Ver todos los lugares</button>
-				</div>
-                <div class="mb-3">
-                    <label class="form-label">Provincia:</label>
-                    <select id="selectProvincia" class="form-select">
-                        <option value="0">-- Todas las Provincias --</option>
-                        <th:block th:each="provincia : ${provincias}">
-                            <option th:value="${provincia.id}" th:text="${provincia.nombre}"></option>
-                        </th:block>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Localidad:</label>
-                    <select id="selectLocalidad" class="form-select">
-                        <option value="0">-- Todas las Localidades --</option>
-                    </select>
-                </div>
-            </div>
-			
-            <h5 class="mb-3">Lugares Disponibles</h5>
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Dirección</th>
-                            <th>Localidad</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaLugaresBody">
-                        <tr>
-                            <td colspan="3">Seleccione una localidad para ver los lugares.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Footer -->
-
-<footer class="py-5 bg-dark">
+    
     <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Turnito 2025</p>
+        <!-- Card de filtros -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="bi bi-funnel-fill"></i> Filtrar Lugares</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="selectProvincia" class="form-label">Seleccione una Provincia:</label>
+                        <select class="form-select" id="selectProvincia">
+                            <option value="0">-- Todas las Provincias --</option>
+                            <option th:each="provincia : ${provincias}"
+                                    th:value="${provincia.id}"
+                                    th:text="${provincia.nombre}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="selectLocalidad" class="form-label">Seleccione una Localidad:</label>
+                        <select class="form-select" id="selectLocalidad">
+                            <option value="0">-- Todas las Localidades --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Card de listado de lugares -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="bi bi-geo-alt-fill"></i> Listado de Lugares</h2>
+            </div>
+            <div class="card-body">
+                <div class="scroll-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre del Lugar</th>
+                                <th>Dirección</th>
+                                <th>Localidad</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaLugaresBody">
+                            <tr>
+                                <td colspan="3" class="empty-message">
+                                    <i class="bi bi-info-circle"></i> Seleccione una provincia y luego una localidad para ver los lugares.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botón para volver -->
+        <a href="/" class="btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Volver a Inicio
+        </a>
     </div>
-	footer {
-	    position: fixed;
-	    bottom: 0;
-	    width: 100%;
-	}
-</footer>
+    
+    <!-- Bootstrap core JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectProvincia = document.getElementById('selectProvincia');
+            const selectLocalidad = document.getElementById('selectLocalidad');
+            const tablaLugaresBody = document.getElementById('tablaLugaresBody');
 
-<!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+            // --- Funciones para Cargar Datos ---
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const selectProvincia = document.getElementById('selectProvincia');
-                const selectLocalidad = document.getElementById('selectLocalidad');
-                const tablaLugaresBody = document.getElementById('tablaLugaresBody');
+            // Carga las localidades en el selectLocalidad según la provincia seleccionada
+            function cargarSelectLocalidades(provinciaId) {
+                selectLocalidad.innerHTML = '<option value="0">-- Todas las Localidades --</option>'; // Resetear select de localidades
+                tablaLugaresBody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="empty-message">
+                            <i class="bi bi-info-circle"></i> Seleccione una localidad para ver los lugares.
+                        </td>
+                    </tr>
+                `; // Limpiar tabla de lugares
 
-                // --- Funciones para Cargar Datos ---
+                if (provinciaId === '0') { // Si se selecciona "Todas las Provincias"
+                    return; // No se cargan localidades en el select, solo se muestra el mensaje inicial
+                }
 
-                // Carga las localidades en el selectLocalidad según la provincia seleccionada
-				function cargarSelectLocalidades(provinciaId) {
-				    selectLocalidad.innerHTML = '<option value="0">-- Todas las Localidades --</option>'; // Resetear select de localidades
-				    tablaLugaresBody.innerHTML = `<tr><td colspan="3">Seleccione una localidad para ver los lugares.</td></tr>`; // Limpiar tabla de lugares
+                let url = `/lugares/porProvincia?provinciaId=${provinciaId}`;
 
-				    // Si se selecciona "Todas las Provincias", no hacemos la llamada fetch.
-				    if (provinciaId !== '0') {
-				        let url = `/lugares/porProvincia?provinciaId=${provinciaId}`;
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.length === 0) {
+                            let option = document.createElement('option');
+                            option.value = '0'; // Valor 0 para indicar que no hay localidades
+                            option.textContent = 'No hay localidades para esta provincia';
+                            selectLocalidad.appendChild(option);
+                            
+                            tablaLugaresBody.innerHTML = `
+                                <tr>
+                                    <td colspan="3" class="no-results">
+                                        <i class="bi bi-exclamation-circle"></i> No existen localidades para la provincia seleccionada.
+                                    </td>
+                                </tr>
+                            `;
+                        } else {
+                            data.forEach(localidad => {
+                                let option = document.createElement('option');
+                                option.value = localidad.id;
+                                option.textContent = localidad.nombre;
+                                selectLocalidad.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar localidades para el select:', error);
+                        let option = document.createElement('option');
+                        option.value = '0';
+                        option.textContent = 'Error al cargar localidades';
+                        selectLocalidad.appendChild(option);
+                        
+                        tablaLugaresBody.innerHTML = `
+                            <tr>
+                                <td colspan="3" class="text-danger">
+                                    <i class="bi bi-exclamation-triangle"></i> Error al cargar las localidades. Intente nuevamente.
+                                </td>
+                            </tr>
+                        `;
+                    });
+            }
 
-				        fetch(url)
-				            .then(response => {
-				                return response.json();
-				            })
-				            .then(data => {
-				                if (data.length === 0) {
-				                    let option = document.createElement('option');
-				                    option.value = '0'; // Valor 0 para indicar que no hay localidades
-				                    option.textContent = 'No hay localidades para esta provincia';
-				                    selectLocalidad.appendChild(option);
-				                } else {
-				                    data.forEach(localidad => {
-				                        let option = document.createElement('option');
-				                        option.value = localidad.id;
-				                        option.textContent = localidad.nombre;
-				                        selectLocalidad.appendChild(option);
-				                    });
-				                }
-				            })
-				    }
-				}
-                // Carga los lugares según la localidad seleccionada
-				function cargarLugares(localidadId) {
-				    tablaLugaresBody.innerHTML = `<tr><td colspan="3">Seleccione una localidad para ver los lugares.</td></tr>`;
-				    if (localidadId !== '0') {
-				        let url = `/lugares/porLocalidad?localidadId=${localidadId}`;
-				        fetch(url)
-				            .then(response => {
-				                return response.json();
-				            })
-				            .then(data => {
-				                tablaLugaresBody.innerHTML = '';
-				                if (data.length === 0) {
-				                    let row = document.createElement('tr');
-				                    row.innerHTML = `<td colspan="3">No hay lugares para esta localidad.</td>`;
-				                    tablaLugaresBody.appendChild(row);
-				                } else {
-				                    data.forEach(lugar => {
-				                        let row = document.createElement('tr');
-				                        row.innerHTML = `
-				                            <td>${lugar.nombre}</td>
-				                            <td>${lugar.direccion ? lugar.direccion.calleYAltura : 'N/A'}</td>
-				                            <td>${lugar.direccion.localidad ? lugar.direccion.localidad.nombre : 'N/A'}</td>
-				                        `;
-				                        tablaLugaresBody.appendChild(row);
-				                    });
-				                }
-				            })
-				    }
-				}
-                // --- Event Listeners ---
+            // Carga los lugares según la localidad seleccionada
+            function cargarLugares(localidadId) {
+                tablaLugaresBody.innerHTML = ''; // Limpiar la tabla de lugares
 
-                // Al cargar la página, inicializa los selects y tablas
-                cargarSelectLocalidades(selectProvincia.value);
+                if (localidadId === '0') {
+                    tablaLugaresBody.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="empty-message">
+                                <i class="bi bi-info-circle"></i> Seleccione una localidad para ver los lugares.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
 
-                // Cuando cambia la provincia, actualiza el select de localidades y limpia la tabla de lugares
-                selectProvincia.addEventListener('change', function() {
-                    const provinciaId = this.value;
-                    cargarSelectLocalidades(provinciaId);
-                });
+                // Mostrar mensaje de carga
+                tablaLugaresBody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="empty-message">
+                            <i class="bi bi-hourglass-split"></i> Cargando lugares...
+                        </td>
+                    </tr>
+                `;
 
-                // Cuando cambia la localidad, carga las lugares
-                selectLocalidad.addEventListener('change', function() {
-                    const localidadId = this.value;
-                    cargarLugares(localidadId);
-                });
-				// Botón "Ver todos los lugares"
-				document.getElementById('btnVerTodos').addEventListener('click', function() {
+                let url = `/lugares/porLocalidad?localidadId=${localidadId}`;
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        tablaLugaresBody.innerHTML = '';
+                        
+                        if (data.length === 0) {
+                            tablaLugaresBody.innerHTML = `
+                                <tr>
+                                    <td colspan="3" class="no-results">
+                                        <i class="bi bi-exclamation-circle"></i> No hay lugares para esta localidad.
+                                    </td>
+                                </tr>
+                            `;
+                        } else {
+                            data.forEach(lugar => {
+                                let row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${lugar.nombre}</td>
+                                    <td>${lugar.direccion ? lugar.direccion.calleYAltura : 'N/A'}</td>
+                                    <td>${lugar.direccion.localidad ? lugar.direccion.localidad.nombre : 'N/A'}</td>
+                                `;
+                                tablaLugaresBody.appendChild(row);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar lugares:', error);
+                        tablaLugaresBody.innerHTML = `
+                            <tr>
+                                <td colspan="3" class="text-danger">
+                                    <i class="bi bi-exclamation-triangle"></i> Error al cargar los lugares. Intente nuevamente.
+                                </td>
+                            </tr>
+                        `;
+                    });
+            }
+            
+            // --- Event Listeners ---
+
+            // Al cargar la página, inicializa los selects y tablas
+            cargarSelectLocalidades(selectProvincia.value);
+
+            // Cuando cambia la provincia, actualiza el select de localidades y limpia la tabla de lugares
+            selectProvincia.addEventListener('change', function() {
+                const provinciaId = this.value;
+                cargarSelectLocalidades(provinciaId);
+            });
+
+            // Cuando cambia la localidad, carga las lugares
+            selectLocalidad.addEventListener('change', function() {
+                const localidadId = this.value;
+                cargarLugares(localidadId);
+        	// Botón "Ver todos los lugares"
+				    document.getElementById('btnVerTodos').addEventListener('click', function() {
 				    window.location.href = '/lugares/todos';
 				});
 
             });
-        </script>
-    </body>
+        });
+    </script>
+</body>
 </html>

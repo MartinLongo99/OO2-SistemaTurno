@@ -1,36 +1,30 @@
 package com.oo2.grupo15.dtos;
 
 import java.time.DayOfWeek;
+import java.util.Set;
+import lombok.AllArgsConstructor;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter @Getter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServicioDTO {
-	private String nombre;
+    private Long id;
+    private String nombre;
+    private Integer duracionMinutos;
     private boolean estado;
-    private int duracionMinutos;
-    private LocalTime horarioInicio;
-    private LocalTime horarioFin;
-    private Set<DayOfWeek> diasSemana = new HashSet<>();
-    
-	public ServicioDTO(String nombre, boolean estado, int duracionMinutos, LocalTime horarioInicio,
-			LocalTime horarioFin, Set<DayOfWeek> diasSemana) {
-		super();
-		this.nombre = nombre;
-		this.estado = estado;
-		this.duracionMinutos = duracionMinutos;
-		this.horarioInicio = horarioInicio;
-		this.horarioFin = horarioFin;
-		this.diasSemana = diasSemana;
-	}
+    private String horarioInicio;
+    private String horarioFin;
+    private Set<DayOfWeek> diasSemana; 
 	
 	public String getDiasSemanaFormateados() {
 		String resultadoFormateado;
