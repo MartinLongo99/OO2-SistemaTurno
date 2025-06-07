@@ -6,11 +6,11 @@ import com.oo2.grupo15.entities.Contacto;
 import com.oo2.grupo15.repositories.IUsuarioRepository;
 import com.oo2.grupo15.services.IUsuarioService;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,12 +18,13 @@ public class UsuarioService implements IUsuarioService {
 
 	@Autowired
 	private IUsuarioRepository usuarioRepository;
+
+	@Autowired
+	private ModelMapper modelMapper;
 	
 	@Override
 	public UsuarioDTO crearUsuario(UsuarioDTO dto) {
-		Usuario usuario = new Usuario();
-		usuario.setEmail(dto.getEmail());
-		usuario.setPassword(dto.getPassword());
+		Usuario usuario = modelMapper.map(dto, Usuario.class);
 		
 		Contacto contacto = new Contacto();
 		contacto.setNombre(dto.getNombre());
@@ -31,43 +32,33 @@ public class UsuarioService implements IUsuarioService {
 		
 		Usuario guardado = usuarioRepository.save(usuario);
 		
-		return new UsuarioDTO(
-			guardado.getId(),
-			guardado.getContacto() != null ? guardado.getContacto().getNombre() : null,
-			guardado.getEmail(),
-			guardado.getPassword()
-		);
+		UsuarioDTO resultado = modelMapper.map(guardado, UsuarioDTO.class);
+        resultado.setNombre(guardado.getContacto() != null ? guardado.getContacto().getNombre() : null);
+        
+        return resultado;
 	}
 		
 	@Override
 	public List<UsuarioDTO> obtenerTodos(){
 		return usuarioRepository.findAll()
 				.stream()
-				.map(usuario -> new UsuarioDTO(
-						usuario.getId(),
-						usuario.getContacto() != null ? usuario.getContacto().getNombre() : null,
-						usuario.getEmail(),
-						usuario.getPassword()
-				))
+				.map(usuario -> {
+					UsuarioDTO dto = modelMapper.map(usuario, UsuarioDTO.class);
+					dto.setNombre(usuario.getContacto() != null ? usuario.getContacto().getNombre() : null);
+                    return dto;
+				})
 				.collect(Collectors.toList());
 				
 	}
 	
 	@Override
 	public UsuarioDTO obtenerPorId(Long id) {
-		Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
-		if(usuarioOpt.isEmpty()) {
-			throw new RuntimeException("Usuario no encontrado con ID: " + id);
-		}
-		
-		Usuario usuario = usuarioOpt.get();
-		
-		return new UsuarioDTO(
-				usuario.getId(),
-				usuario.getContacto() != null ? usuario.getContacto().getNombre() : null,
-				usuario.getEmail(),
-				usuario.getPassword()
-		);
+		 Usuario usuario = usuarioRepository.findById(id)
+	                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+
+	     UsuarioDTO dto = modelMapper.map(usuario, UsuarioDTO.class);
+	     dto.setNombre(usuario.getContacto() != null ? usuario.getContacto().getNombre() : null);
+	     return dto;
 	
 	}	
 	
@@ -87,12 +78,9 @@ public class UsuarioService implements IUsuarioService {
 		
 		Usuario actualizado = usuarioRepository.save(usuario);
 		
-		return new UsuarioDTO(
-			actualizado.getId(),
-			actualizado.getContacto() != null ? actualizado.getContacto().getNombre() : null,
-			actualizado.getEmail(),
-			actualizado.getPassword()
-		);	
+		 UsuarioDTO resultado = modelMapper.map(actualizado, UsuarioDTO.class);
+	     resultado.setNombre(actualizado.getContacto() != null ? actualizado.getContacto().getNombre() : null);
+	     return resultado;
 	}
 	
 	@Override
