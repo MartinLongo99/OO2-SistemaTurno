@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turnito - Todos los Servicios</title>
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -19,7 +15,7 @@
             margin: 0;
             padding: 0;
         }
-        
+
         .page-header {
             background: linear-gradient(135deg, #4a6bfd 0%, #2541b2 100%);
             color: white;
@@ -28,19 +24,19 @@
             border-radius: 0 0 20px 20px;
             text-align: center;
         }
-        
+
         .page-header h1 {
             font-weight: 700;
             font-size: 2.2rem;
             margin-bottom: 10px;
         }
-        
+
         .container {
             max-width: 1140px;
             margin: 0 auto;
             padding: 0 20px;
         }
-        
+
         .card {
             background-color: white;
             border-radius: 12px;
@@ -49,14 +45,14 @@
             border: none;
             overflow: hidden;
         }
-        
+
         .card-header {
             background-color: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
             padding: 20px;
             position: relative;
         }
-        
+
         .card-header h2 {
             margin: 0;
             font-size: 1.5rem;
@@ -65,24 +61,24 @@
             display: flex;
             align-items: center;
         }
-        
+
         .card-header h2 i {
             margin-right: 12px;
             font-size: 1.7rem;
             color: #4a6bfd;
         }
-        
+
         .card-body {
             padding: 25px;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             border-radius: 8px;
             overflow: hidden;
         }
-        
+
         th {
             background-color: #4a6bfd;
             color: white;
@@ -91,44 +87,44 @@
             font-weight: 600;
             border: none;
         }
-        
+
         td {
             padding: 15px;
             border-bottom: 1px solid #eee;
         }
-        
+
         tbody tr:hover {
             background-color: #f6f9ff;
         }
-        
+
         tbody tr:last-child td {
             border-bottom: none;
         }
-        
+
         .empty-message {
             text-align: center;
             padding: 20px;
             color: #6c757d;
             font-style: italic;
         }
-        
+
         .badge {
             padding: 6px 12px;
             border-radius: 50px;
             font-weight: 500;
             font-size: 0.75rem;
         }
-        
+
         .badge-active {
             background-color: #28a745;
             color: white;
         }
-        
+
         .badge-inactive {
             background-color: #dc3545;
             color: white;
         }
-        
+
         .badge-day {
             background-color: #e9f0ff;
             color: #4a6bfd;
@@ -136,7 +132,7 @@
             margin-bottom: 5px;
             display: inline-block;
         }
-        
+
         .btn-back {
             display: inline-flex;
             align-items: center;
@@ -149,42 +145,40 @@
             transition: all 0.3s;
             margin-bottom: 20px;
         }
-        
+
         .btn-back i {
             margin-right: 8px;
         }
-        
+
         .btn-back:hover {
             background-color: #2541b2;
             transform: translateY(-2px);
             color: white;
             text-decoration: none;
         }
-        
+
         .services-count {
             font-weight: 600;
             color: #4a6bfd;
             text-align: right;
             margin-top: 15px;
         }
-        
-        /* Footer personalizado */
+
         footer {
             background-color: #212529;
             padding: 30px 0;
             margin-top: 50px;
         }
-        
-        /* Responsive */
+
         @media (max-width: 768px) {
             .page-header {
                 padding: 30px 0;
             }
-            
+
             .page-header h1 {
                 font-size: 1.8rem;
             }
-            
+
             table {
                 display: block;
                 overflow-x: auto;
@@ -193,7 +187,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="page-header">
         <div class="container">
             <h1>Todos los Servicios</h1>
@@ -202,12 +195,10 @@
     </div>
 
     <div class="container">
-        <!-- Botón para volver -->
         <a href="/servicios" class="btn-back">
             <i class="bi bi-arrow-left-circle"></i> Volver a Gestión de Servicios
         </a>
-        
-        <!-- Card de servicios -->
+
         <div class="card">
             <div class="card-header">
                 <h2><i class="bi bi-list-check"></i> Listado de Servicios</h2>
@@ -243,7 +234,7 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-clock me-2 text-primary"></i>
-                                        <span th:text="${servicio.horarioInicio}">09:00</span> - 
+                                        <span th:text="${servicio.horarioInicio}">09:00</span> -
                                         <span th:text="${servicio.horarioFin}">18:00</span>
                                     </div>
                                 </td>
@@ -257,7 +248,7 @@
                                 </td>
                                 <td>
                                     <div class="dias-badges">
-                                        <span th:each="dia : ${#strings.arraySplit(servicio.getDiasSemanaFormateados, ', ')}" 
+                                        <span th:each="dia : ${#strings.arraySplit(servicio.getDiasSemanaFormateados, ', ')}"
                                               class="badge badge-day">
                                             <i class="bi bi-calendar-day me-1"></i>
                                             <span th:text="${dia}">Lunes</span>
@@ -268,8 +259,7 @@
                         </tbody>
                     </table>
                 </div>
-                
-                <!-- Contador de servicios -->
+
                 <p class="services-count" th:if="${!servicios.empty}">
                     <i class="bi bi-clipboard-check me-1"></i>
                     <span th:text="${servicios.size()}">0</span> servicio(s) registrado(s)
@@ -278,7 +268,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="row">
@@ -291,20 +280,11 @@
                     <ul class="list-unstyled">
                         <li><a href="/" class="text-white-50">Inicio</a></li>
                         <li><a href="/lugares/" class="text-white-50">Lugares</a></li>
-                        <li><a href="/servicios/" class="text-white-50">Servicios</a></li>
+                        <!-- Agrega más enlaces si es necesario -->
                     </ul>
                 </div>
-                <div class="col-lg-4">
-                    <h5 class="text-white mb-3">Contacto</h5>
-                    <p class="text-white-50">info@turnito.com<br>+54 123 456 7890</p>
-                </div>
             </div>
-            <hr class="my-4 bg-light">
-            <p class="m-0 text-center text-white-50">Copyright &copy; Turnito 2023. Todos los derechos reservados.</p>
         </div>
     </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

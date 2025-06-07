@@ -11,7 +11,7 @@ public interface IServicioService {
     ServicioDTO save(ServicioDTO dto);
     ServicioDTO update(Long id, ServicioDTO dto);
     boolean delete(Long id);
-    
+
     // Método adicional para obtener la entidad directamente
     Servicio findEntityById(Long id);
 }

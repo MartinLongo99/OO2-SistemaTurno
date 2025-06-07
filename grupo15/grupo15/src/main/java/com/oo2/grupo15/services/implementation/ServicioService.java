@@ -38,6 +38,28 @@ public class ServicioService implements IServicioService {
     			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
     			.collect(Collectors.toList());
     }
+    
+    
+    public List<ServicioDTO> findByNombre(String nombre){
+    	return servicioRepository.findByNombre(nombre)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
+    
+    public List<ServicioDTO> findByEstado(boolean estado){
+    	return servicioRepository.findByEstado(estado)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
+    
+    public List<ServicioDTO> findByDuracionMinutos(int duracion){
+    	return servicioRepository.findByDuracionMinutos(duracion)
+    			.stream()
+    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+    			.collect(Collectors.toList());
+    }
 
     @Override
     public ServicioDTO findById(Long id) {
