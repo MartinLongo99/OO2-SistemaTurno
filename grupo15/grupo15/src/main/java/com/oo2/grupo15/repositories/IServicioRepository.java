@@ -1,3 +1,4 @@
+
 package com.oo2.grupo15.repositories;
 
 import java.util.List;
@@ -13,5 +14,3 @@ public interface IServicioRepository extends JpaRepository<Servicio, Long> {
 	List<Servicio> findByEstado(boolean estado);
 	List<Servicio> findByDuracionMinutos(int duracion);
 }
-
-
