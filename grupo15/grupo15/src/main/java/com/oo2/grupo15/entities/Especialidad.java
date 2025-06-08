@@ -24,8 +24,8 @@ public class Especialidad{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "nombre_especialidad", nullable = false)
-	private String nombreEspecialidad;
+	@Column(name = "nombre_especialidad", nullable = false, unique = true)
+    private String nombreEspecialidad;
 
     @ManyToMany(mappedBy = "especialidades", fetch = FetchType.LAZY)
     private Set<Profesional> profesionales = new HashSet<>();

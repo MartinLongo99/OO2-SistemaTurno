@@ -12,9 +12,28 @@ public interface IProfesionalRepository extends JpaRepository<Profesional, Long>
         "contacto",
         "contacto.direccion",
         "contacto.direccion.localidad",
-        "contacto.direccion.localidad.provincia",  
+        "contacto.direccion.localidad.provincia",
         "especialidades"
     })
     Optional<Profesional> findByMatricula(String matricula);
-    
+
+    @Override
+    @EntityGraph(attributePaths = {
+        "contacto",
+        "contacto.direccion",
+        "contacto.direccion.localidad",
+        "contacto.direccion.localidad.provincia",
+        "especialidades"
+    })
+    java.util.List<Profesional> findAll();
+
+    @Override
+    @EntityGraph(attributePaths = {
+        "contacto",
+        "contacto.direccion",
+        "contacto.direccion.localidad",
+        "contacto.direccion.localidad.provincia",
+        "especialidades"
+    })
+    Optional<Profesional> findById(Long id);
 }
