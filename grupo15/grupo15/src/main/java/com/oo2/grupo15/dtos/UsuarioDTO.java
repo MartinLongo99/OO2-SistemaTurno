@@ -26,6 +26,7 @@ public class UsuarioDTO {
 		this.password = password;
 	}
 	
-	
+	private ContactoDTO contacto;
+
 	
 }

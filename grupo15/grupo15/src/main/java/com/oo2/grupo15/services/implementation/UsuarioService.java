@@ -92,15 +92,26 @@ public class UsuarioService implements IUsuarioService {
 	@Override
 	public UsuarioDTO buscarPorEmail(String email) {
 	    Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
-	    return (usuario != null) ? modelMapper.map(usuario, UsuarioDTO.class) : null;
+
+	    if (usuario.isPresent()) {
+	        return modelMapper.map(usuario.get(), UsuarioDTO.class);
+	    }
+
+	    return null;
 	}
+
 	
 	@Override
 	public UsuarioDTO guardar(UsuarioDTO usuarioDTO) {
+
 	    Usuario entidad = modelMapper.map(usuarioDTO, Usuario.class);
+
 	    Usuario guardado = usuarioRepository.save(entidad);
+
 	    return modelMapper.map(guardado, UsuarioDTO.class);
 	}
+
+
 
 	
 }
