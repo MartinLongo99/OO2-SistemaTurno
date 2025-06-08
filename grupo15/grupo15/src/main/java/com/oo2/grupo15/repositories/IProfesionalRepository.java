@@ -12,7 +12,9 @@ public interface IProfesionalRepository extends JpaRepository<Profesional, Long>
         "contacto",
         "contacto.direccion",
         "contacto.direccion.localidad",
-        "contacto.direccion.provincia"
+        "contacto.direccion.localidad.provincia",  
+        "especialidades"
     })
     Optional<Profesional> findByMatricula(String matricula);
+    
 }

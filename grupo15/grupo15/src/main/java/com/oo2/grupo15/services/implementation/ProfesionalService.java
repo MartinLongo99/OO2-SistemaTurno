@@ -20,9 +20,10 @@ public class ProfesionalService implements IProfesionalService {
 
     @Override
     public List<ProfesionalDTO> buscarPorMatricula(String matricula) {
-        return profesionalRepository.findByMatricula(matricula).stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+        return profesionalRepository.findByMatricula(matricula)
+                .map(this::convertToDTO)
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -39,6 +40,7 @@ public class ProfesionalService implements IProfesionalService {
     }
 
     private ProfesionalDTO convertToDTO(Profesional profesional) {
+        // Convertir contacto
         Contacto contacto = profesional.getContacto();
         ContactoDTO contactoDTO = new ContactoDTO();
 
@@ -60,16 +62,18 @@ public class ProfesionalService implements IProfesionalService {
             }
         }
 
+        // Convertir especialidades
         List<String> especialidades = profesional.getEspecialidades().stream()
-            .map(e -> e.getNombreEspecialidad())
-            .collect(Collectors.toList());
+                .map(e -> e.getNombreEspecialidad())
+                .collect(Collectors.toList());
 
-        return new ProfesionalDTO(
-            profesional.getId(),
-            profesional.getEmail(),
-            profesional.getMatricula(),
-            contactoDTO,
-            especialidades
-        );
+        // Construir DTO final
+        return ProfesionalDTO.builder()
+                .id(profesional.getId())
+                .email(profesional.getEmail())
+                .matricula(profesional.getMatricula())
+                .contacto(contactoDTO)
+                .especialidades(especialidades)
+                .build();
     }
 }
