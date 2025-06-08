@@ -56,7 +56,6 @@ Sigue estos pasos para poner en marcha el proyecto **Turnito**:
 
 4.  **Ejecuta el script SQL inicial:** Una vez que veas que el servidor Spring Boot se ha levantado correctamente (generalmente se indica con mensajes en la consola como "Started Application..."), **es fundamental ejecutar el script SQL inicial** proporcionado. Este script poblará la base de datos con los datos necesarios para el correcto funcionamiento de la aplicación.
 
-
 ---
 
 ## Navegación por la Aplicación
@@ -66,8 +65,13 @@ Una vez que el proyecto se ha levantado correctamente y el script SQL inicial ha
 Desde allí, podrás:
 
 * **Pedir un turno:** Explorar la funcionalidad principal para solicitar un nuevo turno y recibir un email con la confirmación del mismo.
+    * **Cómo solicitar un turno:**
+        1.  Dirígete a la sección "**Ver Turnos**".
+        2.  En el desplegable, elige la opción "**Consulta General**".
+        3.  Selecciona cualquier fecha que corresponda a un **Día Lunes**.
+        4.  Se mostrarán los turnos disponibles para el día seleccionado. Proporciona los datos del usuario solicitados para reservar el turno.
+        5.  Una vez reservado, el sistema enviará un correo electrónico al usuario confirmando la solicitud.
 * **Utilizar los ABM:** Acceder a las secciones dedicadas a la gestión (Altas, Bajas, Modificaciones) de las clases principales del sistema.
 * **Ver listados de datos:** Consultar y visualizar los datos existentes de las diferentes entidades, aplicando diferentes tipos de filtros.
 
 ---
-
