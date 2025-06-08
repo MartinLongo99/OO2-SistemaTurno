@@ -13,6 +13,7 @@ public interface ITurnoService {
     List<TurnoDTO> obtenerTodos();
     TurnoDTO obtenerPorId(Long id);
     List<TurnoDTO> obtenerTurnosEntreFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin);
+    boolean tieneTurnosActivos(Long usuarioId);
 
 
 }

@@ -3,6 +3,7 @@ package com.oo2.grupo15.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -27,6 +28,7 @@ public class Profesional extends Usuario{
 	    inverseJoinColumns = @JoinColumn(name = "especialidad_id")
     )
     private Set<Especialidad> especialidades = new HashSet<>();
-
+	
+	@Column(nullable = false, unique = true)
 	private String matricula;
 }

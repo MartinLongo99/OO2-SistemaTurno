@@ -170,6 +170,69 @@
             margin-top: 50px;
         }
 
+        .filter-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .filter-section h3 {
+            font-size: 1.3rem;
+            color: #2541b2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-section h3 i {
+            margin-right: 10px;
+            color: #4a6bfd;
+        }
+
+        .filter-form .form-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .filter-form .form-control,
+        .filter-form .form-select {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+        }
+
+        .filter-form .btn-primary {
+            background-color: #4a6bfd;
+            border-color: #4a6bfd;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .filter-form .btn-primary:hover {
+            background-color: #2541b2;
+            border-color: #2541b2;
+            transform: translateY(-1px);
+        }
+
+        .filter-form .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .filter-form .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+
+
         @media (max-width: 768px) {
             .page-header {
                 padding: 30px 0;
@@ -199,6 +262,31 @@
             <i class="bi bi-arrow-left-circle"></i> Volver a Gestión de Servicios
         </a>
 
+        <div class="filter-section">
+            <h3><i class="bi bi-funnel"></i> Filtrar Servicios</h3>
+            <form th:action="@{/servicios/todos}" method="get" class="row g-3 filter-form">
+                <div class="col-md-4">
+                    <label for="nombre" class="form-label">Nombre del Servicio:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" th:value="${filtroNombre}" placeholder="Ej. Consulta Médica">
+                </div>
+                <div class="col-md-3">
+                    <label for="estado" class="form-label">Estado:</label>
+                    <select class="form-select" id="estado" name="estado">
+                        <option value="">Todos</option>
+                        <option value="true" th:selected="${filtroEstado != null and filtroEstado == true}">Activo</option>
+                        <option value="false" th:selected="${filtroEstado != null and filtroEstado == false}">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="duracion" class="form-label">Duración (minutos):</label>
+                    <input type="number" class="form-control" id="duracion" name="duracion" th:value="${filtroDuracion}" placeholder="Ej. 30">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 me-2"><i class="bi bi-search"></i> Buscar</button>
+                    <a th:href="@{/servicios/todos}" class="btn btn-outline-secondary w-100"><i class="bi bi-x-circle"></i> Limpiar</a>
+                </div>
+            </form>
+        </div>
         <div class="card">
             <div class="card-header">
                 <h2><i class="bi bi-list-check"></i> Listado de Servicios</h2>
@@ -220,7 +308,7 @@
                                 <td colspan="5" class="empty-message">
                                     <div class="text-center py-4">
                                         <i class="bi bi-clipboard-x fs-1 text-muted"></i>
-                                        <p class="mt-3">No hay servicios registrados en el sistema.</p>
+                                        <p class="mt-3">No hay servicios registrados con los filtros aplicados.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -280,8 +368,7 @@
                     <ul class="list-unstyled">
                         <li><a href="/" class="text-white-50">Inicio</a></li>
                         <li><a href="/lugares/" class="text-white-50">Lugares</a></li>
-                        <!-- Agrega más enlaces si es necesario -->
-                    </ul>
+                        </ul>
                 </div>
             </div>
         </div>
