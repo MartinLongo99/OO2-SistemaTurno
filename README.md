@@ -29,8 +29,8 @@ El proyecto utiliza **variables de entorno** para configurar la conexión a la b
 * `DB_URL`: La URL de conexión a tu base de datos MySQL (ejemplo: `jdbc:mysql://localhost:3306/turnito_db`).
 * `USERNAME`: El nombre de usuario para acceder a tu base de datos MySQL.
 * `PASSWORD`: La contraseña para acceder a tu base de datos MySQL.
-* `USER_EMAIL`: sistemadeturnos15@gmail.com
-* `PASSWORD_EMAIL`: 
+* `USER_EMAIL`: Buscar en la entrega un archivo llamada contrasena_email.txt
+* `PASSWORD_EMAIL`: Buscar en la entrega un archivo llamada contrasena_email.txt
 
 ### 5. Lombok
 
@@ -65,10 +65,9 @@ Una vez que el proyecto se ha levantado correctamente y el script SQL inicial ha
 
 Desde allí, podrás:
 
-* **Pedir un turno:** Explorar la funcionalidad principal para solicitar un nuevo turno.
+* **Pedir un turno:** Explorar la funcionalidad principal para solicitar un nuevo turno y recibir un email con la confirmación del mismo.
 * **Utilizar los ABM:** Acceder a las secciones dedicadas a la gestión (Altas, Bajas, Modificaciones) de las clases principales del sistema.
-* **Ver listados de datos:** Consultar y visualizar los datos existentes de las diferentes entidades.
+* **Ver listados de datos:** Consultar y visualizar los datos existentes de las diferentes entidades, aplicando diferentes tipos de filtros.
 
 ---
 
-Esperamos que estas instrucciones sean claras y te permitan evaluar el proyecto de manera eficiente. Si tienes alguna pregunta o encuentras algún inconveniente, no dudes en consultarnos.
