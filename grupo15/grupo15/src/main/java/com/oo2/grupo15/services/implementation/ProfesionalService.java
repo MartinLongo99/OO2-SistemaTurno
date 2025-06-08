@@ -25,12 +25,12 @@ public class ProfesionalService implements IProfesionalService {
 
     @Override
     public List<ProfesionalDTO> buscarPorMatricula(String matricula) {
-        return profesionalRepository.findByMatricula(matricula)
+        return profesionalRepository.findByMatriculaConEspecialidades(matricula)
                 .map(this::convertToDTO)
                 .stream()
                 .collect(Collectors.toList());
     }
-
+    
     @Override
     public List<ProfesionalDTO> obtenerTodos() {
         return profesionalRepository.findAll().stream()
@@ -102,4 +102,5 @@ public class ProfesionalService implements IProfesionalService {
                 .especialidades(especialidadesNombres) // ✅ usamos nombres
                 .build();
     }
+    
 }
