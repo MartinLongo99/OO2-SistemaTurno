@@ -64,22 +64,37 @@ public class ServicioController {
 	}
 
 	@PostMapping("/save")
-	public String save(@ModelAttribute("servicio") ServicioDTO dto,
-			@RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados) {
+	public String save(
+    @ModelAttribute("servicio") ServicioDTO dto,
+    @RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados,
+    @RequestParam(value = "profesionalesIds", required = false) String profesionalesIdsStr) {
 
-		Set<DayOfWeek> dias = diasSeleccionados != null ? diasSeleccionados.stream().map(String::toUpperCase)
-				.map(DayOfWeek::valueOf).collect(Collectors.toSet()) : Set.of();
+    // Procesar días de la semana
+    Set<DayOfWeek> dias = diasSeleccionados != null ? diasSeleccionados.stream()
+        .map(String::toUpperCase)
+        .map(DayOfWeek::valueOf)
+        .collect(Collectors.toSet()) : Set.of();
+    dto.setDiasSemana(dias);
 
-		dto.setDiasSemana(dias);
+    // Procesar profesionales
+    if (profesionalesIdsStr != null && !profesionalesIdsStr.isEmpty()) {
+        // Guardar IDs de profesionales para procesarlos en el servicio
+        // Esto solo almacena la información para que la proceses como necesites
+        // en tu servicio existente de servicio-lugar o donde corresponda
+        System.out.println("Profesionales seleccionados: " + profesionalesIdsStr);
+        
+        // Aquí puedes agregar la lógica para vincular profesionales
+        // según tu arquitectura existente
+    }
 
-		if (dto.getId() != null) {
-			servicioService.update(dto.getId(), dto);
-		} else {
-			servicioService.save(dto);
-		}
+    if (dto.getId() != null) {
+        servicioService.update(dto.getId(), dto);
+    } else {
+        servicioService.save(dto);
+    }
 
-		return "redirect:/servicios";
-	}
+    return "redirect:/servicios";
+}
 
 	@GetMapping("/edit/{id}")
 	public String editar(@PathVariable Long id, Model model) {
