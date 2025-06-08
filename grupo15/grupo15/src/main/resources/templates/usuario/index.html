@@ -137,8 +137,13 @@
 
                 <div class="mb-3">
                     <label class="form-label">Nombre</label>
-                    <input type="text" class="form-control" th:field="*{nombre}" placeholder="Ej: Juan Pérez" required />
+                    <input type="text" class="form-control" th:field="*{nombre}" placeholder="Ej: Juan" required />
                 </div>
+				
+				<div class="mb-3">
+				    <label class="form-label">Apellido</label>
+				    <input type="text" class="form-control" th:field="*{contacto.apellido}" placeholder="Ej: García" required />
+				</div>
 
                 <div class="mb-3">
                     <label class="form-label">Email</label>
@@ -173,6 +178,7 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
+							<th>Apellido</th>
                             <th>Email</th>
                             <th>Acciones</th>
                         </tr>
@@ -183,6 +189,7 @@
                         </tr>
                         <tr th:each="usuario : ${usuarios}">
                             <td th:text="${usuario.nombre}">Nombre</td>
+							<td th:text="${usuario.contacto.apellido}">Nombre</td>
                             <td th:text="${usuario.email}">Email</td>
                             <td>
                                 <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}" class="btn btn-warning btn-sm">

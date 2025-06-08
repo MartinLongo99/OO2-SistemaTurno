@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.oo2.grupo15.dtos.LugarDTO;
+import com.oo2.grupo15.entities.Lugar;
 import com.oo2.grupo15.repositories.ILugarRepository;
 import com.oo2.grupo15.services.ILugarService;
 
@@ -45,4 +46,29 @@ public class LugarService implements ILugarService{
 				.collect(Collectors.toList());
 	}
 	
+	
+	@Override
+	public LugarDTO save(LugarDTO dto) {
+	    Lugar lugar = modelMapper.map(dto, Lugar.class);
+	    lugar = lugarRepository.save(lugar);
+	    return modelMapper.map(lugar, LugarDTO.class);
+	}
+
+	@Override
+	public LugarDTO getById(int id) {
+	    return lugarRepository.findById(id)
+	        .map(lugar -> modelMapper.map(lugar, LugarDTO.class))
+	        .orElse(null);
+	}
+
+	@Override
+	public boolean delete(int id) {
+	    try {
+	        lugarRepository.deleteById(id);
+	        return true;
+	    } catch (Exception e) {
+	        return false;
+	    }
+	}
+
 }

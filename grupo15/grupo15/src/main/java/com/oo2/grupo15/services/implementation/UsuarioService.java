@@ -29,6 +29,7 @@ public class UsuarioService implements IUsuarioService {
 		
 		Contacto contacto = new Contacto();
 		contacto.setNombre(dto.getNombre());
+		contacto.setApellido(dto.getContacto() != null ? dto.getContacto().getApellido() : null);
 		usuario.setContacto(contacto);
 		
 		Usuario guardado = usuarioRepository.save(usuario);
@@ -76,6 +77,7 @@ public class UsuarioService implements IUsuarioService {
 		}
 		
 		usuario.getContacto().setNombre(dto.getNombre());
+		usuario.getContacto().setApellido(dto.getContacto() != null ? dto.getContacto().getApellido() : null);
 		
 		Usuario actualizado = usuarioRepository.save(usuario);
 		
