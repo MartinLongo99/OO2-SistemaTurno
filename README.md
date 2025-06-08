@@ -29,6 +29,8 @@ El proyecto utiliza **variables de entorno** para configurar la conexión a la b
 * `DB_URL`: La URL de conexión a tu base de datos MySQL (ejemplo: `jdbc:mysql://localhost:3306/turnito_db`).
 * `USERNAME`: El nombre de usuario para acceder a tu base de datos MySQL.
 * `PASSWORD`: La contraseña para acceder a tu base de datos MySQL.
+* `USER_EMAIL`: sistemadeturnos15@gmail.com
+* `PASSWORD_EMAIL`: 
 
 ### 5. Lombok
 
@@ -42,7 +44,7 @@ Sigue estos pasos para poner en marcha el proyecto **Turnito**:
 
 1.  **Clona el repositorio** (si aún no lo has hecho) y navega hasta el directorio raíz del proyecto.
 
-2.  **Configura las variables de entorno:** Antes de ejecutar, asegúrate de que las variables de entorno `DB_URL`, `USERNAME`, y `PASSWORD` estén correctamente definidas en tu sistema o en el entorno de ejecución de tu IDE.
+2.  **Configura las variables de entorno:** Antes de ejecutar, asegúrate de que las variables de entorno `DB_URL`, `USERNAME`, `PASSWORD`, `USER_EMAIL`, y `PASSWORD_EMAIL`estén correctamente definidas en tu sistema o en el entorno de ejecución de tu IDE.
 
 3.  **Compila y ejecuta el proyecto:** Abre una terminal en el directorio raíz del proyecto y ejecuta el siguiente comando Maven:
 
