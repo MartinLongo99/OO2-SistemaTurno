@@ -2,6 +2,7 @@ package com.oo2.grupo15.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +24,8 @@ public class Especialidad{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	private String nombreEspecialidad;
+	@Column(name = "nombre_especialidad", nullable = false, unique = true)
+    private String nombreEspecialidad;
 
     @ManyToMany(mappedBy = "especialidades", fetch = FetchType.LAZY)
     private Set<Profesional> profesionales = new HashSet<>();
