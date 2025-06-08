@@ -17,6 +17,11 @@ public class Direccion {
     private String calleYAltura;
 
     @ManyToOne
+    @JoinColumn(name = "localidad_id")
     private Localidad localidad;
+
+    @ManyToOne
+    @JoinColumn(name = "provincia_id")
+    private Provincia provincia;
 }
 
