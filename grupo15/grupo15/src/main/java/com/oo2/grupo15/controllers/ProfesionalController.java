@@ -19,7 +19,7 @@ public class ProfesionalController {
     // 🔹 Vista HTML
     @GetMapping
     public String vistaProfesionales() {
-        return ViewRouteHelper.PROFESIONAL_INDEX; // Asegurate que tenga valor "profesional/index"
+        return ViewRouteHelper.PROFESIONAL_INDEX; 
     }
 
     // 🔹 API REST
