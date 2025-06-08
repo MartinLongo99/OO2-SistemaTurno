@@ -22,6 +22,8 @@ public class ViewRouteHelper {
 	public final static String SERVICIO_ALL = "servicio/all";
 	
 	public final static String USUARIO_INDEX = "usuario/index";
+	public final static String USUARIO_ALL = "usuario/all";
+
 	
 	// PROFESIONAL
 	public final static String PROFESIONAL_INDEX = "profesional/index";
@@ -32,4 +34,5 @@ public class ViewRouteHelper {
 	// SOLICITANTE (si luego agregás consulta por pago u otro atributo)
 	public final static String SOLICITANTE_INDEX = "usuario/solicitante/index";
 	public final static String SOLICITANTE_API_BUSCAR = "/solicitantes/api/buscar";
+
 }

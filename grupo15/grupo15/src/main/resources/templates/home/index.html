@@ -6,13 +6,9 @@
     <meta name="description" content="Sistema de gestión de turnos y reservas" />
     <meta name="author" content="Turnito" />
     <title>Turnito - Sistema de Gestión de Turnos</title>
-    <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
     <style>
         body {
@@ -87,7 +83,6 @@
     </style>
 </head>
 <body>
-<!-- Responsive navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container px-5">
         <a class="navbar-brand" href="#!">Turnito</a>
@@ -103,7 +98,6 @@
     </div>
 </nav>
 
-<!-- Hero Section -->
 <section class="hero-section">
     <div class="container px-5">
         <div class="row gx-5 align-items-center">
@@ -111,10 +105,12 @@
                 <h1>Gestiona tus turnos de forma simple y eficiente</h1>
                 <p class="lead mb-4">Turnito te ayuda a organizar, reservar y administrar turnos para tus servicios. Ahorra tiempo y mejora la experiencia de tus clientes.</p>
                 <div class="d-flex gap-3">
-
                     <a class="btn btn-light btn-lg" href="/auth/registro">Crear Cuenta</a>
                     <a class="btn btn-outline-light btn-lg" href="/turnos">Ver Turnos</a>
-                </div>
+                    <a class="btn btn-outline-light btn-lg" href="/usuarios">
+                        <i class="bi bi-people-fill me-2"></i> Menú Usuarios
+                    </a>
+                    </div>
             </div>
             <div class="col-lg-6 d-none d-lg-block">
                 <img class="img-fluid rounded" src="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Gestión de turnos" />
@@ -123,7 +119,6 @@
     </div>
 </section>
 
-<!-- Stats Section -->
 <div class="container px-4 px-lg-5">
     <div class="stats-section">
         <div class="row gx-4 gx-lg-5 text-center">
@@ -149,7 +144,6 @@
     </div>
 </div>
 
-<!-- Features Section -->
 <div class="container px-4 px-lg-5">
     <div class="text-center mb-5">
         <h2 class="fw-bold">Descubre nuestras funcionalidades</h2>
@@ -203,17 +197,15 @@
         </div>
     </div>
     
-    <!-- Call to Action -->
     <div class="card text-white bg-primary my-5 py-4 text-center rounded-3">
         <div class="card-body">
             <h3 class="text-white m-0 mb-2">¿Listo para optimizar la gestión de tus turnos?</h3>
             <p class="text-white m-0 mb-3">Regístrate ahora y comienza a disfrutar de todos los beneficios de Turnito</p>
-            <a class="btn btn-light" href="/auth/login">Comenzar Ahora</a>
+            <a class="btn btn-light" href="/auth/registro">Comenzar Ahora</a>
         </div>
     </div>
 </div>
 
-<!-- Footer-->
 <footer class="py-5 bg-dark">
     <div class="container px-4 px-lg-5">
         <div class="row">
@@ -245,9 +237,7 @@
     </div>
 </footer>
 
-<!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Core theme JS-->
 <script src="js/scripts.js"></script>
 </body>
 </html>

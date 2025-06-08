@@ -28,13 +28,14 @@ public class UsuarioService implements IUsuarioService {
 		Usuario usuario = modelMapper.map(dto, Usuario.class);
 		
 		Contacto contacto = new Contacto();
-		contacto.setNombre(dto.getNombre());
+		contacto.setNombre(dto.getContacto() != null ? dto.getContacto().getNombre() : null);
+		contacto.setApellido(dto.getContacto() != null ? dto.getContacto().getApellido() : null);
+        contacto.setDni(dto.getContacto() != null ? dto.getContacto().getDni() : 0); 
 		usuario.setContacto(contacto);
 		
 		Usuario guardado = usuarioRepository.save(usuario);
 		
 		UsuarioDTO resultado = modelMapper.map(guardado, UsuarioDTO.class);
-        resultado.setNombre(guardado.getContacto() != null ? guardado.getContacto().getNombre() : null);
         
         return resultado;
 	}
@@ -45,7 +46,6 @@ public class UsuarioService implements IUsuarioService {
 				.stream()
 				.map(usuario -> {
 					UsuarioDTO dto = modelMapper.map(usuario, UsuarioDTO.class);
-					dto.setNombre(usuario.getContacto() != null ? usuario.getContacto().getNombre() : null);
                     return dto;
 				})
 				.collect(Collectors.toList());
@@ -58,7 +58,6 @@ public class UsuarioService implements IUsuarioService {
 	                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
 
 	     UsuarioDTO dto = modelMapper.map(usuario, UsuarioDTO.class);
-	     dto.setNombre(usuario.getContacto() != null ? usuario.getContacto().getNombre() : null);
 	     return dto;
 	
 	}	
@@ -75,12 +74,12 @@ public class UsuarioService implements IUsuarioService {
 			usuario.setContacto(new Contacto());
 		}
 		
-		usuario.getContacto().setNombre(dto.getNombre());
+		usuario.getContacto().setNombre(dto.getContacto() != null ? dto.getContacto().getNombre() : null);
+		usuario.getContacto().setApellido(dto.getContacto() != null ? dto.getContacto().getApellido() : null);
 		
 		Usuario actualizado = usuarioRepository.save(usuario);
 		
 		 UsuarioDTO resultado = modelMapper.map(actualizado, UsuarioDTO.class);
-	     resultado.setNombre(actualizado.getContacto() != null ? actualizado.getContacto().getNombre() : null);
 	     return resultado;
 	}
 	
@@ -92,15 +91,38 @@ public class UsuarioService implements IUsuarioService {
 	@Override
 	public UsuarioDTO buscarPorEmail(String email) {
 	    Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
-	    return (usuario != null) ? modelMapper.map(usuario, UsuarioDTO.class) : null;
+
+	    if (usuario.isPresent()) {
+	        return modelMapper.map(usuario.get(), UsuarioDTO.class);
+	    }
+
+	    return null;
 	}
+
 	
 	@Override
 	public UsuarioDTO guardar(UsuarioDTO usuarioDTO) {
+
 	    Usuario entidad = modelMapper.map(usuarioDTO, Usuario.class);
+
 	    Usuario guardado = usuarioRepository.save(entidad);
+
 	    return modelMapper.map(guardado, UsuarioDTO.class);
 	}
 
+
+	public List<UsuarioDTO> getAll(){
+		return usuarioRepository.findAll()
+				.stream()
+				.map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
+				.collect(Collectors.toList());
+	}
+	
+	public List<UsuarioDTO> findByContactoDni(long dni){
+		return usuarioRepository.findByContactoDni(dni)
+				.stream()
+				.map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
+				.collect(Collectors.toList());
+	}
 	
 }

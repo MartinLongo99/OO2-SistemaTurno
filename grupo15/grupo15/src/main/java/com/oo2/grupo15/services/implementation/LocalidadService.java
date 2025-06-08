@@ -39,9 +39,9 @@ public class LocalidadService implements ILocalidadService{
     
     public List<LocalidadDTO> getLocalidadesByProvincia(int provinciaId) {
         return localidadRepository.findByProvinciaIdOrderByNombreAsc(provinciaId) // 
-                                .stream()
-                                .map(localidad -> modelMapper.map(localidad, LocalidadDTO.class))
-                                .collect(Collectors.toList());
+            .stream()
+            .map(localidad -> modelMapper.map(localidad, LocalidadDTO.class))
+            .collect(Collectors.toList());
     }
 
 }

@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/auth")
-public class loginController {
+public class LoginController {
 
 	@Autowired
 	private IUsuarioService usuarioService;
@@ -66,17 +66,19 @@ public class loginController {
 
         UsuarioDTO existente = usuarioService.buscarPorEmail(usuarioNuevo.getEmail());
         if (existente != null) {
-            ModelAndView mav = new ModelAndView("auth/registro");
+            ModelAndView mav = new ModelAndView("registro/index");
             mav.addObject("error", "El correo ya está registrado");
             return mav;
         }
 
-        usuarioService.guardar(usuarioNuevo);
-        
-        System.out.println("Registrando usuario: " + usuarioNuevo.getEmail());
+        System.out.println("Guardando usuario: " + usuarioNuevo.getEmail());
 
+        UsuarioDTO guardado = usuarioService.guardar(usuarioNuevo);
+
+        System.out.println("Usuario guardado: " + guardado.getEmail());
 
         return new ModelAndView("redirect:/auth/login");
     }
+
 
 }

@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.oo2.grupo15.dtos.TurnoDTO;
 import com.oo2.grupo15.entities.Turno;
 
 import java.time.LocalDateTime;
@@ -21,7 +23,7 @@ public interface ITurnoRepository extends JpaRepository<Turno, Long> {
     @Query("SELECT COUNT(t) FROM Turno t WHERE t.solicitante.id = :usuarioId AND t.estado = true")
     int countBySolicitanteIdAndEstadoActivo(@Param("usuarioId") Long usuarioId);
 
-
+   
 
 }
 
