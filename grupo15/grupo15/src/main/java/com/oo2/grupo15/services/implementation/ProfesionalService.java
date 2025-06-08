@@ -32,6 +32,12 @@ public class ProfesionalService implements IProfesionalService {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public Profesional findEntityById(Long id) {
+        return profesionalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Profesional no encontrado con ID: " + id));
+    }
+
     private ProfesionalDTO convertToDTO(Profesional profesional) {
         Contacto contacto = profesional.getContacto();
         ContactoDTO contactoDTO = new ContactoDTO();
