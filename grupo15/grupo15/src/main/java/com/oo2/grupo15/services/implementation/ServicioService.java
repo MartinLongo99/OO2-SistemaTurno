@@ -8,7 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.oo2.grupo15.dtos.*;
+import com.oo2.grupo15.dtos.ServicioDTO;
+import com.oo2.grupo15.dtos.ServicioLugarDTO;
 import com.oo2.grupo15.entities.*;
 import com.oo2.grupo15.repositories.*;
 import com.oo2.grupo15.services.*;
@@ -82,7 +83,7 @@ public class ServicioService implements IServicioService {
         Servicio savedServicio = servicioRepository.save(servicio);
 
         // Guardar relaciones ServicioLugar
-        guardarServicioLugaresDesdeDTO(savedServicio, dto.getServicioLugares());
+        guardarServicioLugares(savedServicio, dto.getLugarIds(), dto.getProfesionalIds());
 
         return convertToDTO(savedServicio);
     }
@@ -96,7 +97,7 @@ public class ServicioService implements IServicioService {
 
             // Actualizar relaciones ServicioLugar
             servicioLugarRepository.deleteByServicioId(id);
-            guardarServicioLugaresDesdeDTO(updatedServicio, dto.getServicioLugares());
+            guardarServicioLugares(updatedServicio, dto.getLugarIds(), dto.getProfesionalIds());
 
             return convertToDTO(updatedServicio);
         }
@@ -118,20 +119,20 @@ public class ServicioService implements IServicioService {
 
     // ------------------ Helpers ------------------
 
-    private void guardarServicioLugaresDesdeDTO(Servicio servicio, Set<ServicioLugarDTO> lugaresDTO) {
-        if (lugaresDTO == null || lugaresDTO.isEmpty()) return;
+    private void guardarServicioLugares(Servicio servicio, List<Long> lugarIds, List<Long> profesionalIds) {
+        if (lugarIds == null || profesionalIds == null) return;
 
-        for (ServicioLugarDTO slDTO : lugaresDTO) {
-            Lugar lugar = lugarService.findEntityById(slDTO.getLugar().getId());
-            Profesional profesional = profesionalService.findEntityById(slDTO.getProfesional().getId());
-
-            ServicioLugar sl = new ServicioLugar();
-            sl.setServicio(servicio);
-            sl.setLugar(lugar);
-            sl.setProfesional(profesional);
-            sl.setActivo(slDTO.isActivo());
-
-            servicioLugarRepository.save(sl);
+        for (Long lugarId : lugarIds) {
+            Lugar lugar = lugarService.findEntityById(lugarId);
+            for (Long profesionalId : profesionalIds) {
+                Profesional profesional = profesionalService.findEntityById(profesionalId);
+                ServicioLugar sl = new ServicioLugar();
+                sl.setServicio(servicio);
+                sl.setLugar(lugar);
+                sl.setProfesional(profesional);
+                sl.setActivo(true); // o dto.getActivo() si se pasa desde el form
+                servicioLugarRepository.save(sl);
+            }
         }
     }
 
@@ -151,15 +152,6 @@ public class ServicioService implements IServicioService {
                 .map(sl -> ServicioLugarDTO.builder()
                     .id(sl.getId())
                     .activo(sl.isActivo())
-                    .lugar(LugarDTO.builder()
-                        .id(sl.getLugar().getId())
-                        .nombre(sl.getLugar().getNombre())
-                        .build())
-                    .profesional(ProfesionalDTO.builder()
-                        .id(sl.getProfesional().getId())
-                        .nombre(sl.getProfesional().getContacto().getNombre())
-                        .apellido(sl.getProfesional().getContacto().getApellido())
-                        .build())
                     .build())
                 .collect(Collectors.toSet());
             dto.setServicioLugares(lugaresDTO);
@@ -167,7 +159,6 @@ public class ServicioService implements IServicioService {
 
         return dto;
     }
-    
 
     private Servicio convertToEntity(ServicioDTO dto) {
         Servicio servicio = new Servicio();
