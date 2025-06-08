@@ -23,7 +23,7 @@ public class EmailService implements IEmailService {
 	public void sendSimpleMail(String to, String subject, String text) {
 		try {
 			SimpleMailMessage message = new SimpleMailMessage();
-			message.setFrom("tu_correo@gmail.com");
+			message.setFrom("sistemadeturnos15@gmail.com");
 			message.setTo(to);
 			message.setSubject(subject);
 			message.setText(text);
@@ -40,7 +40,7 @@ public class EmailService implements IEmailService {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-			helper.setFrom("tu_correo@gmail.com");
+			helper.setFrom("sistemadeturnos15@gmail.com");
 			helper.setTo(to);
 			helper.setSubject(subject);
 			helper.setText(htmlBody, true);
