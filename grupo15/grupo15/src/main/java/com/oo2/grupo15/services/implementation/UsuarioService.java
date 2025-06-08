@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,5 +89,18 @@ public class UsuarioService implements IUsuarioService {
 		usuarioRepository.deleteById(id);
 	}
 	
+	@Override
+	public UsuarioDTO buscarPorEmail(String email) {
+	    Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+	    return (usuario != null) ? modelMapper.map(usuario, UsuarioDTO.class) : null;
+	}
+	
+	@Override
+	public UsuarioDTO guardar(UsuarioDTO usuarioDTO) {
+	    Usuario entidad = modelMapper.map(usuarioDTO, Usuario.class);
+	    Usuario guardado = usuarioRepository.save(entidad);
+	    return modelMapper.map(guardado, UsuarioDTO.class);
+	}
+
 	
 }

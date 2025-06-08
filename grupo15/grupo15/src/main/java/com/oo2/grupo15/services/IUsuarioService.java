@@ -9,6 +9,8 @@ public interface IUsuarioService {
 	UsuarioDTO actualizarUsuario(Long id, UsuarioDTO dto);
 	List<UsuarioDTO> obtenerTodos();
 	UsuarioDTO obtenerPorId(Long id);
+	UsuarioDTO buscarPorEmail(String email);
+	UsuarioDTO guardar(UsuarioDTO usuarioDTO);
 	void eliminarUsuario(Long id);
 	
 }
