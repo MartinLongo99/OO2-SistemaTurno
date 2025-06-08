@@ -34,4 +34,5 @@ public class ProfesionalController {
     public List<ProfesionalDTO> obtenerTodos() {
         return profesionalService.obtenerTodos();
     }
+    
 }

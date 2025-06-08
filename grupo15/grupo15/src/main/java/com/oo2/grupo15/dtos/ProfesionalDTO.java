@@ -18,5 +18,10 @@ public class ProfesionalDTO {
     private String email;
     private String matricula;
     private ContactoDTO contacto;
+    
+    // Para enviar los nombres
     private List<String> especialidades;
+
+    // (Opcional) si lo necesitás al guardar:
+    private List<Integer> especialidadesIds;
 }

@@ -9,4 +9,5 @@ public interface IProfesionalService {
     List<ProfesionalDTO> buscarPorMatricula(String matricula);
     List<ProfesionalDTO> obtenerTodos();
     Profesional findEntityById(Long id);
+    void guardar(ProfesionalDTO dto);
 }
