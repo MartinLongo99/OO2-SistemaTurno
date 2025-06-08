@@ -11,22 +11,19 @@ public class UsuarioDTO {
 
 	private Long id;
 	
-	private String nombre;
-	
 	private String email;
 	
 	private String password;
 	
-
-	public UsuarioDTO(Long id, String nombre, String email, String password) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.email = email;
-		this.password = password;
-	}
-	
 	private ContactoDTO contacto;
 
+	public UsuarioDTO(Long id, String email, String password, ContactoDTO contacto) {
+		super();
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.contacto = contacto;
+	}
+	
 	
 }

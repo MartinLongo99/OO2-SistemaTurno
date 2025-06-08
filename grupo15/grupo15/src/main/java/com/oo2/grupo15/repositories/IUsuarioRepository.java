@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.oo2.grupo15.dtos.UsuarioDTO;
 import com.oo2.grupo15.entities.Usuario;
 
 @Repository
@@ -18,4 +19,6 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Long>{
 	
 	@Query(value = "from Usuario u order by u.id")
 	List<Usuario> obtenerTodos();
+	
+	List<Usuario> findByContactoDni(long dni);
 }

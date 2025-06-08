@@ -22,6 +22,8 @@ public class ViewRouteHelper {
 	public final static String SERVICIO_ALL = "servicio/all";
 	
 	public final static String USUARIO_INDEX = "usuario/index";
+	public final static String USUARIO_ALL = "usuario/all";
+
 	
 	// PROFESIONAL
 	public final static String PROFESIONAL_INDEX = "profesional/index";
