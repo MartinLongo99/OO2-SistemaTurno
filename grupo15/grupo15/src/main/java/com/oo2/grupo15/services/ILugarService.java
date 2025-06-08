@@ -7,4 +7,8 @@ public interface ILugarService {
 	List<LugarDTO> getLugaresByLocalidad(int localidadId);
 	List<LugarDTO> getLugaresByNombre(String nombre);
 	List<LugarDTO> getAll();
+	LugarDTO save(LugarDTO dto);
+	LugarDTO getById(int id);
+	boolean delete(int id);
+
 }

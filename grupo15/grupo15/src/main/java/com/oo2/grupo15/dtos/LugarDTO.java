@@ -1,22 +1,22 @@
 package com.oo2.grupo15.dtos;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter @Getter @NoArgsConstructor
+@Getter
+@Setter
 public class LugarDTO {
-	private int id;
-	private String nombre;
-	private DireccionDTO direccion;
-	
-	
-	public LugarDTO(int id, String nombre, DireccionDTO direccion) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.direccion = direccion;
-	}
-	
-	
+    private Integer id;
+    private String nombre;
+    private DireccionDTO direccion;
+
+    public LugarDTO() {
+        this.direccion = new DireccionDTO(); // ← ¡IMPORTANTE! Inicializar para que no sea null
+    }
+
+    public LugarDTO(int id, String nombre, DireccionDTO direccion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.direccion = direccion;
+    }
 }

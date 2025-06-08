@@ -3,6 +3,9 @@ package com.oo2.grupo15.controllers;
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -71,5 +74,38 @@ public class LugarController {
 		return lstLugares;
 	}
 	
+	@GetMapping("/crear")
+	public ModelAndView crearLugar() {
+		System.out.println("crearLugar");
+	    ModelAndView mAV = new ModelAndView(ViewRouteHelper.LUGAR_FORM);
+	    mAV.addObject("lugar", new LugarDTO());
+	    mAV.addObject("provincias", provinciaService.getAll());
+	    mAV.addObject("localidades", List.of()); // Inicial vacío
+	    return mAV;
+	}
+
+	@PostMapping("/guardar")
+	public String guardarLugar(@ModelAttribute("lugar") LugarDTO lugarDTO) {
+	    lugarService.save(lugarDTO);
+	    return "redirect:/lugares/todos";
+	}
+
+	@GetMapping("/editar/{id}")
+	public ModelAndView editarLugar(@PathVariable("id") int id) {
+	    LugarDTO lugar = lugarService.getById(id);
+	    ModelAndView mAV = new ModelAndView(ViewRouteHelper.LUGAR_FORM);
+	    mAV.addObject("lugar", lugar);
+	    mAV.addObject("provincias", provinciaService.getAll());
+	    mAV.addObject("localidades", localidadService.getLocalidadesByProvincia(
+	        lugar.getDireccion().getLocalidad().getProvincia().getId()));
+	    return mAV;
+	}
+
+	@GetMapping("/eliminar/{id}")
+	public String eliminarLugar(@PathVariable("id") int id) {
+	    lugarService.delete(id);
+	    return "redirect:/lugares/todos";
+	}
+
 
 }

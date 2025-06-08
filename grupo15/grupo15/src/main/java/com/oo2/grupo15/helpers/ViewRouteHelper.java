@@ -22,4 +22,15 @@ public class ViewRouteHelper {
 	public final static String SERVICIO_ALL = "servicio/all";
 	
 	public final static String USUARIO_INDEX = "usuario/index";
+	
+	// PROFESIONAL
+	public final static String PROFESIONAL_INDEX = "profesional/index";
+	public final static String PROFESIONAL_FORM = "profesional/form";
+	public final static String PROFESIONAL_NEW = "profesional/new";
+
+
+	// SOLICITANTE (si luego agregás consulta por pago u otro atributo)
+	public final static String SOLICITANTE_INDEX = "usuario/solicitante/index";
+	public final static String SOLICITANTE_API_BUSCAR = "/solicitantes/api/buscar";
+
 }
