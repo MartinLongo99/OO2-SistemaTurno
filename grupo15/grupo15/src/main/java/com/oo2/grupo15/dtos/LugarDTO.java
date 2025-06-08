@@ -1,10 +1,12 @@
 package com.oo2.grupo15.dtos;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter @Getter @NoArgsConstructor
+@Builder
 public class LugarDTO {
 	private int id;
 	private String nombre;

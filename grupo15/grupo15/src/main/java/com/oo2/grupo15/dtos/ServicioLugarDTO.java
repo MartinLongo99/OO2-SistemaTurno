@@ -6,17 +6,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProfesionalDTO {
+public class ServicioLugarDTO {
     private Long id;
-    private String email;
-    private String matricula;
-    private ContactoDTO contacto;
-    private List<String> especialidades;
+    private Long servicioId;
+    private String servicioNombre;
+    private Long lugarId;
+    private String lugarNombre;
+    private Long profesionalId;
+    private String profesionalNombre;
+    private boolean activo;
 }
