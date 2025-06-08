@@ -1,3 +1,4 @@
+
 package com.oo2.grupo15.controllers;
 
 import java.time.DayOfWeek;
@@ -12,130 +13,117 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.oo2.grupo15.dtos.ServicioDTO;
+import com.oo2.grupo15.services.IServicioService;
 import com.oo2.grupo15.helpers.ViewRouteHelper;
-import com.oo2.grupo15.services.*;
 
 @Controller
 @RequestMapping("/servicios")
 public class ServicioController {
 
-    @Autowired
-    private IServicioService servicioService;
+	@Autowired
+	private IServicioService servicioService;
 
-    @Autowired
-    private ILugarService lugarService;
+	@GetMapping
+	public String index(Model model) {
+		return ViewRouteHelper.SERVICIO_INDEX;
+	}
 
-    @Autowired
-    private IProfesionalService profesionalService;
+	 @GetMapping("/todos")
+	    public ModelAndView all(
+	            @RequestParam(name = "nombre", required = false) String nombre,
+	            @RequestParam(name = "estado", required = false) Boolean estado, 
+	            @RequestParam(name = "duracion", required = false) Integer duracion
+	    ) {
+	        ModelAndView mAV = new ModelAndView(ViewRouteHelper.SERVICIO_ALL);
+	        List<ServicioDTO> servicios;
 
-    @GetMapping
-    public String index(Model model) {
-        return ViewRouteHelper.SERVICIO_INDEX;
-    }
+	        if (nombre != null && !nombre.isEmpty()) {
+	            servicios = servicioService.findByNombre(nombre);
+	        } else if (estado != null) { 
+	            servicios = servicioService.findByEstado(estado);
+	        } else if (duracion != null) { 
+	            servicios = servicioService.findByDuracionMinutos(duracion);
+	        } else {
+	            servicios = servicioService.getAll();
+	        }
 
-    @GetMapping("/todos")
-    public ModelAndView all(
-            @RequestParam(name = "nombre", required = false) String nombre,
-            @RequestParam(name = "estado", required = false) Boolean estado,
-            @RequestParam(name = "duracion", required = false) Integer duracion
-    ) {
-        ModelAndView mAV = new ModelAndView(ViewRouteHelper.SERVICIO_ALL);
-        List<ServicioDTO> servicios;
+	        mAV.addObject("servicios", servicios);
 
-        if (nombre != null && !nombre.isEmpty()) {
-            servicios = servicioService.findByNombre(nombre);
-        } else if (estado != null) {
-            servicios = servicioService.findByEstado(estado);
-        } else if (duracion != null) {
-            servicios = servicioService.findByDuracionMinutos(duracion);
-        } else {
-            servicios = servicioService.getAll();
-        }
+	        mAV.addObject("filtroNombre", nombre);
+	        mAV.addObject("filtroEstado", estado);
+	        mAV.addObject("filtroDuracion", duracion);
 
-        mAV.addObject("servicios", servicios);
-        mAV.addObject("filtroNombre", nombre);
-        mAV.addObject("filtroEstado", estado);
-        mAV.addObject("filtroDuracion", duracion);
+	        return mAV;
+	    }
 
-        return mAV;
-    }
+	@GetMapping("/new")
+	public String nuevo(Model model) {
+		model.addAttribute("servicio", new ServicioDTO());
+		model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
+		return ViewRouteHelper.SERVICIO_FORM;
+	}
 
-    @GetMapping("/new")
-    public String nuevo(Model model) {
-        model.addAttribute("servicio", new ServicioDTO());
-        model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
-        model.addAttribute("lugares", lugarService.getAll());
-        model.addAttribute("profesionales", profesionalService.obtenerTodos());
-        return ViewRouteHelper.SERVICIO_FORM;
-    }
+	@PostMapping("/save")
+	public String save(@ModelAttribute("servicio") ServicioDTO dto,
+			@RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados) {
 
-    @GetMapping("/edit/{id}")
-    public String editar(@PathVariable Long id, Model model) {
-        ServicioDTO servicio = servicioService.findById(id);
-        model.addAttribute("servicio", servicio);
-        model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
-        model.addAttribute("lugares", lugarService.getAll());
-        model.addAttribute("profesionales", profesionalService.obtenerTodos());
-        return ViewRouteHelper.SERVICIO_FORM;
-    }
+		Set<DayOfWeek> dias = diasSeleccionados != null ? diasSeleccionados.stream().map(String::toUpperCase)
+				.map(DayOfWeek::valueOf).collect(Collectors.toSet()) : Set.of();
 
-    @PostMapping("/save")
-    public String save(
-            @ModelAttribute("servicio") ServicioDTO dto,
-            @RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados,
-            @RequestParam(value = "lugares", required = false) List<Long> lugarIds,
-            @RequestParam(value = "profesionales", required = false) List<Long> profesionalIds
-    ) {
-        Set<DayOfWeek> dias = diasSeleccionados != null
-                ? diasSeleccionados.stream().map(String::toUpperCase).map(DayOfWeek::valueOf).collect(Collectors.toSet())
-                : Set.of();
-        dto.setDiasSemana(dias);
-        dto.setLugarIds(lugarIds);
-        dto.setProfesionalIds(profesionalIds);
+		dto.setDiasSemana(dias);
 
-        if (dto.getId() != null) {
-            servicioService.update(dto.getId(), dto);
-        } else {
-            servicioService.save(dto);
-        }
+		if (dto.getId() != null) {
+			servicioService.update(dto.getId(), dto);
+		} else {
+			servicioService.save(dto);
+		}
 
-        return "redirect:/servicios";
-    }
+		return "redirect:/servicios";
+	}
 
-    @GetMapping("/delete/{id}")
-    public String eliminar(@PathVariable Long id) {
-        servicioService.delete(id);
-        return "redirect:/servicios";
-    }
+	@GetMapping("/edit/{id}")
+	public String editar(@PathVariable Long id, Model model) {
+		ServicioDTO servicio = servicioService.findById(id);
+		model.addAttribute("servicio", servicio);
+		model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
+		return ViewRouteHelper.SERVICIO_FORM;
+	}
 
-    // 🚀 API para JavaScript / AJAX
-    @GetMapping("/api")
-    @ResponseBody
-    public List<ServicioDTO> listarServicios() {
-        return servicioService.findAll();
-    }
+	@GetMapping("/delete/{id}")
+	public String eliminar(@PathVariable Long id) {
+		servicioService.delete(id);
+		return "redirect:/servicios";
+	}
 
-    @GetMapping("/api/{id}")
-    @ResponseBody
-    public ServicioDTO buscarPorId(@PathVariable Long id) {
-        return servicioService.findById(id);
-    }
+	// 🚀 ENDPOINTS API PARA JAVASCRIPT
+	@GetMapping("/api")
+	@ResponseBody
+	public List<ServicioDTO> listarServicios() {
+		return servicioService.findAll();
+	}
 
-    @PostMapping("/api")
-    @ResponseBody
-    public ResponseEntity<ServicioDTO> guardarServicioDesdeAPI(@RequestBody ServicioDTO dto) {
-        if (dto.getId() != null) {
-            servicioService.update(dto.getId(), dto);
-        } else {
-            servicioService.save(dto);
-        }
-        return ResponseEntity.ok(dto);
-    }
+	@GetMapping("/api/{id}")
+	@ResponseBody
+	public ServicioDTO buscarPorId(@PathVariable Long id) {
+		return servicioService.findById(id);
+	}
 
-    @DeleteMapping("/api/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> eliminarDesdeAPI(@PathVariable Long id) {
-        servicioService.delete(id);
-        return ResponseEntity.ok().build();
-    }
+	@PostMapping("/api")
+	@ResponseBody
+	public ResponseEntity<ServicioDTO> guardarServicioDesdeAPI(@RequestBody ServicioDTO dto) {
+		if (dto.getId() != null) {
+			servicioService.update(dto.getId(), dto);
+		} else {
+			servicioService.save(dto);
+		}
+		return ResponseEntity.ok(dto);
+	}
+
+	@DeleteMapping("/api/{id}")
+	@ResponseBody
+	public ResponseEntity<Void> eliminarDesdeAPI(@PathVariable Long id) {
+		servicioService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+
 }

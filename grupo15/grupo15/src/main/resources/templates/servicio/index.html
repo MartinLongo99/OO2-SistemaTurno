@@ -1,228 +1,606 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestión de Servicios</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Turnito - Gestión de Servicios</title>
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .page-header {
+      background: linear-gradient(135deg, #4a6bfd 0%, #2541b2 100%);
+      color: white;
+      padding: 40px 0;
+      margin-bottom: 40px;
+      border-radius: 0 0 20px 20px;
+      text-align: center;
+    }
+    
+    .page-header h1 {
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+      border: none;
+      overflow: hidden;
+    }
+    
+    .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      padding: 20px;
+      position: relative;
+    }
+    
+    .card-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2541b2;
+      display: flex;
+      align-items: center;
+    }
+    
+    .card-header h2 i {
+      margin-right: 12px;
+      font-size: 1.7rem;
+      color: #4a6bfd;
+    }
+    
+    .card-body {
+      padding: 25px;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 0.95rem;
+    }
+    
+    .form-select, .form-control {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #dfe3e9;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+      width: 100%;
+      margin-bottom: 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .form-select:focus, .form-control:focus {
+      border-color: #4a6bfd;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(74, 107, 253, 0.25);
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background-color: #4a6bfd;
+      border-color: #4a6bfd;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2541b2;
+      border-color: #2541b2;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background-color: #6c757d;
+      border-color: #6c757d;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #5a6268;
+      border-color: #5a6268;
+      transform: translateY(-2px);
+    }
+    
+    .btn-warning {
+      background-color: #ffc107;
+      border-color: #ffc107;
+      color: #212529;
+    }
+    
+    .btn-warning:hover {
+      background-color: #e0a800;
+      border-color: #e0a800;
+    }
+    
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+    }
+    
+    .btn-danger:hover {
+      background-color: #c82333;
+      border-color: #c82333;
+    }
+    
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      background-color: #4a6bfd;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      /* margin-top: 20px; este se moverá al button-group */
+    }
+    
+    .btn-back i {
+      margin-right: 8px;
+    }
+    
+    .btn-back:hover {
+      background-color: #2541b2;
+      transform: translateY(-2px);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    th {
+      background-color: #4a6bfd;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    tbody tr:hover {
+      background-color: #f6f9ff;
+    }
+    
+    .services-count {
+      font-weight: 600;
+      color: #4a6bfd;
+      padding: 10px 0;
+    }
+    
+    .form-text {
+      color: #6c757d;
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+    
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .badge {
+      padding: 6px 12px;
+      border-radius: 50px;
+      font-weight: 500;
+    }
+    
+    .badge-active {
+      background-color: #28a745;
+    }
+    
+    .badge-inactive {
+      background-color: #dc3545;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .page-header {
+        padding: 30px 0;
+      }
+      
+      .page-header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .btn {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+      .button-group { /* Añadido para mobile */
+          flex-direction: column;
+          align-items: center;
+      }
+    }
+
+    /* Nuevo CSS para el grupo de botones y el botón de "Ver Todos los Servicios" */
+    .button-group {
+        display: flex;
+        gap: 15px; /* Espacio entre los botones */
+        margin-top: 30px;
+        justify-content: center; /* Centra los botones */
+        flex-wrap: wrap; /* Permite que los botones se envuelvan en pantallas pequeñas */
+    }
+
+    .btn-action { /* Estilo para el nuevo botón */
+        display: inline-flex;
+        align-items: center;
+        background-color: #007bff; /* Un color azul, similar a tu primary */
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-action i {
+        margin-right: 8px;
+    }
+    
+    .btn-action:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+  </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Gestión de Turnos</a>
+  <div class="page-header">
+    <div class="container">
+      <h1>Gestión de Servicios</h1>
+      <p>Administra los servicios disponibles en el sistema</p>
     </div>
-</nav>
+  </div>
 
-<div class="container mt-4">
-    <h1 class="mb-4">Servicios</h1>
+  <div class="container">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2><i class="bi bi-list-check"></i> Formulario de Servicio</h2>
+      </div>
+      <div class="card-body">
+        <form id="formServicio">
+          <input type="hidden" id="id" name="id"/>
 
-    <form id="servicio-form" class="mb-4">
-        <input type="hidden" id="servicio-id">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre del servicio</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required placeholder="Ej: Consulta médica"/>
+              </div>
 
-        <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre del Servicio</label>
-            <input type="text" class="form-control" id="nombre" required>
+              <div class="mb-3">
+                <label for="duracionMinutos" class="form-label">Duración (minutos)</label>
+                <input type="number" class="form-control" id="duracionMinutos" name="duracionMinutos" required min="1" placeholder="Ej: 30"/>
+              </div>
+
+              <div class="mb-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-select" id="estado" name="estado">
+                  <option value="true">Activo</option>
+                  <option value="false">Inactivo</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="horarioInicio" class="form-label">Horario Inicio</label>
+                <input type="time" class="form-control" id="horarioInicio" name="horarioInicio" required/>
+              </div>
+
+              <div class="mb-3">
+                <label for="horarioFin" class="form-label">Horario Fin</label>
+                <input type="time" class="form-control" id="horarioFin" name="horarioFin" required/>
+              </div>
+
+              <div class="mb-3">
+                <label for="diasSemana" class="form-label">Días de la semana</label>
+                <select multiple class="form-select" id="diasSemana" name="diasSemana" required size="7">
+                  <option value="MONDAY">Lunes</option>
+                  <option value="TUESDAY">Martes</option>
+                  <option value="WEDNESDAY">Miércoles</option>
+                  <option value="THURSDAY">Jueves</option>
+                  <option value="FRIDAY">Viernes</option>
+                  <option value="SATURDAY">Sábado</option>
+                  <option value="SUNDAY">Domingo</option>
+                </select>
+                <div class="form-text">
+                  <i class="bi bi-info-circle"></i> Usa Ctrl (o Cmd en Mac) para seleccionar varios días.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save"></i> Guardar Servicio
+            </button>
+            <button type="reset" class="btn btn-secondary">
+              <i class="bi bi-arrow-counterclockwise"></i> Limpiar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2><i class="bi bi-calendar-check-fill"></i> Servicios Registrados</h2>
         </div>
-
-        <div class="mb-3">
-            <label for="duracion" class="form-label">Duración (minutos)</label>
-            <input type="number" class="form-control" id="duracion" required>
+        <div class="card-body">
+            <div id="listaServicios">
+                </div>
         </div>
+    </div>
+    
+    <div class="button-group">
+        <a href="/servicios/todos" class="btn-action">
+            <i class="bi bi-list-ul"></i> Ver Todos los Servicios
+        </a>
 
-        <div class="mb-3">
-            <label for="estado" class="form-label">Estado</label>
-            <select class="form-select" id="estado" required>
-                <option value="true">Activo</option>
-                <option value="false">Inactivo</option>
-            </select>
+        <a href="/" class="btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Volver a Inicio
+        </a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('formServicio').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const diasSemana = Array.from(document.getElementById('diasSemana').selectedOptions).map(opt => opt.value);
+
+      const data = {
+        id: document.getElementById('id').value || null,
+        nombre: document.getElementById('nombre').value,
+        duracionMinutos: parseInt(document.getElementById('duracionMinutos').value),
+        estado: document.getElementById('estado').value === 'true',
+        horarioInicio: document.getElementById('horarioInicio').value,
+        horarioFin: document.getElementById('horarioFin').value,
+        diasSemana: diasSemana
+      };
+
+      // Mostrar indicador de carga en el botón
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch('/servicios/api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          // Mostrar notificación de éxito
+          const alertDiv = document.createElement('div');
+          alertDiv.className = 'alert alert-success alert-dismissible fade show';
+          alertDiv.innerHTML = `
+            <i class="bi bi-check-circle-fill"></i> Servicio guardado correctamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          this.parentNode.insertBefore(alertDiv, this);
+          
+          // Restaurar el botón y resetear el formulario
+          this.reset();
+          cargarServicios(); // Recargar la lista de servicios
+          
+          // Ocultar alerta después de 3 segundos
+          setTimeout(() => alertDiv.remove(), 3000);
+        } else {
+          throw new Error('Error al guardar el servicio');
+        }
+      } catch (error) {
+        // Mostrar notificación de error
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+        alertDiv.innerHTML = `
+          <i class="bi bi-exclamation-triangle-fill"></i> ${error.message || 'Error al guardar el servicio'}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        this.parentNode.insertBefore(alertDiv, this);
+      } finally {
+        // Restaurar el botón
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    async function cargarServicios() {
+      const contenedor = document.getElementById('listaServicios');
+      contenedor.innerHTML = `
+        <div class="loading-spinner">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando servicios...</span>
+          </div>
         </div>
+      `;
+      
+      try {
+        const res = await fetch('/servicios/api');
+        const servicios = await res.json();
 
-        <div class="mb-3">
-            <label for="horarioInicio" class="form-label">Horario de Inicio</label>
-            <input type="time" class="form-control" id="horarioInicio" required>
-        </div>
+        if (servicios.length === 0) {
+          contenedor.innerHTML = `
+            <div class="text-center p-4 text-muted">
+              <i class="bi bi-info-circle fs-1"></i>
+              <p class="mt-3">No hay servicios registrados. Utiliza el formulario para crear uno nuevo.</p>
+            </div>
+          `;
+          return;
+        }
 
-        <div class="mb-3">
-            <label for="horarioFin" class="form-label">Horario de Fin</label>
-            <input type="time" class="form-control" id="horarioFin" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Días de la Semana</label>
-            <div class="form-check form-check-inline" id="dias-checkboxes"></div>
-        </div>
-
-        <div class="mb-3">
-            <label for="servicioLugares" class="form-label">Ubicaciones y Profesionales</label>
-            <select multiple class="form-select" id="servicioLugares"></select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
-
-    <h2>Servicios Cargados</h2>
-    <table class="table table-bordered" id="tabla-servicios">
-        <thead class="table-light">
-            <tr>
-                <th>ID</th>
+        contenedor.innerHTML = `
+          <table class="table">
+            <thead>
+              <tr>
                 <th>Nombre</th>
                 <th>Duración</th>
                 <th>Estado</th>
                 <th>Horario</th>
                 <th>Días</th>
-                <th>Ubicaciones y Profesionales</th>
                 <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("servicio-form");
-    const tabla = document.querySelector("#tabla-servicios tbody");
-
-    const inputId = document.getElementById("servicio-id");
-    const inputNombre = document.getElementById("nombre");
-    const inputDuracion = document.getElementById("duracion");
-    const inputEstado = document.getElementById("estado");
-    const inputInicio = document.getElementById("horarioInicio");
-    const inputFin = document.getElementById("horarioFin");
-    const selectServicioLugares = document.getElementById("servicioLugares");
-
-    const diasSemana = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-    const diasLabels = {
-        MONDAY: "Lunes", TUESDAY: "Martes", WEDNESDAY: "Miércoles", THURSDAY: "Jueves",
-        FRIDAY: "Viernes", SATURDAY: "Sábado", SUNDAY: "Domingo"
-    };
-    const diasContainer = document.getElementById("dias-checkboxes");
-
-    diasSemana.forEach(dia => {
-        diasContainer.innerHTML += `
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="dia-${dia}" value="${dia}">
-                <label class="form-check-label" for="dia-${dia}">${diasLabels[dia]}</label>
-            </div>
-        `;
-    });
-
-    function cargarOpcionesServicioLugar() {
-        fetch("/serviciolugar/api")
-            .then(res => res.json())
-            .then(data => {
-                selectServicioLugares.innerHTML = "";
-                data.forEach(sl => {
-                    if (sl.activo) {
-                        const opt = document.createElement("option");
-                        opt.value = sl.id;
-                        opt.textContent = `${sl.lugarNombre} - ${sl.profesionalNombre}`;
-                        selectServicioLugares.appendChild(opt);
+              </tr>
+            </thead>
+            <tbody>
+              ${servicios.map(s => `
+                <tr>
+                  <td>${s.nombre}</td>
+                  <td>${s.duracionMinutos} min</td>
+                  <td>
+                    <span class="badge ${s.estado ? 'badge-active' : 'badge-inactive'}">
+                      ${s.estado ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </td>
+                  <td>${s.horarioInicio} - ${s.horarioFin}</td>
+                  <td>${(s.diasSemana || []).map(d => {
+                    // Convertir DayOfWeek en string (e.g., MONDAY) a español (Lunes)
+                    switch(d) {
+                        case 'MONDAY': return `<span class="badge bg-light text-dark me-1">Lunes</span>`;
+                        case 'TUESDAY': return `<span class="badge bg-light text-dark me-1">Martes</span>`;
+                        case 'WEDNESDAY': return `<span class="badge bg-light text-dark me-1">Miércoles</span>`;
+                        case 'THURSDAY': return `<span class="badge bg-light text-dark me-1">Jueves</span>`;
+                        case 'FRIDAY': return `<span class="badge bg-light text-dark me-1">Viernes</span>`;
+                        case 'SATURDAY': return `<span class="badge bg-light text-dark me-1">Sábado</span>`;
+                        case 'SUNDAY': return `<span class="badge bg-light text-dark me-1">Domingo</span>`;
+                        default: return `<span class="badge bg-light text-dark me-1">${d}</span>`; // Fallback
                     }
-                });
-            });
+                  }).join('')}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" onclick="editarServicio(${s.id})">
+                      <i class="bi bi-pencil"></i> Editar
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="eliminarServicio(${s.id})">
+                      <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <p class="services-count text-end">
+            <i class="bi bi-check-circle-fill"></i> ${servicios.length} servicio(s) registrado(s)
+          </p>
+        `;
+      } catch (error) {
+        contenedor.innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> Error al cargar los servicios: ${error.message}
+          </div>
+        `;
+        console.error('Error:', error);
+      }
     }
 
-    function cargarServicios() {
-        fetch("/servicios/api")
-            .then(res => res.json())
-            .then(servicios => {
-                tabla.innerHTML = "";
-                servicios.forEach(servicio => {
-                    const fila = document.createElement("tr");
+    async function editarServicio(id) {
+      try {
+        // Mostrar indicador de carga en el formulario
+        const form = document.getElementById('formServicio');
+        form.classList.add('opacity-50');
+        form.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+        
+        const res = await fetch(`/servicios/api/${id}`);
+        const servicio = await res.json();
 
-                    const lugarTexto = (servicio.servicioLugares || []).map(sl =>
-                        `${sl.lugarNombre} - ${sl.profesionalNombre}`
-                    ).join(", ");
+        document.getElementById('id').value = servicio.id;
+        document.getElementById('nombre').value = servicio.nombre;
+        document.getElementById('duracionMinutos').value = servicio.duracionMinutos;
+        document.getElementById('estado').value = servicio.estado.toString();
+        document.getElementById('horarioInicio').value = servicio.horarioInicio;
+        document.getElementById('horarioFin').value = servicio.horarioFin;
 
-                    const diasTexto = (servicio.diasSemana || []).map(d => diasLabels[d]).join(", ");
-
-                    fila.innerHTML = `
-                        <td>${servicio.id}</td>
-                        <td>${servicio.nombre}</td>
-                        <td>${servicio.duracionMinutos} min</td>
-                        <td>${servicio.estado ? 'Activo' : 'Inactivo'}</td>
-                        <td>${servicio.horarioInicio} - ${servicio.horarioFin}</td>
-                        <td>${diasTexto}</td>
-                        <td>${lugarTexto}</td>
-                        <td>
-                            <button class="btn btn-sm btn-info btn-editar" data-id="${servicio.id}">Editar</button>
-                            <button class="btn btn-sm btn-danger btn-eliminar" data-id="${servicio.id}">Eliminar</button>
-                        </td>
-                    `;
-                    tabla.appendChild(fila);
-                });
-
-                document.querySelectorAll(".btn-editar").forEach(btn =>
-                    btn.addEventListener("click", () => cargarServicioPorId(btn.dataset.id))
-                );
-
-                document.querySelectorAll(".btn-eliminar").forEach(btn =>
-                    btn.addEventListener("click", () => eliminarServicio(btn.dataset.id))
-                );
-            });
-    }
-
-    function cargarServicioPorId(id) {
-        fetch(`/servicios/api/${id}`)
-            .then(res => res.json())
-            .then(servicio => {
-                inputId.value = servicio.id;
-                inputNombre.value = servicio.nombre;
-                inputDuracion.value = servicio.duracionMinutos;
-                inputEstado.value = servicio.estado;
-                inputInicio.value = servicio.horarioInicio;
-                inputFin.value = servicio.horarioFin;
-
-                document.querySelectorAll("#dias-checkboxes input").forEach(cb => {
-                    cb.checked = servicio.diasSemana?.includes(cb.value);
-                });
-
-                Array.from(selectServicioLugares.options).forEach(opt => {
-                    opt.selected = servicio.servicioLugares?.some(sl => sl.id === parseInt(opt.value));
-                });
-            });
-    }
-
-    function eliminarServicio(id) {
-        if (confirm("¿Seguro que desea eliminar este servicio?")) {
-            fetch(`/servicios/api/${id}`, { method: "DELETE" })
-                .then(() => cargarServicios());
+        const opciones = document.getElementById('diasSemana').options;
+        for (let opt of opciones) {
+          opt.selected = (servicio.diasSemana || []).includes(opt.value);
         }
+        
+        // Resaltar formulario para mostrar que estamos en modo edición
+        const formCard = document.querySelector('.card');
+        formCard.scrollIntoView({ behavior: 'smooth' });
+        formCard.classList.add('border-primary');
+        
+        setTimeout(() => {
+          formCard.classList.remove('border-primary');
+        }, 1500);
+        
+      } catch (error) {
+        alert('Error al cargar el servicio: ' + error.message);
+      } finally {
+        // Restaurar el formulario
+        const form = document.getElementById('formServicio');
+        form.classList.remove('opacity-50');
+        form.querySelectorAll('input, select, button').forEach(el => el.disabled = false);
+      }
     }
 
-    form.addEventListener("submit", e => {
-        e.preventDefault();
+    async function eliminarServicio(id) {
+      if (!confirm('¿Estás seguro de eliminar este servicio?')) return;
+      
+      try {
+        const res = await fetch(`/servicios/api/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          // Mostrar notificación de éxito
+          const alertDiv = document.createElement('div');
+          alertDiv.className = 'alert alert-success alert-dismissible fade show';
+          alertDiv.innerHTML = `
+            <i class="bi bi-check-circle-fill"></i> Servicio eliminado correctamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          document.querySelector('.card-body').appendChild(alertDiv);
+          
+          // Ocultar alerta después de 3 segundos
+          setTimeout(() => alertDiv.remove(), 3000);
+          
+          cargarServicios(); // Recargar la lista
+        } else {
+          throw new Error('Error al eliminar el servicio');
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    }
 
-        const diasSeleccionados = Array.from(document.querySelectorAll("#dias-checkboxes input:checked")).map(cb => cb.value);
-        const servicioLugarIdsSeleccionados = Array.from(selectServicioLugares.selectedOptions).map(opt => parseInt(opt.value));
-
-        const data = {
-            nombre: inputNombre.value,
-            duracionMinutos: parseInt(inputDuracion.value),
-            estado: inputEstado.value === "true",
-            horarioInicio: inputInicio.value,
-            horarioFin: inputFin.value,
-            diasSemana: diasSeleccionados,
-            servicioLugarIds: servicioLugarIdsSeleccionados
-        };
-
-        const method = inputId.value ? "PUT" : "POST";
-        const url = inputId.value ? `/servicios/api/${inputId.value}` : "/servicios/api";
-
-        fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        }).then(() => {
-            form.reset();
-            inputId.value = "";
-            cargarServicios();
-        });
-    });
-
-    cargarOpcionesServicioLugar();
+    // Inicializar
     cargarServicios();
-});
-</script>
+  </script>
 </body>
 </html>
