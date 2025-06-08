@@ -18,7 +18,5 @@ public class Direccion {
 
     @ManyToOne
     private Localidad localidad;
-
-    @ManyToOne
-    private Provincia provincia;
 }
+

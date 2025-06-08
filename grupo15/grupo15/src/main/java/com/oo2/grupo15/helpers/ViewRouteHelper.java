@@ -32,4 +32,5 @@ public class ViewRouteHelper {
 	// SOLICITANTE (si luego agregás consulta por pago u otro atributo)
 	public final static String SOLICITANTE_INDEX = "usuario/solicitante/index";
 	public final static String SOLICITANTE_API_BUSCAR = "/solicitantes/api/buscar";
+
 }

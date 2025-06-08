@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class LocalidadDTO {
 
-    private int id;
+    private Integer id;
 
     private String nombre;
     
