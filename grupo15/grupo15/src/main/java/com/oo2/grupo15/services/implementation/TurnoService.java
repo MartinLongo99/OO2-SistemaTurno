@@ -17,6 +17,7 @@ import com.oo2.grupo15.entities.Turno;
 import com.oo2.grupo15.repositories.IServicioLugarRepository;
 import com.oo2.grupo15.repositories.ISolicitanteRepository;
 import com.oo2.grupo15.repositories.ITurnoRepository;
+import com.oo2.grupo15.services.IEmailService;
 import com.oo2.grupo15.services.ITurnoService;
 
 @Service
@@ -32,6 +33,9 @@ public class TurnoService implements ITurnoService {
     private ISolicitanteRepository solicitanteRepository;
     @Autowired
     private IContactoRepository contactoRepository;
+    
+    @Autowired
+    private IEmailService emailService;
 
     private ModelMapper modelMapper = new ModelMapper();
 
@@ -52,6 +56,29 @@ public class TurnoService implements ITurnoService {
         }
 
         Turno saved = turnoRepository.save(turno);
+        
+     // Enviar email de confirmación
+        try {
+            Solicitante solicitante = turno.getSolicitante();
+            String email = solicitante.getEmail();
+
+            if (email != null && !email.isEmpty()) {
+                org.thymeleaf.context.Context context = new org.thymeleaf.context.Context();
+                context.setVariable("solicitante", solicitante);
+                context.setVariable("servicioLugar", turno.getServicioLugar());
+                context.setVariable("fechaHora", turno.getFechaHora());
+                context.setVariable("profesional", turno.getServicioLugar().getProfesional());
+
+                emailService.sendMailWithThymeleafTemplate(email, "Confirmación de Turno", "mail/turno-confirmacion.html", context);
+            } else {
+                System.out.println("El solicitante no tiene un email válido, no se envía correo.");
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al intentar enviar el correo de confirmación: " + e.getMessage());
+        }
+
+        
         return modelMapper.map(saved, TurnoDTO.class);
     }
     public boolean tieneTurnosActivos(Long usuarioId) {

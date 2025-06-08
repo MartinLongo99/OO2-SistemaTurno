@@ -16,8 +16,9 @@ public class MailConfiguration {
 
 	        mailSender.setHost("smtp.gmail.com");
 	        mailSender.setPort(587);
-	        mailSender.setUsername(System.getenv("sistemadeturnos15@gmail.com"));
-	        mailSender.setPassword(System.getenv("Root1234"));
+	        mailSender.setUsername(System.getenv("USER_EMAIL"));
+	        mailSender.setPassword(System.getenv("PASSWORD_EMAIL"));
+
 
 	        Properties props = mailSender.getJavaMailProperties();
 	        props.put("mail.smtp.auth", true);
