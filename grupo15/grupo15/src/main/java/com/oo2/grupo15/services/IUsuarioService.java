@@ -12,5 +12,7 @@ public interface IUsuarioService {
 	UsuarioDTO buscarPorEmail(String email);
 	UsuarioDTO guardar(UsuarioDTO usuarioDTO);
 	void eliminarUsuario(Long id);
+	List<UsuarioDTO> getAll();
+	List<UsuarioDTO> findByContactoDni(long dni);
 	
 }

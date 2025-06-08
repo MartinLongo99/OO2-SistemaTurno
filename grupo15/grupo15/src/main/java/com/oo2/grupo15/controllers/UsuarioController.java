@@ -2,6 +2,9 @@ package com.oo2.grupo15.controllers;
 
 
 import com.oo2.grupo15.exceptions.UsuarioConTurnosActivosException;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +39,22 @@ public class UsuarioController {
         ModelAndView mAV = new ModelAndView(ViewRouteHelper.USUARIO_INDEX); 
         mAV.addObject("usuarios", usuarioService.obtenerTodos());
         mAV.addObject("usuarioNuevo", new UsuarioDTO());
+        return mAV;
+    }
+    
+    @GetMapping("/gestion")
+    public ModelAndView gestionarUsuarios(@RequestParam(name = "dni", required = false) Long dni) {
+        ModelAndView mAV = new ModelAndView(ViewRouteHelper.USUARIO_ALL); 
+        List<UsuarioDTO> usuarios;
+
+        if (dni != null) {
+            usuarios = usuarioService.findByContactoDni(dni);
+        } else {
+            usuarios = usuarioService.getAll();
+        }
+
+        mAV.addObject("usuarios", usuarios);
+        mAV.addObject("dniBuscado", dni); 
         return mAV;
     }
 
