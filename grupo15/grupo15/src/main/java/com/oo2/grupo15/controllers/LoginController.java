@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.oo2.grupo15.dtos.UsuarioDTO;
 import com.oo2.grupo15.services.IUsuarioService;
 
-import ch.qos.logback.core.model.Model;
 import jakarta.servlet.http.HttpSession;
 
 @Controller

@@ -11,7 +11,7 @@ public class LugarDTO {
     private DireccionDTO direccion;
 
     public LugarDTO() {
-        this.direccion = new DireccionDTO(); // ← ¡IMPORTANTE! Inicializar para que no sea null
+        this.direccion = new DireccionDTO(); // Inicializar para que no sea null
     }
 
     public LugarDTO(int id, String nombre, DireccionDTO direccion) {
