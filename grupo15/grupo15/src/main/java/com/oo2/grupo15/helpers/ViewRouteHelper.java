@@ -23,7 +23,7 @@ public class ViewRouteHelper {
 	
 	public final static String USUARIO_INDEX = "usuario/index";
 	public final static String USUARIO_ALL = "usuario/all";
-
+	public static final String USUARIO_EDITAR = "usuario-editar";
 	
 	// PROFESIONAL
 	public final static String PROFESIONAL_INDEX = "profesional/index";

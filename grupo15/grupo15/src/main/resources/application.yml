@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${USERNAME}
-    password: ${PASSWORD}
+    url: jdbc:mysql://localhost:3306/turnito_db?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
 
   jpa:
     show-sql: true
@@ -17,8 +17,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${USER_EMAIL}
-    password: ${PASSWORD_EMAIL}
+    username: sistemadeturnos15@gmail.com
+    password: lmsy awjd hiuc acos
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true

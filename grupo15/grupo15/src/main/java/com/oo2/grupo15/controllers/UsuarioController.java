@@ -92,9 +92,8 @@ public class UsuarioController {
     @GetMapping("/editar/{id}")
     public ModelAndView editarUsuario(@PathVariable Long id) {
         UsuarioDTO usuario = usuarioService.obtenerPorId(id);
-        ModelAndView mAV = new ModelAndView("usuarios");
+        ModelAndView mAV = new ModelAndView("usuario/usuario-editar"); // Incluir la subcarpeta
         mAV.addObject("usuarioNuevo", usuario);
-        mAV.addObject("usuarios", usuarioService.obtenerTodos());
         return mAV;
     }
 }
