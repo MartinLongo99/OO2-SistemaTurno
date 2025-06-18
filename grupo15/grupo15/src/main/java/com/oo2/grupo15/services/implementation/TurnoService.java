@@ -4,16 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.oo2.grupo15.dtos.ContactoDTO;
-import com.oo2.grupo15.dtos.DireccionDTO;
-import com.oo2.grupo15.dtos.LocalidadDTO;
 import com.oo2.grupo15.dtos.SolicitanteDTO;
 import com.oo2.grupo15.entities.Contacto;
-import com.oo2.grupo15.entities.Direccion;
-import com.oo2.grupo15.entities.Localidad;
 import com.oo2.grupo15.repositories.IContactoRepository;
-import com.oo2.grupo15.repositories.ILocalidadRepository;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,20 +36,8 @@ public class TurnoService implements ITurnoService {
     
     @Autowired
     private IEmailService emailService;
-    
-    @Autowired
-    private ILocalidadRepository localidadRepository;
-
 
     private ModelMapper modelMapper = new ModelMapper();
-    
-    @Override
-    public List<TurnoDTO> obtenerTurnosPorSolicitante(Long solicitanteId) {
-        return turnoRepository.findBySolicitanteId(solicitanteId).stream()
-                .map(turno -> modelMapper.map(turno, TurnoDTO.class))
-                .collect(Collectors.toList());
-    }
-
 
     @Override
     public TurnoDTO crearTurno(TurnoDTO dto) {
@@ -169,61 +150,54 @@ public class TurnoService implements ITurnoService {
     }
     @Override
     public TurnoDTO crearTurnoConDni(TurnoDTO dto, SolicitanteDTO solicitanteDTO) {
-        Long dni = solicitanteDTO.getContacto().getDni();
-        Solicitante solicitanteExistente = solicitanteRepository.findByContactoDni(dni);
+        // Primero verificamos si existe un solicitante con ese DNI usando el método
+        Solicitante solicitanteExistente = solicitanteRepository.findByContactoDni(solicitanteDTO.getDni());
 
+        // Si encontramos un solicitante, usamos su ID
         if (solicitanteExistente != null) {
-            System.out.println("Solicitante encontrado con DNI " + dni + ", ID: " + solicitanteExistente.getId());
+            System.out.println("Solicitante encontrado con DNI " + solicitanteDTO.getDni() + ", ID: " + solicitanteExistente.getId());
             dto.setSolicitanteId(solicitanteExistente.getId());
         } else {
-            System.out.println("No se encontró solicitante con DNI: " + dni + ". Creando nuevo solicitante...");
+            System.out.println("No se encontró solicitante con DNI: " + solicitanteDTO.getDni() + ". Creando nuevo solicitante...");
 
             try {
+                // Crear nuevo solicitante - con constructor booleano para el atributo 'pago'
                 Solicitante nuevoSolicitante = new Solicitante(false);
+
+                // Configurar propiedades del Usuario
                 nuevoSolicitante.setEmail(solicitanteDTO.getEmail());
-                nuevoSolicitante.setPassword("password_temporal");
+                nuevoSolicitante.setPassword("password_temporal"); // Contraseña temporal
 
-                // Crear contacto
+                // Crear y configurar el contacto
                 Contacto contacto = new Contacto();
-                ContactoDTO contactoDTO = solicitanteDTO.getContacto();
-                contacto.setNombre(contactoDTO.getNombre());
-                contacto.setApellido(contactoDTO.getApellido());
-                contacto.setDni(contactoDTO.getDni());
-                contacto.setTelefono(contactoDTO.getTelefono());
+                contacto.setNombre(solicitanteDTO.getNombre());
+                contacto.setApellido(solicitanteDTO.getApellido());
+                contacto.setDni(solicitanteDTO.getDni());
 
-                // Crear dirección (si existe)
-                DireccionDTO direccionDTO = contactoDTO.getDireccion();
-                if (direccionDTO != null && direccionDTO.getLocalidad() != null) {
-                    Direccion direccion = new Direccion();
-                    direccion.setCalleYAltura(direccionDTO.getCalleYAltura());
-
-                    LocalidadDTO localidadDTO = direccionDTO.getLocalidad();
-                    Localidad localidad = localidadRepository.findById(localidadDTO.getId()).orElse(null);
-
-                    if (localidad != null) {
-                        direccion.setLocalidad(localidad);
-                        contacto.setDireccion(direccion);
-                    }
-                }
-
+                // Guardar primero el contacto
                 Contacto contactoGuardado = contactoRepository.save(contacto);
+
+                // Asignar el contacto guardado al solicitante
                 nuevoSolicitante.setContacto(contactoGuardado);
 
+                // Guardar el solicitante
                 Solicitante saved = solicitanteRepository.save(nuevoSolicitante);
                 System.out.println("Nuevo solicitante creado con ID: " + saved.getId());
 
+                // Asignar el ID del solicitante al DTO del turno
                 dto.setSolicitanteId(saved.getId());
-
             } catch (Exception e) {
                 System.err.println("Error al crear solicitante: " + e.getMessage());
                 e.printStackTrace();
+                // Si falla la creación del solicitante, continuamos sin asignar uno al turno
             }
         }
 
+        // Asegurarnos de que el DTO tenga el solicitanteId
         System.out.println("Creando turno con solicitanteId: " + dto.getSolicitanteId());
+
+        // Ahora creamos el turno con el solicitante asignado
         return crearTurno(dto);
     }
-
-
 
 }
