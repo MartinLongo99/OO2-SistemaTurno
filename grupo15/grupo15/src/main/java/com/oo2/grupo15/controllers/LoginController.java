@@ -1,7 +1,6 @@
 package com.oo2.grupo15.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,26 +10,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.oo2.grupo15.dtos.UsuarioDTO;
-import com.oo2.grupo15.entities.Contacto;
-import com.oo2.grupo15.entities.Role;
-import com.oo2.grupo15.entities.Usuario;
-import com.oo2.grupo15.repositories.IRoleRepository;
 import com.oo2.grupo15.services.IUsuarioService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/auth")
 public class LoginController {
 
-    @Autowired
-    private IUsuarioService usuarioService;
-
-    @Autowired
-    private IRoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @GetMapping("/login")
+	@Autowired
+	private IUsuarioService usuarioService;
+	
+	@GetMapping("/login")
     public ModelAndView mostrarLogin(@RequestParam(name = "error", required = false) String error,
                                      @RequestParam(name = "logout", required = false) String logout) {
         ModelAndView mav = new ModelAndView("login/index");
@@ -39,20 +30,35 @@ public class LoginController {
         return mav;
     }
 
-    @GetMapping("/loginSuccess")
-    public String loginSuccess() {
-        return "redirect:/";
+    @PostMapping("/login")
+    public ModelAndView procesarLogin(@RequestParam String email,
+                                      @RequestParam String password,
+                                      HttpSession session) {
+        UsuarioDTO usuario = usuarioService.buscarPorEmail(email);
+
+        if (usuario != null && usuario.getPassword().equals(password)) {
+            session.setAttribute("usuarioLogueado", usuario);
+            return new ModelAndView("redirect:/");
+        }
+
+        ModelAndView mav = new ModelAndView("redirect:/auth/login");
+        mav.addObject("error", true);
+        return mav;
     }
 
-
-
+    @PostMapping("/logout")
+    public ModelAndView logout(HttpSession session) {
+        session.invalidate();
+        return new ModelAndView("redirect:/auth/login?logout=true");
+    }
+    
     @GetMapping("/registro")
     public ModelAndView mostrarRegistro() {
         ModelAndView mav = new ModelAndView("registro/index");
         mav.addObject("usuarioNuevo", new UsuarioDTO());
         return mav;
     }
-
+    
     @PostMapping("/registro")
     public ModelAndView procesarRegistro(@ModelAttribute("usuarioNuevo") UsuarioDTO usuarioNuevo) {
         System.out.println("Datos recibidos: " + usuarioNuevo.getEmail() + " / " + usuarioNuevo.getPassword());
@@ -64,28 +70,14 @@ public class LoginController {
             return mav;
         }
 
-        // Encriptar la contraseña antes de guardar
-        String passwordEncriptada = passwordEncoder.encode(usuarioNuevo.getPassword());
-        usuarioNuevo.setPassword(passwordEncriptada);
+        System.out.println("Guardando usuario: " + usuarioNuevo.getEmail());
 
-        // Asignar rol de USER al nuevo usuario
         UsuarioDTO guardado = usuarioService.guardar(usuarioNuevo);
 
-        // Ahora necesitamos asignar el rol USER manualmente
-        // Como estamos trabajando con DTOs, tenemos que obtener la entidad
-        Usuario usuario = new Usuario();
-        usuario.setId(guardado.getId());
-
-        // Obtener el rol USER
-        Role rolUser = roleRepository.findByName("USER");
-        if (rolUser != null) {
-            usuario.addRole(rolUser);
-            // Guardar el usuario con el rol asignado
-            usuarioService.guardar(guardado);
-        }
-
-        System.out.println("Usuario registrado: " + guardado.getEmail());
+        System.out.println("Usuario guardado: " + guardado.getEmail());
 
         return new ModelAndView("redirect:/auth/login");
     }
+
+
 }
