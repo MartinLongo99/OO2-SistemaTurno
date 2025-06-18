@@ -1,10 +1,16 @@
 package com.oo2.grupo15.services.implementation;
 
 import com.oo2.grupo15.dtos.ContactoDTO;
+import com.oo2.grupo15.dtos.DireccionDTO;
+import com.oo2.grupo15.dtos.LocalidadDTO;
 import com.oo2.grupo15.dtos.ProfesionalDTO;
+import com.oo2.grupo15.dtos.ProvinciaDTO;
 import com.oo2.grupo15.entities.Contacto;
+import com.oo2.grupo15.entities.Direccion;
 import com.oo2.grupo15.entities.Especialidad;
+import com.oo2.grupo15.entities.Localidad;
 import com.oo2.grupo15.entities.Profesional;
+import com.oo2.grupo15.entities.Provincia;
 import com.oo2.grupo15.repositories.IEspecialidadRepository;
 import com.oo2.grupo15.repositories.IProfesionalRepository;
 import com.oo2.grupo15.services.IProfesionalService;
@@ -74,19 +80,35 @@ public class ProfesionalService implements IProfesionalService {
             contactoDTO.setNombre(contacto.getNombre());
             contactoDTO.setApellido(contacto.getApellido());
             contactoDTO.setDni(contacto.getDni());
+            contactoDTO.setTelefono(contacto.getTelefono());
 
-            if (contacto.getDireccion() != null) {
-                contactoDTO.setCalleYAltura(contacto.getDireccion().getCalleYAltura());
+            Direccion direccion = contacto.getDireccion();
+            if (direccion != null) {
+                DireccionDTO direccionDTO = new DireccionDTO();
+                direccionDTO.setId(direccion.getId());
+                direccionDTO.setCalleYAltura(direccion.getCalleYAltura());
 
-                if (contacto.getDireccion().getLocalidad() != null) {
-                    contactoDTO.setLocalidad(contacto.getDireccion().getLocalidad().getNombre());
+                Localidad localidad = direccion.getLocalidad();
+                if (localidad != null) {
+                    LocalidadDTO localidadDTO = new LocalidadDTO();
+                    localidadDTO.setId(localidad.getId());
+                    localidadDTO.setNombre(localidad.getNombre());
 
-                    if (contacto.getDireccion().getLocalidad().getProvincia() != null) {
-                        contactoDTO.setProvincia(contacto.getDireccion().getLocalidad().getProvincia().getNombre());
+                    Provincia provincia = localidad.getProvincia();
+                    if (provincia != null) {
+                        ProvinciaDTO provinciaDTO = new ProvinciaDTO();
+                        provinciaDTO.setId(provincia.getId());
+                        provinciaDTO.setNombre(provincia.getNombre());
+                        localidadDTO.setProvincia(provinciaDTO);
                     }
+
+                    direccionDTO.setLocalidad(localidadDTO);
                 }
+
+                contactoDTO.setDireccion(direccionDTO);
             }
         }
+
 
         // Convertir especialidades a NOMBRES
         List<String> especialidadesNombres = profesional.getEspecialidades().stream()

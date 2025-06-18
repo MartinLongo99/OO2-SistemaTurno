@@ -203,7 +203,6 @@
                 <p>
                     <i class="bi bi-calendar-date"></i>
                     <strong>Fecha:</strong>
-                    <!-- Cambiamos el formato de fecha para evitar el error de locale -->
                     <span th:text="${#temporals.format(fechaHora, 'dd/MM/yyyy')}"></span>
                 </p>
                 <p>
@@ -244,7 +243,7 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="telefono" class="form-label">Teléfono</label>
-                            <input type="text" class="form-control" id="telefono" name="telefono" required>
+                            <input type="number" class="form-control" id="telefono" name="telefono" required min="1000000" step="1" placeholder="Ej: 1145678901">
                         </div>
                     </div>
                 </div>

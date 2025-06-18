@@ -10,7 +10,6 @@ public class ContactoDTO {
     private String nombre;
     private String apellido;
     private long dni;
-    private String calleYAltura;
-    private String localidad;
-    private String provincia;
+    private long telefono;
+    private DireccionDTO direccion;
 }

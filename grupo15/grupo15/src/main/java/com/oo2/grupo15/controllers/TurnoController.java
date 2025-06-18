@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.oo2.grupo15.dtos.ContactoDTO;
+import com.oo2.grupo15.dtos.DireccionDTO;
 import com.oo2.grupo15.dtos.SolicitanteDTO;
 import com.oo2.grupo15.dtos.TurnoDTO;
 import com.oo2.grupo15.entities.Contacto;
@@ -57,6 +59,13 @@ public class TurnoController {
         return "turno/reserva";
     }
     
+    @GetMapping("/misTurnos")
+    public String verTurnosPorSolicitante(@RequestParam("solicitanteId") Long id, Model model) {
+        List<TurnoDTO> turnos = turnoService.obtenerTurnosPorSolicitante(id);
+        model.addAttribute("turnos", turnos);
+        return "turno/misTurnos"; // vista HTML con los turnos
+    }
+
 
 
     // Endpoint que retorna turnos existentes
@@ -162,30 +171,37 @@ public class TurnoController {
                                @RequestParam("apellido") String apellido,
                                @RequestParam("dni") long dni,
                                @RequestParam("email") String email,
-                               @RequestParam("telefono") String telefono,
+                               @RequestParam("telefono") long telefono,
                                RedirectAttributes redirectAttributes) {
 
-        // Crear DTO para el turno
+        // Crear TurnoDTO
         TurnoDTO turnoDTO = new TurnoDTO();
         turnoDTO.setFechaHora(fechaHora);
         turnoDTO.setServicioLugarId(servicioLugarId);
-        turnoDTO.setEstado(true); // Por defecto el turno está activo
+        turnoDTO.setEstado(true); // por defecto activo
 
-        // Crear DTO para el solicitante
+        // Crear ContactoDTO
+        ContactoDTO contactoDTO = new ContactoDTO();
+        contactoDTO.setNombre(nombre);
+        contactoDTO.setApellido(apellido);
+        contactoDTO.setDni(dni);
+        contactoDTO.setTelefono(telefono);
+
+        // (opcional) Dirección vacía o parcial si no se recolecta desde el formulario
+        DireccionDTO direccionDTO = new DireccionDTO();
+        direccionDTO.setCalleYAltura(""); // o podés omitir si no tenés el dato
+        contactoDTO.setDireccion(direccionDTO);
+
+        // Crear SolicitanteDTO con el contacto
         SolicitanteDTO solicitanteDTO = new SolicitanteDTO();
-        solicitanteDTO.setNombre(nombre);
-        solicitanteDTO.setApellido(apellido);
-        solicitanteDTO.setDni(dni);
         solicitanteDTO.setEmail(email);
-        solicitanteDTO.setTelefono(telefono);
+        solicitanteDTO.setContacto(contactoDTO);
 
-        // Llamar al servicio para crear el turno con los datos del solicitante
+        // Crear turno
         TurnoDTO turnoCreado = turnoService.crearTurnoConDni(turnoDTO, solicitanteDTO);
 
-        // Añadir también la fecha y hora al modelo para mostrarla en la confirmación
+        // Redirigir con datos para mostrar en la vista
         redirectAttributes.addFlashAttribute("fechaHora", fechaHora);
-
-        // Guardar el ID del turno y otros datos para la página de confirmación
         redirectAttributes.addFlashAttribute("turnoId", turnoCreado.getId());
         redirectAttributes.addFlashAttribute("nombreSolicitante", nombre);
         redirectAttributes.addFlashAttribute("apellidoSolicitante", apellido);

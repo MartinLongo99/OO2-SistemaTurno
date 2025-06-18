@@ -10,10 +10,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SolicitanteDTO {
-    private Long id;
-    private String nombre;
-    private String apellido;
-    private long dni;
-    private String email;
-    private String telefono;
+    private ContactoDTO contacto;
+    private String email; // porque está en Usuario
+    private Boolean pago;
 }
