@@ -3,7 +3,6 @@ package com.oo2.grupo15.controllers;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +14,15 @@ import org.springframework.web.bind.annotation.*;
 
 import com.oo2.grupo15.dtos.SolicitanteDTO;
 import com.oo2.grupo15.dtos.TurnoDTO;
+import com.oo2.grupo15.entities.Contacto;
 import com.oo2.grupo15.entities.Servicio;
+import com.oo2.grupo15.entities.Solicitante;
+import com.oo2.grupo15.entities.Turno;
 import com.oo2.grupo15.repositories.ITurnoRepository;
 import com.oo2.grupo15.services.IServicioService;
 import com.oo2.grupo15.services.ITurnoService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.oo2.grupo15.exceptions.RecursoNoEncontradoException;
 
 @Controller
 @RequestMapping("/turnos")
@@ -194,47 +197,49 @@ public class TurnoController {
     }
     @GetMapping("/confirmacion")
     public String mostrarConfirmacion(Model model) {
-        // Si no hay datos en el modelo, obtenemos el último turno creado
-        if (!model.containsAttribute("turnoId")) {
-            try {
-                List<TurnoDTO> ultimosTurnos = turnoService.obtenerTodos();
-                if (!ultimosTurnos.isEmpty()) {
-                    // Ordenamos por ID descendente para obtener el último creado
-                    Collections.sort(ultimosTurnos, Comparator.comparing(TurnoDTO::getId).reversed());
-                    TurnoDTO ultimoTurno = ultimosTurnos.get(0);
+        try {
+            if (!model.containsAttribute("turnoId")) {
+                List<TurnoDTO> turnos = turnoService.obtenerTodos();
 
-                    model.addAttribute("turno", ultimoTurno);
-                    model.addAttribute("turnoId", ultimoTurno.getId());
-
-                    // Aquí deberías obtener los datos del solicitante asociado al turno
-                    if (ultimoTurno.getSolicitanteId() != null) {
-                        // Aquí deberías tener un método para obtener el solicitante por ID
-                        // Ejemplo (debes implementar este método o similar):
-                        // SolicitanteDTO solicitante = solicitanteService.findById(ultimoTurno.getSolicitanteId());
-
-                        // Por ahora, usamos datos de ejemplo:
-                        model.addAttribute("nombreSolicitante", "Juan");
-                        model.addAttribute("apellidoSolicitante", "Pérez");
-                        model.addAttribute("dniSolicitante", "12345678");
-                        model.addAttribute("emailSolicitante", "juan.perez@email.com");
-                        model.addAttribute("telefonoSolicitante", "+54 9 11 1234-5678");
-                    }
-
-                    // También podrías obtener la información del servicio/lugar
-                    if (ultimoTurno.getServicioLugarId() != null) {
-                        // Ejemplo (debes implementar estos métodos o similares):
-                        // ServicioLugarDTO servicioLugar = servicioLugarService.findById(ultimoTurno.getServicioLugarId());
-
-                        model.addAttribute("nombreServicio", "Consulta Médica"); // Ejemplo
-                        model.addAttribute("nombreLugar", "Consultorio Central"); // Ejemplo
-                    }
+                if (turnos.isEmpty()) {
+                    throw new RecursoNoEncontradoException("No hay turnos disponibles.");
                 }
-            } catch (Exception e) {
-                // Manejar posibles errores
-                e.printStackTrace();
-            }
-        }
 
-        return "turno/confirmacion";
+                // Ordenamos para obtener el último creado
+                turnos.sort(Comparator.comparing(TurnoDTO::getId).reversed());
+                TurnoDTO ultimoTurnoDTO = turnos.get(0);
+
+                model.addAttribute("turno", ultimoTurnoDTO);
+                model.addAttribute("turnoId", ultimoTurnoDTO.getId());
+
+                // Acceder directamente al Turno como entidad para traer relaciones
+                Turno turnoEntidad = turnoService.obtenerEntidadPorId(ultimoTurnoDTO.getId());
+
+                // Datos del solicitante
+                Solicitante solicitante = turnoEntidad.getSolicitante();
+                if (solicitante != null && solicitante.getContacto() != null) {
+                    Contacto contacto = solicitante.getContacto();
+
+                    model.addAttribute("nombreSolicitante", contacto.getNombre());
+                    model.addAttribute("apellidoSolicitante", contacto.getApellido());
+                    model.addAttribute("dniSolicitante", contacto.getDni());
+                    model.addAttribute("emailSolicitante", solicitante.getEmail());
+                    model.addAttribute("telefonoSolicitante", contacto.getTelefono());
+                }
+
+            }
+
+            return "turno/confirmacion";
+
+        } catch (RecursoNoEncontradoException e) {
+            model.addAttribute("error", e.getMessage());
+            return "error/404";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Error inesperado al mostrar la confirmación.");
+            return "error/500";
+        }
     }
+
+
 }

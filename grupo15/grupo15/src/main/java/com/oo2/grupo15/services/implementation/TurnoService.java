@@ -127,6 +127,13 @@ public class TurnoService implements ITurnoService {
                         .orElseThrow(() -> new RuntimeException("Turno no encontrado")),
                 TurnoDTO.class);
     }
+    
+    @Override
+    public Turno obtenerEntidadPorId(Long id) {
+        return turnoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Turno no encontrado"));
+    }
+
 
     @Override
     public List<TurnoDTO> obtenerTurnosEntreFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
