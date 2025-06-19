@@ -1,6 +1,8 @@
 package com.oo2.grupo15.services;
 
 import java.util.List;
+import java.util.Optional;
+
 import com.oo2.grupo15.dtos.UsuarioDTO;
 
 public interface IUsuarioService {
@@ -13,6 +15,6 @@ public interface IUsuarioService {
 	UsuarioDTO guardar(UsuarioDTO usuarioDTO);
 	void eliminarUsuario(Long id);
 	List<UsuarioDTO> getAll();
-	List<UsuarioDTO> findByContactoDni(long dni);
+	Optional<UsuarioDTO> findByContactoDni(long dni);
 	
 }
