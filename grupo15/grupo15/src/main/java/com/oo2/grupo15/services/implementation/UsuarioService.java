@@ -31,7 +31,6 @@ public class UsuarioService implements IUsuarioService, UserDetailsService {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	// Implementación del método UserDetailsService
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Usuario usuario = usuarioRepository.findByEmail(email)
@@ -47,7 +46,13 @@ public class UsuarioService implements IUsuarioService, UserDetailsService {
 	@Override
 	public UsuarioDTO crearUsuario(UsuarioDTO dto) {
 		Usuario usuario = modelMapper.map(dto, Usuario.class);
+		if (dto.getContacto() != null && dto.getContacto().getDni() != 0) { 
+            Optional<Usuario> usuarioConMismoDni = usuarioRepository.findByContactoDni(dto.getContacto().getDni());
 
+            if (usuarioConMismoDni.isPresent()) {
+                throw new DNIExistenteException("El DNI " + dto.getContacto().getDni() + " ya está registrado para otro usuario.");
+            }
+        }
 		Contacto contacto = new Contacto();
 		contacto.setNombre(dto.getContacto() != null ? dto.getContacto().getNombre() : null);
 		contacto.setApellido(dto.getContacto() != null ? dto.getContacto().getApellido() : null);
@@ -91,18 +96,18 @@ public class UsuarioService implements IUsuarioService, UserDetailsService {
         if (dto.getContacto() != null && dto.getContacto().getDni() != 0) { 
             Optional<Usuario> usuarioConMismoDni = usuarioRepository.findByContactoDni(dto.getContacto().getDni());
 
-            if (usuarioConMismoDni.isPresent() && !usuarioConMismoDni.get().getId().equals(id)) {
-                
+            if (usuarioConMismoDni.isPresent()) {
                 throw new DNIExistenteException("El DNI " + dto.getContacto().getDni() + " ya está registrado para otro usuario.");
             }
         }
 		usuario.setEmail(dto.getEmail());
 		usuario.setPassword(dto.getPassword());
-
+		
 		if(usuario.getContacto() == null){
 			usuario.setContacto(new Contacto());
 		}
-
+		
+		usuario.getContacto().setDni(dto.getContacto().getDni());
 		usuario.getContacto().setNombre(dto.getContacto() != null ? dto.getContacto().getNombre() : null);
 		usuario.getContacto().setApellido(dto.getContacto() != null ? dto.getContacto().getApellido() : null);
 
