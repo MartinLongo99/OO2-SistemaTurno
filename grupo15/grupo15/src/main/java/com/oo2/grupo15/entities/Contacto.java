@@ -25,6 +25,7 @@ public class Contacto {
 	private String nombre;
 	private String apellido;
 	private long dni;
+	private long telefono;
 
 	@ManyToOne
 	private Direccion direccion;
