@@ -1,9 +1,11 @@
 package com.oo2.grupo15.controllers;
 
 
+import com.oo2.grupo15.exceptions.DNIExistenteException;
 import com.oo2.grupo15.exceptions.UsuarioConTurnosActivosException;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,7 +50,13 @@ public class UsuarioController {
         List<UsuarioDTO> usuarios;
 
         if (dni != null) {
-            usuarios = usuarioService.findByContactoDni(dni);
+            Optional<UsuarioDTO> usuarioEncontrado = usuarioService.findByContactoDni(dni);
+           
+            if (usuarioEncontrado.isPresent()) {
+                usuarios = List.of(usuarioEncontrado.get()); 
+            } else {
+                usuarios = List.of(); 
+            }
         } else {
             usuarios = usuarioService.getAll();
         }
@@ -59,14 +67,24 @@ public class UsuarioController {
     }
 
     @PostMapping("/guardar")
-    public ModelAndView guardarUsuario(@ModelAttribute("usuarioNuevo") UsuarioDTO dto) {
-    	if (dto.getId() == null) {
-    	    usuarioService.crearUsuario(dto);
-    	} else {
-    	    usuarioService.actualizarUsuario(dto.getId(), dto);
-    	}
-
-        return new ModelAndView("redirect:/usuarios");
+    public ModelAndView guardarUsuario(@ModelAttribute("usuarioNuevo") UsuarioDTO dto, RedirectAttributes redirectAttributes) {
+        try {
+            if (dto.getId() == null) {
+                usuarioService.crearUsuario(dto);
+                redirectAttributes.addFlashAttribute("mensaje", "Usuario creado correctamente.");
+            } else {
+                usuarioService.actualizarUsuario(dto.getId(), dto);
+                redirectAttributes.addFlashAttribute("mensaje", "Usuario actualizado correctamente.");
+            }
+            return new ModelAndView("redirect:/usuarios");
+        } catch (DNIExistenteException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            if (dto.getId() != null) {
+                return new ModelAndView("redirect:/usuarios/editar/" + dto.getId());
+            } else {
+                return new ModelAndView("redirect:/usuarios");
+            }
+        } 
     }
 
     @GetMapping("/eliminar/{id}")

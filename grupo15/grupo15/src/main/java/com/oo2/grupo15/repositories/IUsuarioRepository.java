@@ -20,5 +20,5 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Long>{
 	@Query(value = "from Usuario u order by u.id")
 	List<Usuario> obtenerTodos();
 	
-	List<Usuario> findByContactoDni(long dni);
+	Optional<Usuario> findByContactoDni(long dni);
 }

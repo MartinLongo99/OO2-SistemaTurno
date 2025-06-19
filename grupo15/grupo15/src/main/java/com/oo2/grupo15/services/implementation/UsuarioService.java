@@ -3,6 +3,7 @@ package com.oo2.grupo15.services.implementation;
 import com.oo2.grupo15.dtos.UsuarioDTO;
 import com.oo2.grupo15.entities.Contacto;
 import com.oo2.grupo15.entities.Usuario;
+import com.oo2.grupo15.exceptions.DNIExistenteException;
 import com.oo2.grupo15.repositories.IUsuarioRepository;
 import com.oo2.grupo15.services.IUsuarioService;
 
@@ -87,6 +88,14 @@ public class UsuarioService implements IUsuarioService, UserDetailsService {
 		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
 
+        if (dto.getContacto() != null && dto.getContacto().getDni() != 0) { 
+            Optional<Usuario> usuarioConMismoDni = usuarioRepository.findByContactoDni(dto.getContacto().getDni());
+
+            if (usuarioConMismoDni.isPresent() && !usuarioConMismoDni.get().getId().equals(id)) {
+                
+                throw new DNIExistenteException("El DNI " + dto.getContacto().getDni() + " ya está registrado para otro usuario.");
+            }
+        }
 		usuario.setEmail(dto.getEmail());
 		usuario.setPassword(dto.getPassword());
 
@@ -138,10 +147,8 @@ public class UsuarioService implements IUsuarioService, UserDetailsService {
 				.collect(Collectors.toList());
 	}
 
-	public List<UsuarioDTO> findByContactoDni(long dni){
-		return usuarioRepository.findByContactoDni(dni)
-				.stream()
-				.map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
-				.collect(Collectors.toList());
-	}
+	public Optional<UsuarioDTO> findByContactoDni(long dni){
+        Optional<Usuario> usuario = usuarioRepository.findByContactoDni(dni);
+        return usuario.map(u -> modelMapper.map(u, UsuarioDTO.class));
+    }
 }
