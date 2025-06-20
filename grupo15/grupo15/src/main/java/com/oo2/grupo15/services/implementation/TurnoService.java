@@ -195,7 +195,8 @@ public class TurnoService implements ITurnoService {
     
     @Override
     public List<TurnoDTO> obtenerTurnosPorEmailSolicitante(String email) {
-        List<Turno> turnos = turnoRepository.findBySolicitante_Email(email);
+        List<Turno> turnos = turnoRepository.findAllBySolicitante_Email(email);
+
 
 
         return turnos.stream().map(t -> {

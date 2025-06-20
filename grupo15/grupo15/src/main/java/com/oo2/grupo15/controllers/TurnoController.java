@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import com.oo2.grupo15.dtos.SolicitanteDTO;
 import com.oo2.grupo15.dtos.TurnoDTO;
 import com.oo2.grupo15.entities.Servicio;
+import com.oo2.grupo15.exceptions.RecursoNoEncontradoException;
 import com.oo2.grupo15.repositories.ITurnoRepository;
 import com.oo2.grupo15.services.IServicioService;
 import com.oo2.grupo15.services.ITurnoService;
@@ -44,11 +45,23 @@ public class TurnoController {
     
     @GetMapping("/misTurnos")
     public String verMisTurnos(Model model, Principal principal) {
-        String emailUsuario = principal.getName(); // Email del usuario logueado
-        List<TurnoDTO> turnosDelUsuario = turnoService.obtenerTurnosPorEmailSolicitante(emailUsuario);
-        model.addAttribute("turnos", turnosDelUsuario);
-        return "turno/mis-turnos";
+        try {
+            String emailUsuario = principal.getName();
+            List<TurnoDTO> turnosDelUsuario = turnoService.obtenerTurnosPorEmailSolicitante(emailUsuario);
+
+            if (turnosDelUsuario == null || turnosDelUsuario.isEmpty()) {
+                throw new RecursoNoEncontradoException("No se encontraron turnos para el usuario con email: " + emailUsuario);
+            }
+
+            model.addAttribute("turnos", turnosDelUsuario);
+            return "turno/mis-turnos";
+
+        } catch (RecursoNoEncontradoException ex) {
+            model.addAttribute("mensaje", ex.getMessage());
+            return "error/500";
+        }
     }
+
 
     
     @GetMapping("/reserva")
