@@ -14,6 +14,7 @@ public class ViewRouteHelper {
 	public final static String LUGAR_ALL = "lugar/all";
 	public final static String LUGAR_FORM = "lugar/form";
 	public final static String LUGAR_NEW = "lugar/new";
+	public final static String REDIRECT_LUGARES_ROOT = "/lugares/todos";
 	
 	public final static String SERVICIO_INDEX = "servicio/index";
 	public final static String SERVICIO_FORM = "servicio/form";
@@ -25,6 +26,7 @@ public class ViewRouteHelper {
 	public final static String USUARIO_ALL = "usuario/all";
 	public static final String USUARIO_EDITAR = "usuario-editar";
     public final static String ERROR_VIEW = "error/usuario-dni-error"; 
+    public final static String ERROR_LUGAR_VIEW = "error/lugar-error";
     public final static String REDIRECT_USUARIOS_ROOT = "/usuarios";
     public final static String REDIRECT_USUARIOS_EDITAR = "/usuarios/editar/";
 	

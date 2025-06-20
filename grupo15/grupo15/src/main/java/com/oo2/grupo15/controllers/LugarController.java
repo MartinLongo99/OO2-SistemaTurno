@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import com.oo2.grupo15.dtos.LocalidadDTO;
 import com.oo2.grupo15.dtos.LugarDTO;
+import com.oo2.grupo15.exceptions.LugarDuplicadoException;
 import com.oo2.grupo15.helpers.ViewRouteHelper;
 import com.oo2.grupo15.services.ILocalidadService;
 import com.oo2.grupo15.services.ILugarService;
@@ -86,6 +87,11 @@ public class LugarController {
 
 	@PostMapping("/guardar")
 	public String guardarLugar(@ModelAttribute("lugar") LugarDTO lugarDTO) {
+		if (lugarService.existeLugarDuplicado(lugarDTO)) {
+	        throw new LugarDuplicadoException("Ya existe un lugar con el mismo nombre, calle y localidad.");
+	    }
+		
+		
 	    lugarService.save(lugarDTO);
 	    return "redirect:/lugares/todos";
 	}

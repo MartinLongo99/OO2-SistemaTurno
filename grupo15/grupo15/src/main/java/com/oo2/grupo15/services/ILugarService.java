@@ -9,6 +9,7 @@ public interface ILugarService {
 	List<LugarDTO> getAll();
 	LugarDTO save(LugarDTO dto);
 	LugarDTO getById(int id);
+	boolean existeLugarDuplicado(LugarDTO dto);
 	boolean delete(int id);
 
 }
