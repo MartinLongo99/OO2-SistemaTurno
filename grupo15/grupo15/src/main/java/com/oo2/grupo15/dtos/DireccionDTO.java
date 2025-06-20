@@ -11,7 +11,7 @@ public class DireccionDTO {
     private LocalidadDTO localidad;
 
     public DireccionDTO() {
-        this.localidad = new LocalidadDTO(); // ← también prevenís errores en la vista
+        this.localidad = new LocalidadDTO();
     }
 
     public DireccionDTO(int id, String calleYAltura, LocalidadDTO localidad) {

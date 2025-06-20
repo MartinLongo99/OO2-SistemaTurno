@@ -14,6 +14,7 @@ public class ViewRouteHelper {
 	public final static String LUGAR_ALL = "lugar/all";
 	public final static String LUGAR_FORM = "lugar/form";
 	public final static String LUGAR_NEW = "lugar/new";
+	public final static String REDIRECT_LUGARES_ROOT = "/lugares/todos";
 	
 	public final static String SERVICIO_INDEX = "servicio/index";
 	public final static String SERVICIO_FORM = "servicio/form";
