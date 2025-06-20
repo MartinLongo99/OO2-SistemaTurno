@@ -18,4 +18,8 @@ public class TurnoDTO {
     private Long servicioLugarId;
     private Long solicitanteId;
     
+ // Nuevos campos para la vista
+    private String nombreServicio;
+    private String nombreLugar;
+    
 }

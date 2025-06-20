@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Turnos - Turnito</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #4a6bfd 0%, #2541b2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2541b2;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header h2 i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+            color: #4a6bfd;
+        }
+
+        .table {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        .table th {
+            background-color: #f1f3f5;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .badge-activo {
+            background-color: #28a745;
+        }
+
+        .badge-cancelado {
+            background-color: #dc3545;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            background-color: #4a6bfd;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-back i {
+            margin-right: 8px;
+        }
+
+        .btn-back:hover {
+            background-color: #2541b2;
+            transform: translateY(-2px);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .btn-back {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-header">
+    <div class="container">
+        <h1>Mis Turnos</h1>
+        <p>Consulta tus turnos agendados</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="bi bi-clock-history"></i> Turnos Registrados</h2>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Fecha y Hora</th>
+                            <th>Servicio</th>
+                            <th>Lugar</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="turno : ${turnos}">
+                            <td th:text="${#temporals.format(turno.fechaHora, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</td>
+                            <td th:text="${turno.nombreServicio}">Servicio</td>
+                            <td th:text="${turno.nombreLugar}">Lugar</td>
+                            <td>
+                                <span th:if="${turno.estado}" class="badge badge-activo text-white">Activo</span>
+                                <span th:if="${!turno.estado}" class="badge badge-cancelado text-white">Cancelado</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(turnos)}">
+                            <td colspan="4" class="text-center text-muted py-4">
+                                <i class="bi bi-info-circle"></i> No tenés turnos registrados.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <a href="/" class="btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Volver a Inicio
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
