@@ -192,5 +192,27 @@ public class TurnoService implements ITurnoService {
         // Ahora creamos el turno con el solicitante asignado
         return crearTurno(dto);
     }
+    
+    @Override
+    public List<TurnoDTO> obtenerTurnosPorEmailSolicitante(String email) {
+        List<Turno> turnos = turnoRepository.findBySolicitante_Email(email);
+
+
+        return turnos.stream().map(t -> {
+            TurnoDTO dto = modelMapper.map(t, TurnoDTO.class);
+
+            if (t.getServicioLugar() != null) {
+                if (t.getServicioLugar().getServicio() != null) {
+                    dto.setNombreServicio(t.getServicioLugar().getServicio().getNombre());
+                }
+                if (t.getServicioLugar().getLugar() != null) {
+                    dto.setNombreLugar(t.getServicioLugar().getLugar().getNombre());
+                }
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 
 }

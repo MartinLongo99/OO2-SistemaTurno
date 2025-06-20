@@ -1,5 +1,6 @@
 package com.oo2.grupo15.controllers;
 
+import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +41,15 @@ public class TurnoController {
         model.addAttribute("servicios", servicioService.findAll());
         return "turno/index";
     }
+    
+    @GetMapping("/misTurnos")
+    public String verMisTurnos(Model model, Principal principal) {
+        String emailUsuario = principal.getName(); // Email del usuario logueado
+        List<TurnoDTO> turnosDelUsuario = turnoService.obtenerTurnosPorEmailSolicitante(emailUsuario);
+        model.addAttribute("turnos", turnosDelUsuario);
+        return "turno/mis-turnos";
+    }
+
     
     @GetMapping("/reserva")
     public String reservaForm(
