@@ -1,44 +1,19 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="Sistema de gestión de turnos y reservas" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Sistema de gestión de turnos" />
     <meta name="author" content="Turnito" />
-    <title>Turnito - Sistema de Gestión de Turnos</title>
+    <title>Turnito - Sistema de Turnos</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-        }
-        .hero-section {
-            background: linear-gradient(135deg, #4a6bfd 0%, #2541b2 100%);
-            color: white;
-            padding: 80px 0;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 40px;
-        }
-        .hero-text h1 {
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-        .feature-card {
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-        .card-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #4a6bfd;
+            background-color: #f5f7fa;
         }
         .navbar {
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -47,10 +22,38 @@
             font-weight: 700;
             font-size: 1.5rem;
         }
+        .hero-section {
+            background: linear-gradient(135deg, #4a6bfd 0%, #2541b2 100%);
+            color: white;
+            padding: 80px 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #4a6bfd;
+        }
         .btn-primary {
             background-color: #4a6bfd;
             border-color: #4a6bfd;
-            padding: 10px 25px;
+            padding: 8px 20px;
             border-radius: 50px;
             font-weight: 500;
         }
@@ -58,150 +61,198 @@
             background-color: #2541b2;
             border-color: #2541b2;
         }
-        .stats-section {
-            background-color: #f8f9fa;
-            border-radius: 12px;
-            padding: 40px 0;
-            margin: 50px 0;
-        }
-        .stat-item {
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
+        .btn-outline-primary {
+            border-color: #4a6bfd;
             color: #4a6bfd;
+            border-radius: 50px;
+            font-weight: 500;
         }
-        .stat-label {
-            font-size: 1rem;
-            color: #6c757d;
+        .btn-outline-primary:hover {
+            background-color: #4a6bfd;
+            color: white;
         }
         footer {
             background-color: #212529;
             padding: 30px 0;
+            margin-top: 50px;
         }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container px-5">
-        <a class="navbar-brand" href="#!">Turnito</a>
+        <a class="navbar-brand" href="/">Turnito</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="#!">Nosotros</a></li>
-                <li class="nav-item"><a class="nav-link" href="#!">Contacto</a></li>
-                <li class="nav-item"><a class="nav-link" href="#!">Servicios</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="/turnos">Turnos</a></li>
+                <!-- Mostrar enlaces admin solo si el usuario es administrador -->
+                <li class="nav-item" th:if="${isAdmin}"><a class="nav-link" href="/usuarios">Usuarios</a></li>
+                <li class="nav-item" th:if="${isAdmin}"><a class="nav-link" href="/SERVICIOS">Servicios</a></li>
+                <li class="nav-item" th:if="${isAdmin}"><a class="nav-link" href="/LUGARES">Lugares</a></li>
             </ul>
+
+            <!-- Opciones de usuario -->
+            <div class="ms-3">
+                <!-- Si el usuario está logueado -->
+                <div th:if="${username}" class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle me-1"></i>
+                        <span th:text="${username}">Usuario</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="/turnos/misTurnos"><i class="bi bi-calendar-check me-2"></i>Mis Turnos</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/auth/logout}" method="post">
+                                <button class="dropdown-item" type="submit">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Si no está logueado -->
+                <div th:unless="${username}" class="d-flex">
+                    <a href="/auth/login" class="btn btn-outline-light me-2">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+                    </a>
+                    <a href="/auth/registro" class="btn btn-primary">
+                        <i class="bi bi-person-plus me-1"></i> Registrarse
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
 <section class="hero-section">
     <div class="container px-5">
-        <div class="row gx-5 align-items-center">
-            <div class="col-lg-6 hero-text">
-                <h1>Gestiona tus turnos de forma simple y eficiente</h1>
-                <p class="lead mb-4">Turnito te ayuda a organizar, reservar y administrar turnos para tus servicios. Ahorra tiempo y mejora la experiencia de tus clientes.</p>
-                <div class="d-flex gap-3">
-                    <a class="btn btn-light btn-lg" href="/auth/registro">Crear Cuenta</a>
-                    <a class="btn btn-outline-light btn-lg" href="/turnos">Ver Turnos</a>
-                    <a class="btn btn-outline-light btn-lg" href="/usuarios">
-                        <i class="bi bi-people-fill me-2"></i> Menú Usuarios
-                    </a>
-                    </div>
-            </div>
-            <div class="col-lg-6 d-none d-lg-block">
-                <img class="img-fluid rounded" src="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Gestión de turnos" />
-            </div>
-        </div>
+        <h1>Bienvenido a Turnito</h1>
+        <p class="lead mb-0">Sistema de gestión de turnos para profesionales y usuarios</p>
     </div>
 </section>
 
 <div class="container px-4 px-lg-5">
-    <div class="stats-section">
-        <div class="row gx-4 gx-lg-5 text-center">
-            <div class="col-md-4 mb-3 mb-md-0">
-                <div class="stat-item">
-                    <div class="stat-number">5000+</div>
-                    <div class="stat-label">Turnos gestionados</div>
+    <!-- Panel de administrador (solo visible para admins) -->
+    <div class="row mb-4" th:if="${isAdmin}">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Panel de Administrador</h4>
                 </div>
-            </div>
-            <div class="col-md-4 mb-3 mb-md-0">
-                <div class="stat-item">
-                    <div class="stat-number">150+</div>
-                    <div class="stat-label">Proveedores activos</div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-item">
-                    <div class="stat-number">98%</div>
-                    <div class="stat-label">Clientes satisfechos</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card text-center h-100 py-3">
+                                <div class="card-body">
+                                    <div class="card-icon">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <h5 class="card-title">Usuarios</h5>
+                                    <p class="card-text">Gestión de usuarios del sistema</p>
+                                    <a href="/usuarios" class="btn btn-primary">Administrar</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card text-center h-100 py-3">
+                                <div class="card-body">
+                                    <div class="card-icon">
+                                        <i class="bi bi-briefcase"></i>
+                                    </div>
+                                    <h5 class="card-title">Servicios</h5>
+                                    <p class="card-text">Gestión de servicios ofrecidos</p>
+                                    <a href="/servicios" class="btn btn-primary">Administrar</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card text-center h-100 py-3">
+                                <div class="card-body">
+                                    <div class="card-icon">
+                                        <i class="bi bi-geo-alt"></i>
+                                    </div>
+                                    <h5 class="card-title">Lugares</h5>
+                                    <p class="card-text">Gestión de lugares de atención</p>
+                                    <a href="/lugares/" class="btn btn-primary">Administrar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container px-4 px-lg-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold">Descubre nuestras funcionalidades</h2>
-        <p class="lead">Todo lo que necesitas para gestionar tus turnos en un solo lugar</p>
-    </div>
-    
-    <div class="row gx-4 gx-lg-5">
-        <div class="col-md-4 mb-5">
-            <div class="feature-card card h-100 p-4">
-                <div class="card-body text-center">
-                    <div class="card-icon">
-                        <i class="bi bi-geo-alt"></i>
+    <!-- Panel de turnos (visible para todos, con o sin login) -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Gestión de Turnos</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-md-6 mb-3">
+                            <div class="card text-center h-100 py-3">
+                                <div class="card-body">
+                                    <div class="card-icon">
+                                        <i class="bi bi-calendar-plus"></i>
+                                    </div>
+                                    <h5 class="card-title">Reservar Turno</h5>
+                                    <p class="card-text">Solicita un nuevo turno con nuestros profesionales</p>
+                                    <a href="/turnos" class="btn btn-success">Reservar</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="card-title h4 mb-3">Buscar Lugares</h3>
-                    <p class="card-text">Encuentra fácilmente lugares disponibles para tus reservas. Filtra por localidad y provincia para encontrar la opción perfecta.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0 text-center">
-                    <a class="btn btn-primary" href="/lugares/">Explorar Lugares</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4 mb-5">
-            <div class="feature-card card h-100 p-4">
-                <div class="card-body text-center">
-                    <div class="card-icon">
-                        <i class="bi bi-calendar-check"></i>
-                    </div>
-                    <h3 class="card-title h4 mb-3">Ver Turnos</h3>
-                    <p class="card-text">Consulta la disponibilidad de turnos en tiempo real. Selecciona fechas específicas para ver la disponibilidad actualizada.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0 text-center">
-                    <a class="btn btn-primary" href="/turnos">Verificar Disponibilidad</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4 mb-5">
-            <div class="feature-card card h-100 p-4">
-                <div class="card-body text-center">
-                    <div class="card-icon">
-                        <i class="bi bi-list-check"></i>
-                    </div>
-                    <h3 class="card-title h4 mb-3">Ver Servicios</h3>
-                    <p class="card-text">Explora todos los servicios disponibles en nuestra plataforma. Filtra por especialidad o ubicación para encontrar lo que necesitas.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0 text-center">
-                    <a class="btn btn-primary" href="/servicios">Explorar Servicios</a>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="card text-white bg-primary my-5 py-4 text-center rounded-3">
-        <div class="card-body">
-            <h3 class="text-white m-0 mb-2">¿Listo para optimizar la gestión de tus turnos?</h3>
-            <p class="text-white m-0 mb-3">Regístrate ahora y comienza a disfrutar de todos los beneficios de Turnito</p>
-            <a class="btn btn-light" href="/auth/registro">Comenzar Ahora</a>
+
+    <!-- Sección informativa adicional -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body p-4">
+                    <h4><i class="bi bi-info-circle me-2"></i>¿Cómo funciona?</h4>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="text-center">
+                                <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
+                                    <span class="fs-4">1</span>
+                                </div>
+                                <h5>Selecciona el servicio</h5>
+                                <p class="text-muted">Elige entre los diferentes servicios disponibles según tus necesidades.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="text-center">
+                                <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
+                                    <span class="fs-4">2</span>
+                                </div>
+                                <h5>Elige fecha y hora</h5>
+                                <p class="text-muted">Selecciona el día y horario que mejor se adapte a tu disponibilidad.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
+                                    <span class="fs-4">3</span>
+                                </div>
+                                <h5>Confirma tu turno</h5>
+                                <p class="text-muted">Completa tus datos personales y recibe la confirmación por email.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -216,8 +267,8 @@
             <div class="col-lg-4 mb-4 mb-lg-0">
                 <h5 class="text-white mb-3">Enlaces rápidos</h5>
                 <ul class="list-unstyled">
-                    <li><a href="#!" class="text-white-50">Inicio</a></li>
-                    <li><a href="#!" class="text-white-50">Servicios</a></li>
+                    <li><a href="/" class="text-white-50">Inicio</a></li>
+                    <li><a href="/turnos" class="text-white-50">Turnos</a></li>
                     <li><a href="#!" class="text-white-50">Ayuda</a></li>
                     <li><a href="#!" class="text-white-50">Contacto</a></li>
                 </ul>
@@ -237,7 +288,6 @@
     </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/scripts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
