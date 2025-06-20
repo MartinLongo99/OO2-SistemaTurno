@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.oo2.grupo15.exceptions.DNIExistenteException;
+import com.oo2.grupo15.exceptions.LugarDuplicadoException;
 import com.oo2.grupo15.helpers.ViewRouteHelper;
 
 @ControllerAdvice
@@ -17,4 +18,14 @@ public class GlobalExceptionHandler {
         mAV.addObject("returnUrl", ViewRouteHelper.REDIRECT_USUARIOS_ROOT);
         return mAV;
     }
+    
+    @ExceptionHandler(LugarDuplicadoException.class)
+    public ModelAndView handleLugarDuplicadoException(LugarDuplicadoException ex) {
+        ModelAndView mAV = new ModelAndView(ViewRouteHelper.ERROR_LUGAR_VIEW);
+        mAV.addObject("errorMessage", ex.getMessage());
+        mAV.addObject("returnUrl", ViewRouteHelper.REDIRECT_LUGARES_ROOT);
+        return mAV;
+    }
+
 }
+
