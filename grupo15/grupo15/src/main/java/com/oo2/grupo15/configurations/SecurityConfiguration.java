@@ -39,6 +39,9 @@ public class SecurityConfiguration {
                     // Recursos públicos
                     auth.requestMatchers("/css/**", "/imgs/**", "/js/**", "/vendor/bootstrap/css/**",
                             "/vendor/jquery/**", "/vendor/bootstrap/js/**", "/api/v1/**").permitAll();
+                    
+                    // **Agrega esto:**
+                    auth.requestMatchers("/api/lugares/**").permitAll();  
 
                     // Páginas de autenticación
                     auth.requestMatchers("/auth/login", "/auth/loginProcess", "/auth/loginSuccess",
