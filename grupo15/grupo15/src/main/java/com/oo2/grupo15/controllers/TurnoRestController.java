@@ -2,6 +2,7 @@ package com.oo2.grupo15.controllers;
 
 import com.oo2.grupo15.dtos.SolicitanteDTO;
 import com.oo2.grupo15.dtos.TurnoDTO;
+import com.oo2.grupo15.dtos.TurnoReservaDTO;
 import com.oo2.grupo15.entities.Servicio;
 import com.oo2.grupo15.repositories.ITurnoRepository;
 import com.oo2.grupo15.services.IServicioService;
@@ -26,45 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-class TurnoBookingRequestDTO {
-    private LocalDateTime fechaHora;
-    private Long servicioLugarId;
-    private String nombreSolicitante;
-    private String apellidoSolicitante;
-    private long dniSolicitante;
-    private String emailSolicitante;
-    private String telefonoSolicitante;
-
-    public TurnoBookingRequestDTO() {}
-
-    public TurnoBookingRequestDTO(LocalDateTime fechaHora, Long servicioLugarId, String nombreSolicitante,
-                                 String apellidoSolicitante, long dniSolicitante, String emailSolicitante,
-                                 String telefonoSolicitante) {
-        this.fechaHora = fechaHora;
-        this.servicioLugarId = servicioLugarId;
-        this.nombreSolicitante = nombreSolicitante;
-        this.apellidoSolicitante = apellidoSolicitante;
-        this.dniSolicitante = dniSolicitante;
-        this.emailSolicitante = emailSolicitante;
-        this.telefonoSolicitante = telefonoSolicitante;
-    }
-
-    public LocalDateTime getFechaHora() { return fechaHora; }
-    public void setFechaHora(LocalDateTime fechaHora) { this.fechaHora = fechaHora; }
-    public Long getServicioLugarId() { return servicioLugarId; }
-    public void setServicioLugarId(Long servicioLugarId) { this.servicioLugarId = servicioLugarId; }
-    public String getNombreSolicitante() { return nombreSolicitante; }
-    public void setNombreSolicitante(String nombreSolicitante) { this.nombreSolicitante = nombreSolicitante; }
-    public String getApellidoSolicitante() { return apellidoSolicitante; }
-    public void setApellidoSolicitante(String apellidoSolicitante) { this.apellidoSolicitante = apellidoSolicitante; }
-    public long getDniSolicitante() { return dniSolicitante; }
-    public void setDniSolicitante(long dniSolicitante) { this.dniSolicitante = dniSolicitante; }
-    public String getEmailSolicitante() { return emailSolicitante; }
-    public void setEmailSolicitante(String emailSolicitante) { this.emailSolicitante = emailSolicitante; }
-    public String getTelefonoSolicitante() { return telefonoSolicitante; }
-    public void setTelefonoSolicitante(String telefonoSolicitante) { this.telefonoSolicitante = telefonoSolicitante; }
-}
 
 
 @RestController 
@@ -92,12 +54,13 @@ public class TurnoRestController {
             @ApiResponse(responseCode = "404", description = "Servicio no encontrado o inactivo")
     })
     @GetMapping("/disponibles")
-    public ResponseEntity<List<Map<String, Object>>> getTurnosDisponibles(
+    public ResponseEntity<List<Map<String, Object>>> getAvailableAppointments(
             @Parameter(description = "ID del servicio para el cual buscar turnos", required = true)
             @RequestParam Long servicioId,
             @Parameter(description = "Fecha en formato YYYY-MM-DD para buscar turnos", required = true, example = "2025-07-25")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
 
+      
         System.out.println("Buscando turnos para servicioId: " + servicioId + " y fecha: " + fecha);
 
         Servicio servicio = servicioService.findEntityById(servicioId);
@@ -122,6 +85,7 @@ public class TurnoRestController {
             return ResponseEntity.ok(new ArrayList<>());
         }
 
+     
         LocalDateTime fechaInicio = LocalDateTime.of(fecha, servicio.getHorarioInicio());
         LocalDateTime fechaFin = LocalDateTime.of(fecha, servicio.getHorarioFin());
         System.out.println("Buscando turnos entre: " + fechaInicio + " y " + fechaFin);
@@ -167,26 +131,33 @@ public class TurnoRestController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor al procesar la reserva")
     })
     @PostMapping
-    public ResponseEntity<TurnoDTO> reservarTurno(
+    public ResponseEntity<TurnoDTO> bookAppointment(
             @Parameter(description = "Datos de la reserva del turno, incluyendo fecha/hora, servicio/lugar y detalles del solicitante", required = true)
-            @RequestBody TurnoBookingRequestDTO bookingRequest) {
+            @RequestBody TurnoReservaDTO bookingRequest) {
         try {
-            TurnoDTO turnoDTO = new TurnoDTO();
-            turnoDTO.setFechaHora(bookingRequest.getFechaHora());
-            turnoDTO.setServicioLugarId(bookingRequest.getServicioLugarId());
-            turnoDTO.setEstado(true); 
+        	TurnoDTO turnoDTO = new TurnoDTO(
+                null, 
+                bookingRequest.fechaHora(), 
+                true, 
+                bookingRequest.servicioLugarId(), 
+                null 
+            );
 
-            SolicitanteDTO solicitanteDTO = new SolicitanteDTO();
-            solicitanteDTO.setNombre(bookingRequest.getNombreSolicitante());
-            solicitanteDTO.setApellido(bookingRequest.getApellidoSolicitante());
-            solicitanteDTO.setDni(bookingRequest.getDniSolicitante());
-            solicitanteDTO.setEmail(bookingRequest.getEmailSolicitante());
-            solicitanteDTO.setTelefono(bookingRequest.getTelefonoSolicitante());
+            SolicitanteDTO solicitanteDTO = new SolicitanteDTO(
+                null, 
+                bookingRequest.nombreSolicitante(), 
+                bookingRequest.apellidoSolicitante(), 
+                bookingRequest.dniSolicitante(), 
+                bookingRequest.emailSolicitante(), 
+                bookingRequest.telefonoSolicitante() 
+            );
 
+           
             TurnoDTO turnoCreado = turnoService.crearTurnoConDni(turnoDTO, solicitanteDTO);
-
+            
             return new ResponseEntity<>(turnoCreado, HttpStatus.CREATED);
         } catch (Exception e) {
+            
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
