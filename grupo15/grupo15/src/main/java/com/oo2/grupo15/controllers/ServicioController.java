@@ -1,4 +1,3 @@
-
 package com.oo2.grupo15.controllers;
 
 import java.time.DayOfWeek;
@@ -28,73 +27,77 @@ public class ServicioController {
 		return ViewRouteHelper.SERVICIO_INDEX;
 	}
 
-	 @GetMapping("/todos")
-	    public ModelAndView all(
-	            @RequestParam(name = "nombre", required = false) String nombre,
-	            @RequestParam(name = "estado", required = false) Boolean estado, 
-	            @RequestParam(name = "duracion", required = false) Integer duracion
-	    ) {
-	        ModelAndView mAV = new ModelAndView(ViewRouteHelper.SERVICIO_ALL);
-	        List<ServicioDTO> servicios;
+	@GetMapping("/todos")
+	public ModelAndView all(
+			@RequestParam(name = "nombre", required = false) String nombre,
+			@RequestParam(name = "estado", required = false) Boolean estado,
+			@RequestParam(name = "duracion", required = false) Integer duracion
+	) {
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.SERVICIO_ALL);
+		List<ServicioDTO> servicios;
 
-	        if (nombre != null && !nombre.isEmpty()) {
-	            servicios = servicioService.findByNombre(nombre);
-	        } else if (estado != null) { 
-	            servicios = servicioService.findByEstado(estado);
-	        } else if (duracion != null) { 
-	            servicios = servicioService.findByDuracionMinutos(duracion);
-	        } else {
-	            servicios = servicioService.getAll();
-	        }
+		if (nombre != null && !nombre.isEmpty()) {
+			servicios = servicioService.findByNombre(nombre);
+		} else if (estado != null) {
+			servicios = servicioService.findByEstado(estado);
+		} else if (duracion != null) {
+			servicios = servicioService.findByDuracionMinutos(duracion);
+		} else {
+			servicios = servicioService.getAll();
+		}
 
-	        mAV.addObject("servicios", servicios);
+		mAV.addObject("servicios", servicios);
 
-	        mAV.addObject("filtroNombre", nombre);
-	        mAV.addObject("filtroEstado", estado);
-	        mAV.addObject("filtroDuracion", duracion);
+		mAV.addObject("filtroNombre", nombre);
+		mAV.addObject("filtroEstado", estado);
+		mAV.addObject("filtroDuracion", duracion);
 
-	        return mAV;
-	    }
+		return mAV;
+	}
 
 	@GetMapping("/new")
 	public String nuevo(Model model) {
-		model.addAttribute("servicio", new ServicioDTO());
+		model.addAttribute("servicio", new ServicioDTO(
+				null, "", 0, true, "", "", Set.of()
+		));
 		model.addAttribute("diasSemana", Arrays.asList(DayOfWeek.values()));
 		return ViewRouteHelper.SERVICIO_FORM;
 	}
 
 	@PostMapping("/save")
 	public String save(
-    @ModelAttribute("servicio") ServicioDTO dto,
-    @RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados,
-    @RequestParam(value = "profesionalesIds", required = false) String profesionalesIdsStr) {
+			@ModelAttribute("servicio") ServicioDTO dto,
+			@RequestParam(value = "diasSemana", required = false) List<String> diasSeleccionados,
+			@RequestParam(value = "profesionalesIds", required = false) String profesionalesIdsStr) {
 
-    // Procesar días de la semana
-    Set<DayOfWeek> dias = diasSeleccionados != null ? diasSeleccionados.stream()
-        .map(String::toUpperCase)
-        .map(DayOfWeek::valueOf)
-        .collect(Collectors.toSet()) : Set.of();
-    dto.setDiasSemana(dias);
+		Set<DayOfWeek> dias = diasSeleccionados != null ? diasSeleccionados.stream()
+				.map(String::toUpperCase)
+				.map(DayOfWeek::valueOf)
+				.collect(Collectors.toSet()) : Set.of();
 
-    // Procesar profesionales
-    if (profesionalesIdsStr != null && !profesionalesIdsStr.isEmpty()) {
-        // Guardar IDs de profesionales para procesarlos en el servicio
-        // Esto solo almacena la información para que la proceses como necesites
-        // en tu servicio existente de servicio-lugar o donde corresponda
-        System.out.println("Profesionales seleccionados: " + profesionalesIdsStr);
-        
-        // Aquí puedes agregar la lógica para vincular profesionales
-        // según tu arquitectura existente
-    }
+		ServicioDTO nuevoDto = new ServicioDTO(
+				dto.id(),
+				dto.nombre(),
+				dto.duracionMinutos(),
+				dto.estado(),
+				dto.horarioInicio(),
+				dto.horarioFin(),
+				dias
+		);
 
-    if (dto.getId() != null) {
-        servicioService.update(dto.getId(), dto);
-    } else {
-        servicioService.save(dto);
-    }
+		if (profesionalesIdsStr != null && !profesionalesIdsStr.isEmpty()) {
+			System.out.println("Profesionales seleccionados: " + profesionalesIdsStr);
+			// Lógica para vincular profesionales si corresponde
+		}
 
-    return "redirect:/servicios";
-}
+		if (nuevoDto.id() != null) {
+			servicioService.update(nuevoDto.id(), nuevoDto);
+		} else {
+			servicioService.save(nuevoDto);
+		}
+
+		return "redirect:/servicios";
+	}
 
 	@GetMapping("/edit/{id}")
 	public String editar(@PathVariable Long id, Model model) {
@@ -126,8 +129,8 @@ public class ServicioController {
 	@PostMapping("/api")
 	@ResponseBody
 	public ResponseEntity<ServicioDTO> guardarServicioDesdeAPI(@RequestBody ServicioDTO dto) {
-		if (dto.getId() != null) {
-			servicioService.update(dto.getId(), dto);
+		if (dto.id() != null) {
+			servicioService.update(dto.id(), dto);
 		} else {
 			servicioService.save(dto);
 		}
@@ -140,5 +143,4 @@ public class ServicioController {
 		servicioService.delete(id);
 		return ResponseEntity.ok().build();
 	}
-
 }
