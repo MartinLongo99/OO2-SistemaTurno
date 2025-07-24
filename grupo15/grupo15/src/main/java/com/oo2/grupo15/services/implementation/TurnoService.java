@@ -20,6 +20,11 @@ import com.oo2.grupo15.repositories.ITurnoRepository;
 import com.oo2.grupo15.services.IEmailService;
 import com.oo2.grupo15.services.ITurnoService;
 
+// Importaciones para ModelMapper y Records
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.record.RecordValueReader;
+
+
 @Service
 public class TurnoService implements ITurnoService {
 
@@ -37,27 +42,46 @@ public class TurnoService implements ITurnoService {
     @Autowired
     private IEmailService emailService;
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper; // Ahora es final y se inicializa en el constructor
+
+    public TurnoService() {
+        this.modelMapper = new ModelMapper();
+        // Configurar ModelMapper para trabajar con Record Classes
+        this.modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT) // O el que uses, STRICT es buena práctica
+                .addValueReader(new RecordValueReader());
+        
+        this.modelMapper.createTypeMap(Turno.class, TurnoDTO.class)
+        .setProvider(request -> {
+            Turno source = (Turno) request.getSource();
+            return new TurnoDTO(
+                source.getId(),
+                source.getFechaHora(),
+                source.isEstado(),
+                source.getServicioLugar() != null ? source.getServicioLugar().getId() : null,
+                source.getSolicitante() != null ? source.getSolicitante().getId() : null
+            );
+        });
+    }
 
     @Override
     public TurnoDTO crearTurno(TurnoDTO dto) {
         Turno turno = new Turno();
-        turno.setFechaHora(dto.getFechaHora());
-        turno.setEstado(dto.isEstado());
+        turno.setFechaHora(dto.fechaHora());
+        turno.setEstado(dto.estado());
 
-        if (dto.getServicioLugarId() != null) {
-            turno.setServicioLugar(servicioLugarRepository.findById(dto.getServicioLugarId())
+        if (dto.servicioLugarId() != null) {
+            turno.setServicioLugar(servicioLugarRepository.findById(dto.servicioLugarId())
                     .orElseThrow(() -> new RuntimeException("ServicioLugar no encontrado")));
         }
 
-        if (dto.getSolicitanteId() != null) {
-            turno.setSolicitante(solicitanteRepository.findById(dto.getSolicitanteId())
+        if (dto.solicitanteId() != null) {
+            turno.setSolicitante(solicitanteRepository.findById(dto.solicitanteId())
                     .orElseThrow(() -> new RuntimeException("Solicitante no encontrado")));
         }
 
         Turno saved = turnoRepository.save(turno);
         
-     // Enviar email de confirmación
         try {
             Solicitante solicitante = turno.getSolicitante();
             String email = solicitante.getEmail();
@@ -81,8 +105,8 @@ public class TurnoService implements ITurnoService {
         
         return modelMapper.map(saved, TurnoDTO.class);
     }
+
     public boolean tieneTurnosActivos(Long usuarioId) {
-        // Asumiendo que tienes un método en tu repositorio que cuenta turnos activos
         return turnoRepository.countBySolicitanteIdAndEstadoActivo(usuarioId) > 0;
     }
 
@@ -91,16 +115,16 @@ public class TurnoService implements ITurnoService {
         Turno turno = turnoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Turno no encontrado"));
 
-        turno.setFechaHora(dto.getFechaHora());
-        turno.setEstado(dto.isEstado());
+        turno.setFechaHora(dto.fechaHora());
+        turno.setEstado(dto.estado());
 
-        if (dto.getServicioLugarId() != null) {
-            turno.setServicioLugar(servicioLugarRepository.findById(dto.getServicioLugarId())
+        if (dto.servicioLugarId() != null) {
+            turno.setServicioLugar(servicioLugarRepository.findById(dto.servicioLugarId())
                     .orElseThrow(() -> new RuntimeException("ServicioLugar no encontrado")));
         }
 
-        if (dto.getSolicitanteId() != null) {
-            turno.setSolicitante(solicitanteRepository.findById(dto.getSolicitanteId())
+        if (dto.solicitanteId() != null) {
+            turno.setSolicitante(solicitanteRepository.findById(dto.solicitanteId())
                     .orElseThrow(() -> new RuntimeException("Solicitante no encontrado")));
         }
 
@@ -133,87 +157,66 @@ public class TurnoService implements ITurnoService {
         List<Object[]> resultados = turnoRepository.buscarTurnosSimplificados(fechaInicio, fechaFin);
         return resultados.stream()
                 .map(resultado -> {
-                    TurnoDTO dto = new TurnoDTO();
-                    dto.setId((Long) resultado[0]);
-                    dto.setFechaHora((LocalDateTime) resultado[1]);
-                    dto.setEstado((Boolean) resultado[2]);
-                    return dto;
+                    return new TurnoDTO(
+                        (Long) resultado[0],
+                        (LocalDateTime) resultado[1],
+                        (Boolean) resultado[2],
+                        null,
+                        null
+                    );
                 })
                 .collect(Collectors.toList());
     }
+
     @Override
     public TurnoDTO crearTurnoConDni(TurnoDTO dto, SolicitanteDTO solicitanteDTO) {
-        // Primero verificamos si existe un solicitante con ese DNI usando el método
-        Solicitante solicitanteExistente = solicitanteRepository.findByContactoDni(solicitanteDTO.getDni());
+        Solicitante solicitanteExistente = solicitanteRepository.findByContactoDni(solicitanteDTO.dni());
 
-        // Si encontramos un solicitante, usamos su ID
         if (solicitanteExistente != null) {
-            System.out.println("Solicitante encontrado con DNI " + solicitanteDTO.getDni() + ", ID: " + solicitanteExistente.getId());
-            dto.setSolicitanteId(solicitanteExistente.getId());
+            System.out.println("Solicitante encontrado con DNI " + solicitanteDTO.dni() + ", ID: " + solicitanteExistente.getId());
+            dto = new TurnoDTO(
+                dto.id(),
+                dto.fechaHora(),
+                dto.estado(),
+                dto.servicioLugarId(),
+                solicitanteExistente.getId()
+            );
         } else {
-            System.out.println("No se encontró solicitante con DNI: " + solicitanteDTO.getDni() + ". Creando nuevo solicitante...");
+            System.out.println("No se encontró solicitante con DNI: " + solicitanteDTO.dni() + ". Creando nuevo solicitante...");
 
             try {
-                // Crear nuevo solicitante - con constructor booleano para el atributo 'pago'
                 Solicitante nuevoSolicitante = new Solicitante(false);
 
-                // Configurar propiedades del Usuario
-                nuevoSolicitante.setEmail(solicitanteDTO.getEmail());
-                nuevoSolicitante.setPassword("password_temporal"); // Contraseña temporal
+                nuevoSolicitante.setEmail(solicitanteDTO.email());
+                nuevoSolicitante.setPassword("password_temporal");
 
-                // Crear y configurar el contacto
                 Contacto contacto = new Contacto();
-                contacto.setNombre(solicitanteDTO.getNombre());
-                contacto.setApellido(solicitanteDTO.getApellido());
-                contacto.setDni(solicitanteDTO.getDni());
+                contacto.setNombre(solicitanteDTO.nombre());
+                contacto.setApellido(solicitanteDTO.apellido());
+                contacto.setDni(solicitanteDTO.dni());
 
-                // Guardar primero el contacto
                 Contacto contactoGuardado = contactoRepository.save(contacto);
 
-                // Asignar el contacto guardado al solicitante
                 nuevoSolicitante.setContacto(contactoGuardado);
 
-                // Guardar el solicitante
                 Solicitante saved = solicitanteRepository.save(nuevoSolicitante);
                 System.out.println("Nuevo solicitante creado con ID: " + saved.getId());
 
-                // Asignar el ID del solicitante al DTO del turno
-                dto.setSolicitanteId(saved.getId());
+                dto = new TurnoDTO(
+                    dto.id(),
+                    dto.fechaHora(),
+                    dto.estado(),
+                    dto.servicioLugarId(),
+                    saved.getId()
+                );
             } catch (Exception e) {
                 System.err.println("Error al crear solicitante: " + e.getMessage());
                 e.printStackTrace();
-                // Si falla la creación del solicitante, continuamos sin asignar uno al turno
             }
         }
 
-        // Asegurarnos de que el DTO tenga el solicitanteId
-        System.out.println("Creando turno con solicitanteId: " + dto.getSolicitanteId());
+        System.out.println("Creando turno con solicitanteId: " + dto.solicitanteId());
 
-        // Ahora creamos el turno con el solicitante asignado
         return crearTurno(dto);
     }
-    
-    @Override
-    public List<TurnoDTO> obtenerTurnosPorEmailSolicitante(String email) {
-        List<Turno> turnos = turnoRepository.findAllBySolicitante_Email(email);
-
-
-
-        return turnos.stream().map(t -> {
-            TurnoDTO dto = modelMapper.map(t, TurnoDTO.class);
-
-            if (t.getServicioLugar() != null) {
-                if (t.getServicioLugar().getServicio() != null) {
-                    dto.setNombreServicio(t.getServicioLugar().getServicio().getNombre());
-                }
-                if (t.getServicioLugar().getLugar() != null) {
-                    dto.setNombreLugar(t.getServicioLugar().getLugar().getNombre());
-                }
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
-    }
-
-
 }

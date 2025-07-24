@@ -4,7 +4,6 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,59 +17,50 @@ public class ServicioService implements IServicioService {
 
     @Autowired
     private IServicioRepository servicioRepository;
-    
-	private ModelMapper modelMapper = new ModelMapper();
 
     public ServicioService(IServicioRepository servicioRepository) {
-		this.servicioRepository = servicioRepository;
-	}
+        this.servicioRepository = servicioRepository;
+    }
 
-	@Override
+    @Override
     public List<ServicioDTO> findAll() {
         return servicioRepository.findAll().stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
-    
-    public List<ServicioDTO> getAll(){
-    	return servicioRepository.findAll()
-    			.stream()
-    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
-    			.collect(Collectors.toList());
+
+    public List<ServicioDTO> getAll() {
+        return servicioRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
-    
-    
-    public List<ServicioDTO> findByNombre(String nombre){
-    	return servicioRepository.findByNombre(nombre)
-    			.stream()
-    			.map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
-    			.collect(Collectors.toList());
+
+    public List<ServicioDTO> findByNombre(String nombre) {
+        return servicioRepository.findByNombre(nombre).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ServicioDTO> findByEstado(Boolean estado) {
-        // Si el repositorio usa boolean primitivo, necesitas una conversión segura
         boolean estadoValue = (estado != null) ? estado : false;
-
-        return servicioRepository.findByEstado(estadoValue)
-                .stream()
-                .map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
+        return servicioRepository.findByEstado(estadoValue).stream()
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     public List<ServicioDTO> findByDuracionMinutos(Integer duracion) {
-        return servicioRepository.findByDuracionMinutos(duracion)
-            .stream()
-            .map(servicio -> modelMapper.map(servicio, ServicioDTO.class))
-            .collect(Collectors.toList());
+        return servicioRepository.findByDuracionMinutos(duracion).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     public ServicioDTO findById(Long id) {
         return servicioRepository.findById(id)
-            .map(this::convertToDTO)
-            .orElse(null);
+                .map(this::convertToDTO)
+                .orElse(null);
     }
 
     @Override
@@ -94,46 +84,43 @@ public class ServicioService implements IServicioService {
     @Override
     public boolean delete(Long id) {
         servicioRepository.deleteById(id);
-        return false;
+        return true;
     }
 
-    // Agregar este método a ServicioService.java
     @Override
     public Servicio findEntityById(Long id) {
         return servicioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado con ID: " + id));
     }
 
-
-
     private ServicioDTO convertToDTO(Servicio servicio) {
         return new ServicioDTO(
-            servicio.getId(),
-            servicio.getNombre(),
-            servicio.getDuracionMinutos(),
-            servicio.isEstado(),
-            servicio.getHorarioInicio() != null ? servicio.getHorarioInicio().toString() : null,
-            servicio.getHorarioFin() != null ? servicio.getHorarioFin().toString() : null,
-            servicio.getDiasSemana()
+                servicio.getId(),
+                servicio.getNombre(),
+                servicio.getDuracionMinutos(),
+                servicio.isEstado(),
+                servicio.getHorarioInicio() != null ? servicio.getHorarioInicio().toString() : null,
+                servicio.getHorarioFin() != null ? servicio.getHorarioFin().toString() : null,
+                servicio.getDiasSemana()
         );
     }
 
     private Servicio convertToEntity(ServicioDTO dto) {
         Servicio servicio = new Servicio();
-        servicio.setId(dto.getId());
-        servicio.setNombre(dto.getNombre());
-        servicio.setEstado(dto.isEstado());
-        servicio.setDuracionMinutos(dto.getDuracionMinutos());
+        servicio.setId(dto.id());
+        servicio.setNombre(dto.nombre());
+        servicio.setEstado(dto.estado());
+        servicio.setDuracionMinutos(dto.duracionMinutos());
 
-        if (dto.getHorarioInicio() != null && !dto.getHorarioInicio().isEmpty()) {
-            servicio.setHorarioInicio(LocalTime.parse(dto.getHorarioInicio()));
+        if (dto.horarioInicio() != null && !dto.horarioInicio().isEmpty()) {
+            servicio.setHorarioInicio(LocalTime.parse(dto.horarioInicio()));
         }
 
-        if (dto.getHorarioFin() != null && !dto.getHorarioFin().isEmpty()) {
-            servicio.setHorarioFin(LocalTime.parse(dto.getHorarioFin()));
+        if (dto.horarioFin() != null && !dto.horarioFin().isEmpty()) {
+            servicio.setHorarioFin(LocalTime.parse(dto.horarioFin()));
         }
 
-        servicio.setDiasSemana(dto.getDiasSemana() != null ? dto.getDiasSemana() : Collections.emptySet());
+        servicio.setDiasSemana(dto.diasSemana() != null ? dto.diasSemana() : Collections.emptySet());
 
         return servicio;
     }

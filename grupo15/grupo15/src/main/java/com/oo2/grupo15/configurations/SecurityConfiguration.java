@@ -1,3 +1,4 @@
+// src/main/java/com/oo2/grupo15/configurations/SecurityConfiguration.java
 package com.oo2.grupo15.configurations;
 
 import com.oo2.grupo15.services.implementation.UsuarioService;
@@ -32,6 +33,9 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
+                    // Permitir acceso a los recursos de Swagger UI
+                    auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
+
                     // Recursos públicos
                     auth.requestMatchers("/css/**", "/imgs/**", "/js/**", "/vendor/bootstrap/css/**",
                             "/vendor/jquery/**", "/vendor/bootstrap/js/**", "/api/v1/**").permitAll();

@@ -1,10 +1,10 @@
+// src/main/java/com/oo2/grupo15/controllers/TurnoController.java
 package com.oo2.grupo15.controllers;
 
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,13 +71,13 @@ public class TurnoController {
             Model model) {
         model.addAttribute("servicioId", servicioId);
         model.addAttribute("fechaHora", fechaHora);
-        // Crear un DTO vacío para el formulario
-        model.addAttribute("turno", new TurnoDTO());
-        model.addAttribute("solicitante", new SolicitanteDTO());
+        // Crear un DTO vacío para el formulario usando el constructor canónico de Record Class
+        // Se pasan valores por defecto (null, false, 0) para los campos.
+        model.addAttribute("turno", new TurnoDTO(null, null, false, null, null));
+        model.addAttribute("solicitante", new SolicitanteDTO(null, null, null, 0, null, null));
         return "turno/reserva";
     }
     
-
 
     // Endpoint que retorna turnos existentes
     @GetMapping("/disponibilidad")
@@ -185,19 +185,13 @@ public class TurnoController {
                                @RequestParam("telefono") String telefono,
                                RedirectAttributes redirectAttributes) {
 
-        // Crear DTO para el turno
-        TurnoDTO turnoDTO = new TurnoDTO();
-        turnoDTO.setFechaHora(fechaHora);
-        turnoDTO.setServicioLugarId(servicioLugarId);
-        turnoDTO.setEstado(true); // Por defecto el turno está activo
+        // Crear DTO para el turno usando el constructor canónico de Record Class
+        // Los valores de 'id' y 'solicitanteId' se establecen en null porque serán manejados por el servicio/BD.
+        TurnoDTO turnoDTO = new TurnoDTO(null, fechaHora, true, servicioLugarId, null);
 
-        // Crear DTO para el solicitante
-        SolicitanteDTO solicitanteDTO = new SolicitanteDTO();
-        solicitanteDTO.setNombre(nombre);
-        solicitanteDTO.setApellido(apellido);
-        solicitanteDTO.setDni(dni);
-        solicitanteDTO.setEmail(email);
-        solicitanteDTO.setTelefono(telefono);
+        // Crear DTO para el solicitante usando el constructor canónico de Record Class
+        // El valor de 'id' se establece en null porque será manejado por el servicio/BD.
+        SolicitanteDTO solicitanteDTO = new SolicitanteDTO(null, nombre, apellido, dni, email, telefono);
 
         // Llamar al servicio para crear el turno con los datos del solicitante
         TurnoDTO turnoCreado = turnoService.crearTurnoConDni(turnoDTO, solicitanteDTO);
@@ -206,7 +200,8 @@ public class TurnoController {
         redirectAttributes.addFlashAttribute("fechaHora", fechaHora);
 
         // Guardar el ID del turno y otros datos para la página de confirmación
-        redirectAttributes.addFlashAttribute("turnoId", turnoCreado.getId());
+        // Acceder a los campos de Record Class se hace directamente con el nombre del campo (ej. turnoCreado.id())
+        redirectAttributes.addFlashAttribute("turnoId", turnoCreado.id());
         redirectAttributes.addFlashAttribute("nombreSolicitante", nombre);
         redirectAttributes.addFlashAttribute("apellidoSolicitante", apellido);
         redirectAttributes.addFlashAttribute("dniSolicitante", dni);
@@ -223,17 +218,19 @@ public class TurnoController {
                 List<TurnoDTO> ultimosTurnos = turnoService.obtenerTodos();
                 if (!ultimosTurnos.isEmpty()) {
                     // Ordenamos por ID descendente para obtener el último creado
-                    Collections.sort(ultimosTurnos, Comparator.comparing(TurnoDTO::getId).reversed());
+                    // Acceder a los campos de Record Class se hace directamente con el nombre del campo (ej. TurnoDTO::id)
+                    Collections.sort(ultimosTurnos, Comparator.comparing(TurnoDTO::id).reversed());
                     TurnoDTO ultimoTurno = ultimosTurnos.get(0);
 
                     model.addAttribute("turno", ultimoTurno);
-                    model.addAttribute("turnoId", ultimoTurno.getId());
+                    model.addAttribute("turnoId", ultimoTurno.id()); // Accesor de Record Class
 
                     // Aquí deberías obtener los datos del solicitante asociado al turno
-                    if (ultimoTurno.getSolicitanteId() != null) {
+                    // Acceder a los campos de Record Class se hace directamente con el nombre del campo (ej. ultimoTurno.solicitanteId())
+                    if (ultimoTurno.solicitanteId() != null) {
                         // Aquí deberías tener un método para obtener el solicitante por ID
                         // Ejemplo (debes implementar este método o similar):
-                        // SolicitanteDTO solicitante = solicitanteService.findById(ultimoTurno.getSolicitanteId());
+                        // SolicitanteDTO solicitante = solicitanteService.findById(ultimoTurno.solicitanteId());
 
                         // Por ahora, usamos datos de ejemplo:
                         model.addAttribute("nombreSolicitante", "Juan");
@@ -244,9 +241,10 @@ public class TurnoController {
                     }
 
                     // También podrías obtener la información del servicio/lugar
-                    if (ultimoTurno.getServicioLugarId() != null) {
+                    // Acceder a los campos de Record Class se hace directamente con el nombre del campo (ej. ultimoTurno.servicioLugarId())
+                    if (ultimoTurno.servicioLugarId() != null) {
                         // Ejemplo (debes implementar estos métodos o similares):
-                        // ServicioLugarDTO servicioLugar = servicioLugarService.findById(ultimoTurno.getServicioLugarId());
+                        // ServicioLugarDTO servicioLugar = servicioLugarService.findById(ultimoTurno.servicioLugarId());
 
                         model.addAttribute("nombreServicio", "Consulta Médica"); // Ejemplo
                         model.addAttribute("nombreLugar", "Consultorio Central"); // Ejemplo
