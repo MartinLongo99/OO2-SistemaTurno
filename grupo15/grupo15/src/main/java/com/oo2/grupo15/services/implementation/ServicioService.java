@@ -65,9 +65,15 @@ public class ServicioService implements IServicioService {
 
     @Override
     public ServicioDTO save(ServicioDTO dto) {
-        Servicio servicio = convertToEntity(dto);
-        Servicio saved = servicioRepository.save(servicio);
-        return convertToDTO(saved);
+        try {
+            Servicio servicio = convertToEntity(dto);
+            Servicio saved = servicioRepository.save(servicio);
+            return convertToDTO(saved);
+        } catch (Exception e) {
+            System.err.println("Error al guardar el servicio: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
