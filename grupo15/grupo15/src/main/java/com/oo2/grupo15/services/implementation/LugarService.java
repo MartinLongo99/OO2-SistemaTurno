@@ -63,10 +63,13 @@ public class LugarService implements ILugarService{
 
 	@Override
 	public boolean existeLugarDuplicado(LugarDTO dto) {
+	    if (dto == null || dto.direccion() == null || dto.direccion().getLocalidad() == null) {
+	        return false; // o lanzar excepción si querés
+	    }
 	    return lugarRepository.existsByNombreAndDireccion_CalleYAlturaAndDireccion_Localidad_Id(
-	        dto.getNombre(),
-	        dto.getDireccion().getCalleYAltura(),
-	        dto.getDireccion().getLocalidad().getId()
+	        dto.nombre(),
+	        dto.direccion().getCalleYAltura(),
+	        dto.direccion().getLocalidad().getId()
 	    );
 	}
 
