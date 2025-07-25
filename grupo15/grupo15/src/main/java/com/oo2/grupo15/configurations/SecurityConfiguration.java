@@ -33,23 +33,30 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
+                    // Permitir acceso a los recursos de Swagger UI
                     auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll();
 
+                    // Recursos públicos
                     auth.requestMatchers("/css/**", "/imgs/**", "/js/**", "/vendor/bootstrap/css/**",
                             "/vendor/jquery/**", "/vendor/bootstrap/js/**", "/api/v1/**").permitAll();
+                    
+                    //
+                    auth.requestMatchers("/api/lugares/**").permitAll();  
 
+                    // Páginas de autenticación
                     auth.requestMatchers("/auth/login", "/auth/loginProcess", "/auth/loginSuccess",
                             "/auth/logout", "/auth/registro").permitAll();
 
-                    auth.requestMatchers("/api/**").permitAll();
-                    
+                    // Home page y turnos - acceso público
                     auth.requestMatchers("/", "/home", "/index").permitAll();
                     auth.requestMatchers("/turnos/**").permitAll();
 
+                    // Páginas de administración - solo ADMIN
                     auth.requestMatchers("/usuarios/**").hasRole("ADMIN");
-                    auth.requestMatchers("/servicios/**").hasRole("ADMIN");
-                    auth.requestMatchers("/lugares/**").hasRole("ADMIN");
+                    auth.requestMatchers("/SERVICIOS/**").hasRole("ADMIN");
+                    auth.requestMatchers("/LUGARES/**").hasRole("ADMIN");
 
+                    // Todo lo demás requiere autenticación
                     auth.anyRequest().authenticated();
                 })
                 .formLogin(login -> {

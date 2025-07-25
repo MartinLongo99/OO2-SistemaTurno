@@ -46,19 +46,6 @@ public class LugarService implements ILugarService{
 				.collect(Collectors.toList());
 	}
 	
-	@Override
-	public LugarDTO update(Integer id, LugarDTO dto) {
-	    return lugarRepository.findById(id)
-	        .map(lugar -> {
-	            lugar.setNombre(dto.getNombre());
-	            lugar.setDireccion(modelMapper.map(dto.getDireccion(), lugar.getDireccion().getClass()));
-	            Lugar actualizado = lugarRepository.save(lugar);
-	            return modelMapper.map(actualizado, LugarDTO.class);
-	        })
-	        .orElse(null);
-	}
-
-	
 	
 	@Override
 	public LugarDTO save(LugarDTO dto) {
@@ -76,10 +63,13 @@ public class LugarService implements ILugarService{
 
 	@Override
 	public boolean existeLugarDuplicado(LugarDTO dto) {
+	    if (dto == null || dto.direccion() == null || dto.direccion().getLocalidad() == null) {
+	        return false; // o lanzar excepción si querés
+	    }
 	    return lugarRepository.existsByNombreAndDireccion_CalleYAlturaAndDireccion_Localidad_Id(
-	        dto.getNombre(),
-	        dto.getDireccion().getCalleYAltura(),
-	        dto.getDireccion().getLocalidad().getId()
+	        dto.nombre(),
+	        dto.direccion().getCalleYAltura(),
+	        dto.direccion().getLocalidad().getId()
 	    );
 	}
 

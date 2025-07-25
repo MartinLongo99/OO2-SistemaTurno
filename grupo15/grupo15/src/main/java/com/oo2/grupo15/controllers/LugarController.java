@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.oo2.grupo15.dtos.DireccionDTO;
 import com.oo2.grupo15.dtos.LocalidadDTO;
 import com.oo2.grupo15.dtos.LugarDTO;
 import com.oo2.grupo15.exceptions.LugarDuplicadoException;
@@ -77,24 +79,27 @@ public class LugarController {
 	
 	@GetMapping("/crear")
 	public ModelAndView crearLugar() {
-		System.out.println("crearLugar");
+	    System.out.println("crearLugar");
 	    ModelAndView mAV = new ModelAndView(ViewRouteHelper.LUGAR_FORM);
-	    mAV.addObject("lugar", new LugarDTO());
+
+	    // Creamos un lugar con direccion vacía para evitar null
+	    LugarDTO lugarVacio = new LugarDTO(null, "", new DireccionDTO(/* ... campos vacíos */));
+	    mAV.addObject("lugar", lugarVacio);
 	    mAV.addObject("provincias", provinciaService.getAll());
 	    mAV.addObject("localidades", List.of()); // Inicial vacío
 	    return mAV;
 	}
 
+
 	@PostMapping("/guardar")
 	public String guardarLugar(@ModelAttribute("lugar") LugarDTO lugarDTO) {
-		if (lugarService.existeLugarDuplicado(lugarDTO)) {
+	    if (lugarService.existeLugarDuplicado(lugarDTO)) {
 	        throw new LugarDuplicadoException("Ya existe un lugar con el mismo nombre, calle y localidad.");
 	    }
-		
-		
 	    lugarService.save(lugarDTO);
 	    return "redirect:/lugares/todos";
 	}
+
 
 	@GetMapping("/editar/{id}")
 	public ModelAndView editarLugar(@PathVariable("id") int id) {
@@ -103,7 +108,7 @@ public class LugarController {
 	    mAV.addObject("lugar", lugar);
 	    mAV.addObject("provincias", provinciaService.getAll());
 	    mAV.addObject("localidades", localidadService.getLocalidadesByProvincia(
-	        lugar.getDireccion().getLocalidad().getProvincia().getId()));
+	        lugar.direccion().getLocalidad().getProvincia().getId()));
 	    return mAV;
 	}
 
