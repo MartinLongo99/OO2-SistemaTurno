@@ -23,10 +23,7 @@ public interface ITurnoRepository extends JpaRepository<Turno, Long> {
     @Query("SELECT COUNT(t) FROM Turno t WHERE t.solicitante.id = :usuarioId AND t.estado = true")
     int countBySolicitanteIdAndEstadoActivo(@Param("usuarioId") Long usuarioId);
 
-    List<Turno> findAllBySolicitante_Email(String email);
-
-
-
+   
 
 }
 
