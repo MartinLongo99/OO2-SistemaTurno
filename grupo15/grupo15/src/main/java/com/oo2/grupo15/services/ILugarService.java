@@ -11,5 +11,5 @@ public interface ILugarService {
 	LugarDTO getById(int id);
 	boolean existeLugarDuplicado(LugarDTO dto);
 	boolean delete(int id);
-
+	LugarDTO update(Integer id, LugarDTO dto);
 }

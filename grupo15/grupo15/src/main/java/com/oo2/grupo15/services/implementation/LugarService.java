@@ -46,6 +46,19 @@ public class LugarService implements ILugarService{
 				.collect(Collectors.toList());
 	}
 	
+	@Override
+	public LugarDTO update(Integer id, LugarDTO dto) {
+	    return lugarRepository.findById(id)
+	        .map(lugar -> {
+	            lugar.setNombre(dto.getNombre());
+	            lugar.setDireccion(modelMapper.map(dto.getDireccion(), lugar.getDireccion().getClass()));
+	            Lugar actualizado = lugarRepository.save(lugar);
+	            return modelMapper.map(actualizado, LugarDTO.class);
+	        })
+	        .orElse(null);
+	}
+
+	
 	
 	@Override
 	public LugarDTO save(LugarDTO dto) {
