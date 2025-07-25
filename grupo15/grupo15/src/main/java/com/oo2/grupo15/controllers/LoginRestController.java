@@ -57,7 +57,7 @@ public class LoginRestController {
     public ResponseEntity<ApiResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
         try {
             // Buscar usuario por email
-            UsuarioDTO usuarioDTO = usuarioService.buscarPorEmail(loginRequest.getEmail());
+            UsuarioDTO usuarioDTO = usuarioService.buscarPorEmail(loginRequest.email());
             
             if (usuarioDTO == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -65,21 +65,20 @@ public class LoginRestController {
             }
 
             // Verificar contraseña
-            if (!passwordEncoder.matches(loginRequest.getPassword(), usuarioDTO.getPassword())) {
+            if (!passwordEncoder.matches(loginRequest.password(), usuarioDTO.password())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponseDTO.error("Credenciales inválidas", 401));
             }
 
-            // Crear respuesta de login exitoso
-            LoginResponseDTO loginResponse = new LoginResponseDTO();
-            loginResponse.setId(usuarioDTO.getId());
-            loginResponse.setEmail(usuarioDTO.getEmail());
-            loginResponse.setMessage("Login exitoso");
-            loginResponse.setContacto(usuarioDTO.getContacto());
-            
-            // Nota: En una implementación real con JWT, aquí generarías el token
-            // Por ahora, simulamos roles básicos
-            loginResponse.setRoles(Set.of("USER"));
+            // Crear respuesta de login exitoso usando el constructor del record
+            // Orden correcto: id, email, message, roles, contacto
+            LoginResponseDTO loginResponse = new LoginResponseDTO(
+                usuarioDTO.id(),
+                usuarioDTO.email(),
+                "Login exitoso",
+                Set.of("USER"), // Roles básicos - en una implementación real con JWT sería diferente
+                usuarioDTO.contacto()
+            );
 
             return ResponseEntity.ok(
                 ApiResponseDTO.success("Usuario autenticado correctamente", loginResponse)

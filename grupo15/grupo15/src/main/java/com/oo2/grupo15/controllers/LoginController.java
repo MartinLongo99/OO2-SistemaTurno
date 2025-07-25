@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.oo2.grupo15.dtos.ContactoDTO;
 import com.oo2.grupo15.dtos.UsuarioDTO;
 import com.oo2.grupo15.entities.Contacto;
 import com.oo2.grupo15.entities.Role;
@@ -44,47 +45,48 @@ public class LoginController {
         return "redirect:/";
     }
 
-
-
     @GetMapping("/registro")
     public ModelAndView mostrarRegistro() {
         ModelAndView mav = new ModelAndView("registro/index");
-        mav.addObject("usuarioNuevo", new UsuarioDTO());
+        // Crear un DTO vacío para el formulario
+        ContactoDTO contactoVacio = new ContactoDTO(null, null, 0, null, null, null);
+        UsuarioDTO usuarioVacio = new UsuarioDTO(null, null, null, contactoVacio);
+        mav.addObject("usuarioNuevo", usuarioVacio);
         return mav;
     }
 
     @PostMapping("/registro")
     public ModelAndView procesarRegistro(@ModelAttribute("usuarioNuevo") UsuarioDTO usuarioNuevo) {
-        System.out.println("Datos recibidos: " + usuarioNuevo.getEmail() + " / " + usuarioNuevo.getPassword());
+        System.out.println("Datos recibidos: " + usuarioNuevo.email() + " / " + usuarioNuevo.password());
 
-        UsuarioDTO existente = usuarioService.buscarPorEmail(usuarioNuevo.getEmail());
+        UsuarioDTO existente = usuarioService.buscarPorEmail(usuarioNuevo.email());
         if (existente != null) {
             ModelAndView mav = new ModelAndView("registro/index");
             mav.addObject("error", "El correo ya está registrado");
             return mav;
         }
 
-        // Encriptar la contraseña antes de guardar
-        String passwordEncriptada = passwordEncoder.encode(usuarioNuevo.getPassword());
-        usuarioNuevo.setPassword(passwordEncriptada);
+        String passwordEncriptada = passwordEncoder.encode(usuarioNuevo.password());
+        
+        UsuarioDTO usuarioConPasswordEncriptada = new UsuarioDTO(
+            usuarioNuevo.id(),
+            usuarioNuevo.email(),
+            passwordEncriptada,
+            usuarioNuevo.contacto()
+        );
 
-        // Asignar rol de USER al nuevo usuario
-        UsuarioDTO guardado = usuarioService.guardar(usuarioNuevo);
+        UsuarioDTO guardado = usuarioService.guardar(usuarioConPasswordEncriptada);
 
-        // Ahora necesitamos asignar el rol USER manualmente
-        // Como estamos trabajando con DTOs, tenemos que obtener la entidad
         Usuario usuario = new Usuario();
-        usuario.setId(guardado.getId());
+        usuario.setId(guardado.id());
 
-        // Obtener el rol USER
         Role rolUser = roleRepository.findByName("USER");
         if (rolUser != null) {
             usuario.addRole(rolUser);
-            // Guardar el usuario con el rol asignado
             usuarioService.guardar(guardado);
         }
 
-        System.out.println("Usuario registrado: " + guardado.getEmail());
+        System.out.println("Usuario registrado: " + guardado.email());
 
         return new ModelAndView("redirect:/auth/login");
     }

@@ -47,14 +47,13 @@ public class ProfesionalService implements IProfesionalService {
     @Override
     public void guardar(ProfesionalDTO dto) {
         Profesional profesional = new Profesional();
-        profesional.setId(dto.getId());
-        profesional.setEmail(dto.getEmail());
-        profesional.setMatricula(dto.getMatricula());
+        profesional.setId(dto.id()); 
+        profesional.setEmail(dto.email()); 
+        profesional.setMatricula(dto.matricula()); 
 
-        // Mapear especialidades desde IDs (para guardar)
         Set<Especialidad> especialidades = new HashSet<>();
-        if (dto.getEspecialidadesIds() != null) {
-            especialidades = dto.getEspecialidadesIds().stream()
+        if (dto.especialidadesIds() != null) { 
+            especialidades = dto.especialidadesIds().stream()
                     .map(id -> especialidadRepository.findById(id)
                             .orElseThrow(() -> new RuntimeException("Especialidad no encontrada con ID: " + id)))
                     .collect(Collectors.toSet());
@@ -66,41 +65,48 @@ public class ProfesionalService implements IProfesionalService {
     }
 
     private ProfesionalDTO convertToDTO(Profesional profesional) {
-        // Convertir contacto
+        ContactoDTO contactoDTO = null;
         Contacto contacto = profesional.getContacto();
-        ContactoDTO contactoDTO = new ContactoDTO();
 
         if (contacto != null) {
-            contactoDTO.setNombre(contacto.getNombre());
-            contactoDTO.setApellido(contacto.getApellido());
-            contactoDTO.setDni(contacto.getDni());
+            String calleYAltura = null;
+            String localidad = null;
+            String provincia = null;
 
             if (contacto.getDireccion() != null) {
-                contactoDTO.setCalleYAltura(contacto.getDireccion().getCalleYAltura());
+                calleYAltura = contacto.getDireccion().getCalleYAltura();
 
                 if (contacto.getDireccion().getLocalidad() != null) {
-                    contactoDTO.setLocalidad(contacto.getDireccion().getLocalidad().getNombre());
+                    localidad = contacto.getDireccion().getLocalidad().getNombre();
 
                     if (contacto.getDireccion().getLocalidad().getProvincia() != null) {
-                        contactoDTO.setProvincia(contacto.getDireccion().getLocalidad().getProvincia().getNombre());
+                        provincia = contacto.getDireccion().getLocalidad().getProvincia().getNombre();
                     }
                 }
             }
+         
+            contactoDTO = new ContactoDTO(
+                contacto.getNombre(),
+                contacto.getApellido(),
+                contacto.getDni(),
+                calleYAltura,
+                localidad,
+                provincia
+            );
         }
 
-        // Convertir especialidades a NOMBRES
+        // Convertir especialidades a Nombres
         List<String> especialidadesNombres = profesional.getEspecialidades().stream()
                 .map(Especialidad::getNombreEspecialidad)
                 .collect(Collectors.toList());
 
-        // Construir DTO final
-        return ProfesionalDTO.builder()
-                .id(profesional.getId())
-                .email(profesional.getEmail())
-                .matricula(profesional.getMatricula())
-                .contacto(contactoDTO)
-                .especialidades(especialidadesNombres) // ✅ usamos nombres
-                .build();
+        return new ProfesionalDTO(
+            profesional.getId(),
+            profesional.getEmail(),
+            profesional.getMatricula(),
+            contactoDTO,
+            especialidadesNombres,
+            null
+        );
     }
-    
 }

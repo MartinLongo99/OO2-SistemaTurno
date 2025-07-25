@@ -1,5 +1,6 @@
 package com.oo2.grupo15.services.implementation;
 
+import com.oo2.grupo15.dtos.ContactoDTO;
 import com.oo2.grupo15.dtos.UsuarioDTO;
 import com.oo2.grupo15.entities.Contacto;
 import com.oo2.grupo15.entities.Usuario;
@@ -25,135 +26,167 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioService implements IUsuarioService, UserDetailsService {
 
-	@Autowired
-	private IUsuarioRepository usuarioRepository;
+    @Autowired
+    private IUsuarioRepository usuarioRepository;
 
-	@Autowired
-	private ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Usuario usuario = usuarioRepository.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
 
-		Collection<GrantedAuthority> authorities = usuario.getRoles().stream()
-				.map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
-				.collect(Collectors.toList());
+        Collection<GrantedAuthority> authorities = usuario.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .collect(Collectors.toList());
 
-		return new User(usuario.getEmail(), usuario.getPassword(), authorities);
-	}
+        return new User(usuario.getEmail(), usuario.getPassword(), authorities);
+    }
 
-	@Override
-	public UsuarioDTO crearUsuario(UsuarioDTO dto) {
-		Usuario usuario = modelMapper.map(dto, Usuario.class);
-		if (dto.getContacto() != null && dto.getContacto().getDni() != 0) { 
-            Optional<Usuario> usuarioConMismoDni = usuarioRepository.findByContactoDni(dto.getContacto().getDni());
+    @Override
+    public UsuarioDTO crearUsuario(UsuarioDTO dto) {
+        Usuario usuario = new Usuario();
+        usuario.setEmail(dto.email()); 
+        usuario.setPassword(dto.password()); 
 
-            if (usuarioConMismoDni.isPresent()) {
-                throw new DNIExistenteException("El DNI " + dto.getContacto().getDni() + " ya está registrado para otro usuario.");
-            }
-        }
-		Contacto contacto = new Contacto();
-		contacto.setNombre(dto.getContacto() != null ? dto.getContacto().getNombre() : null);
-		contacto.setApellido(dto.getContacto() != null ? dto.getContacto().getApellido() : null);
-		contacto.setDni(dto.getContacto() != null ? dto.getContacto().getDni() : 0);
-		usuario.setContacto(contacto);
-
-		Usuario guardado = usuarioRepository.save(usuario);
-
-		UsuarioDTO resultado = modelMapper.map(guardado, UsuarioDTO.class);
-
-		return resultado;
-	}
-
-	@Override
-	public List<UsuarioDTO> obtenerTodos(){
-		return usuarioRepository.findAll()
-				.stream()
-				.map(usuario -> {
-					UsuarioDTO dto = modelMapper.map(usuario, UsuarioDTO.class);
-					return dto;
-				})
-				.collect(Collectors.toList());
-
-	}
-
-	@Override
-	public UsuarioDTO obtenerPorId(Long id) {
-		Usuario usuario = usuarioRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
-
-		UsuarioDTO dto = modelMapper.map(usuario, UsuarioDTO.class);
-		return dto;
-
-	}
-
-	@Override
-	public UsuarioDTO actualizarUsuario(Long id, UsuarioDTO dto) {
-		Usuario usuario = usuarioRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
-
-        if (dto.getContacto() != null && dto.getContacto().getDni() != 0) { 
-            Optional<Usuario> usuarioConMismoDni = usuarioRepository.findByContactoDni(dto.getContacto().getDni());
+        if (dto.contacto() != null && dto.contacto().dni() != 0) { 
+            Optional<Usuario> usuarioConMismoDni = usuarioRepository.findByContactoDni(dto.contacto().dni());
 
             if (usuarioConMismoDni.isPresent()) {
-                throw new DNIExistenteException("El DNI " + dto.getContacto().getDni() + " ya está registrado para otro usuario.");
+                throw new DNIExistenteException("El DNI " + dto.contacto().dni() + " ya está registrado para otro usuario.");
             }
         }
-		usuario.setEmail(dto.getEmail());
-		usuario.setPassword(dto.getPassword());
-		
-		if(usuario.getContacto() == null){
-			usuario.setContacto(new Contacto());
-		}
-		
-		usuario.getContacto().setDni(dto.getContacto().getDni());
-		usuario.getContacto().setNombre(dto.getContacto() != null ? dto.getContacto().getNombre() : null);
-		usuario.getContacto().setApellido(dto.getContacto() != null ? dto.getContacto().getApellido() : null);
 
-		Usuario actualizado = usuarioRepository.save(usuario);
+        Contacto contacto = new Contacto();
+        if (dto.contacto() != null) {
+            contacto.setNombre(dto.contacto().nombre());
+            contacto.setApellido(dto.contacto().apellido());
+            contacto.setDni(dto.contacto().dni());
+        }
+        usuario.setContacto(contacto);
 
-		UsuarioDTO resultado = modelMapper.map(actualizado, UsuarioDTO.class);
-		return resultado;
-	}
+        Usuario guardado = usuarioRepository.save(usuario);
 
-	@Override
-	public void eliminarUsuario(Long id) {
-		usuarioRepository.deleteById(id);
-	}
+        return convertirUsuarioADTO(guardado);
+    }
 
-	@Override
-	public UsuarioDTO buscarPorEmail(String email) {
-		Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+    @Override
+    public List<UsuarioDTO> obtenerTodos() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(this::convertirUsuarioADTO)
+                .collect(Collectors.toList());
+    }
 
-		if (usuario.isPresent()) {
-			return modelMapper.map(usuario.get(), UsuarioDTO.class);
-		}
+    @Override
+    public UsuarioDTO obtenerPorId(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
 
-		return null;
-	}
+        return convertirUsuarioADTO(usuario);
+    }
 
+    @Override
+    public UsuarioDTO actualizarUsuario(Long id, UsuarioDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
 
-	@Override
-	public UsuarioDTO guardar(UsuarioDTO usuarioDTO) {
+        if (dto.contacto() != null && dto.contacto().dni() != 0) {
+            Optional<Usuario> usuarioConMismoDni = usuarioRepository.findByContactoDni(dto.contacto().dni());
 
-		Usuario entidad = modelMapper.map(usuarioDTO, Usuario.class);
+            if (usuarioConMismoDni.isPresent() && !usuarioConMismoDni.get().getId().equals(id)) {
+                throw new DNIExistenteException("El DNI " + dto.contacto().dni() + " ya está registrado para otro usuario.");
+            }
+        }
 
-		Usuario guardado = usuarioRepository.save(entidad);
+        usuario.setEmail(dto.email());
+        if (dto.password() != null && !dto.password().isEmpty()) {
+            usuario.setPassword(dto.password());
+        }
 
-		return modelMapper.map(guardado, UsuarioDTO.class);
-	}
+        if (usuario.getContacto() == null) {
+            usuario.setContacto(new Contacto());
+        }
 
+        if (dto.contacto() != null) {
+            usuario.getContacto().setNombre(dto.contacto().nombre());
+            usuario.getContacto().setApellido(dto.contacto().apellido());
+            usuario.getContacto().setDni(dto.contacto().dni());
+        }
 
-	public List<UsuarioDTO> getAll(){
-		return usuarioRepository.findAll()
-				.stream()
-				.map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
-				.collect(Collectors.toList());
-	}
+        Usuario actualizado = usuarioRepository.save(usuario);
 
-	public Optional<UsuarioDTO> findByContactoDni(long dni){
+        return convertirUsuarioADTO(actualizado);
+    }
+
+    @Override
+    public void eliminarUsuario(Long id) {
+        usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public UsuarioDTO buscarPorEmail(String email) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+
+        return usuario.map(this::convertirUsuarioADTO).orElse(null);
+    }
+
+    @Override
+    public UsuarioDTO guardar(UsuarioDTO usuarioDTO) {
+        Usuario entidad = new Usuario();
+        entidad.setEmail(usuarioDTO.email());
+        entidad.setPassword(usuarioDTO.password());
+
+        if (usuarioDTO.contacto() != null) {
+            Contacto contacto = new Contacto();
+            contacto.setNombre(usuarioDTO.contacto().nombre());
+            contacto.setApellido(usuarioDTO.contacto().apellido());
+            contacto.setDni(usuarioDTO.contacto().dni());
+            entidad.setContacto(contacto);
+        }
+
+        Usuario guardado = usuarioRepository.save(entidad);
+
+        return convertirUsuarioADTO(guardado);
+    }
+
+    public List<UsuarioDTO> getAll() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(this::convertirUsuarioADTO)
+                .collect(Collectors.toList());
+    }
+
+    public Optional<UsuarioDTO> findByContactoDni(long dni) {
         Optional<Usuario> usuario = usuarioRepository.findByContactoDni(dni);
-        return usuario.map(u -> modelMapper.map(u, UsuarioDTO.class));
+        return usuario.map(this::convertirUsuarioADTO);
+    }
+
+    private UsuarioDTO convertirUsuarioADTO(Usuario usuario) {
+        ContactoDTO contactoDTO = null;
+        
+        if (usuario.getContacto() != null) {
+            Contacto contacto = usuario.getContacto();
+            String calleYAltura = null;
+            String localidad = null;
+            String provincia = null;
+
+            contactoDTO = new ContactoDTO(
+                contacto.getNombre(),
+                contacto.getApellido(),
+                contacto.getDni(),
+                calleYAltura,
+                localidad,
+                provincia
+            );
+        }
+
+        return new UsuarioDTO(
+            usuario.getId(),
+            usuario.getEmail(),
+            null,
+            contactoDTO
+        );
     }
 }

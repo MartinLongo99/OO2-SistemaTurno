@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.oo2.grupo15.dtos.ContactoDTO;
 import com.oo2.grupo15.dtos.UsuarioDTO;
 import com.oo2.grupo15.helpers.ViewRouteHelper;
 import com.oo2.grupo15.services.IUsuarioService;
@@ -31,7 +32,11 @@ public class UsuarioController {
 	@GetMapping
 	public String index(Model model) {
 		model.addAttribute("usuarios", usuarioService.obtenerTodos());
-		model.addAttribute("usuarioNuevo", new UsuarioDTO());
+		
+		ContactoDTO contactoVacio = new ContactoDTO(null, null, 0, null, null, null);
+		UsuarioDTO usuarioVacio = new UsuarioDTO(null, null, null, contactoVacio);
+		model.addAttribute("usuarioNuevo", usuarioVacio);
+		
 		return ViewRouteHelper.USUARIO_INDEX;
 	}
 
@@ -39,7 +44,11 @@ public class UsuarioController {
 	public ModelAndView mostrarUsuarios() {
 		ModelAndView mAV = new ModelAndView(ViewRouteHelper.USUARIO_INDEX);
 		mAV.addObject("usuarios", usuarioService.obtenerTodos());
-		mAV.addObject("usuarioNuevo", new UsuarioDTO());
+		
+		ContactoDTO contactoVacio = new ContactoDTO(null, null, 0, null, null, null);
+		UsuarioDTO usuarioVacio = new UsuarioDTO(null, null, null, contactoVacio);
+		mAV.addObject("usuarioNuevo", usuarioVacio);
+		
 		return mAV;
 	}
 
@@ -69,31 +78,27 @@ public class UsuarioController {
 	public ModelAndView guardarUsuario(@ModelAttribute("usuarioNuevo") UsuarioDTO dto,
 			RedirectAttributes redirectAttributes) {
 
-		if (dto.getId() == null) {
+		if (dto.id() == null) {
 			usuarioService.crearUsuario(dto);
 			redirectAttributes.addFlashAttribute("mensaje", "Usuario creado correctamente.");
 		} else {
-			usuarioService.actualizarUsuario(dto.getId(), dto);
+			usuarioService.actualizarUsuario(dto.id(), dto);
 			redirectAttributes.addFlashAttribute("mensaje", "Usuario actualizado correctamente.");
 		}
 		return new ModelAndView(ViewRouteHelper.REDIRECT_USUARIOS_ROOT);
-
 	}
 
 	@GetMapping("/eliminar/{id}")
 	public String eliminarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 		try {
-			// Verificar si el usuario tiene turnos activos
 			if (turnoService.tieneTurnosActivos(id)) {
 				throw new UsuarioConTurnosActivosException(id);
 			}
 
-			// Si no tiene turnos activos, proceder con la eliminación
 			usuarioService.eliminarUsuario(id);
 			redirectAttributes.addFlashAttribute("mensaje", "Usuario eliminado correctamente");
 
 		} catch (UsuarioConTurnosActivosException ex) {
-			// Capturar la excepción y añadir un mensaje de error
 			redirectAttributes.addFlashAttribute("error", ex.getMessage());
 		}
 
@@ -103,7 +108,7 @@ public class UsuarioController {
 	@GetMapping("/editar/{id}")
 	public ModelAndView editarUsuario(@PathVariable Long id) {
 		UsuarioDTO usuario = usuarioService.obtenerPorId(id);
-		ModelAndView mAV = new ModelAndView("usuario/usuario-editar"); // Incluir la subcarpeta
+		ModelAndView mAV = new ModelAndView("usuario/usuario-editar"); 
 		mAV.addObject("usuarioNuevo", usuario);
 		return mAV;
 	}

@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/usuarios")
 @Tag(name = "API de Usuarios", description = "Operaciones de la API para la gestión de usuarios")
 @CrossOrigin(origins = "*")
-
 public class UsuarioRestController {
 
     @Autowired
@@ -55,11 +55,17 @@ public class UsuarioRestController {
         try {
             List<UsuarioDTO> usuarios = usuarioService.obtenerTodos();
             
-            // Limpiar contraseñas por seguridad
-            usuarios.forEach(usuario -> usuario.setPassword(null));
+            List<UsuarioDTO> usuariosSinPassword = usuarios.stream()
+                .map(usuario -> new UsuarioDTO(
+                    usuario.id(),
+                    usuario.email(),
+                    null,
+                    usuario.contacto()
+                ))
+                .collect(Collectors.toList());
             
             return ResponseEntity.ok(
-                ApiResponseDTO.success("Usuarios obtenidos exitosamente", usuarios)
+                ApiResponseDTO.success("Usuarios obtenidos exitosamente", usuariosSinPassword)
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -95,11 +101,15 @@ public class UsuarioRestController {
         try {
             UsuarioDTO usuario = usuarioService.obtenerPorId(id);
             
-            // Limpiar contraseña por seguridad
-            usuario.setPassword(null);
+            UsuarioDTO usuarioSinPassword = new UsuarioDTO(
+                usuario.id(),
+                usuario.email(),
+                null, 
+                usuario.contacto()
+            );
             
             return ResponseEntity.ok(
-                ApiResponseDTO.success("Usuario encontrado", usuario)
+                ApiResponseDTO.success("Usuario encontrado", usuarioSinPassword)
             );
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -140,10 +150,16 @@ public class UsuarioRestController {
             
             if (usuario.isPresent()) {
                 UsuarioDTO usuarioDTO = usuario.get();
-                usuarioDTO.setPassword(null); // Limpiar contraseña por seguridad
+                
+                UsuarioDTO usuarioSinPassword = new UsuarioDTO(
+                    usuarioDTO.id(),
+                    usuarioDTO.email(),
+                    null, 
+                    usuarioDTO.contacto()
+                );
                 
                 return ResponseEntity.ok(
-                    ApiResponseDTO.success("Usuario encontrado", usuarioDTO)
+                    ApiResponseDTO.success("Usuario encontrado", usuarioSinPassword)
                 );
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -179,25 +195,33 @@ public class UsuarioRestController {
     @PostMapping
     public ResponseEntity<ApiResponseDTO<UsuarioDTO>> crearUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO) {
         try {
-            // Verificar si el email ya existe
-            UsuarioDTO existente = usuarioService.buscarPorEmail(usuarioDTO.getEmail());
+            UsuarioDTO existente = usuarioService.buscarPorEmail(usuarioDTO.email());
             if (existente != null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponseDTO.error("El email ya está registrado", 400));
             }
 
-            // Encriptar contraseña
-            String passwordEncriptada = passwordEncoder.encode(usuarioDTO.getPassword());
-            usuarioDTO.setPassword(passwordEncriptada);
+            String passwordEncriptada = passwordEncoder.encode(usuarioDTO.password());
+            UsuarioDTO usuarioConPasswordEncriptada = new UsuarioDTO(
+                usuarioDTO.id(),
+                usuarioDTO.email(),
+                passwordEncriptada,
+                usuarioDTO.contacto()
+            );
 
             // Crear usuario
-            UsuarioDTO usuarioCreado = usuarioService.crearUsuario(usuarioDTO);
+            UsuarioDTO usuarioCreado = usuarioService.crearUsuario(usuarioConPasswordEncriptada);
             
             // Limpiar contraseña en la respuesta
-            usuarioCreado.setPassword(null);
+            UsuarioDTO usuarioRespuesta = new UsuarioDTO(
+                usuarioCreado.id(),
+                usuarioCreado.email(),
+                null, // contraseña limpia
+                usuarioCreado.contacto()
+            );
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponseDTO.success("Usuario creado exitosamente", usuarioCreado));
+                .body(ApiResponseDTO.success("Usuario creado exitosamente", usuarioRespuesta));
 
         } catch (DNIExistenteException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -240,19 +264,29 @@ public class UsuarioRestController {
             @PathVariable Long id,
             @Valid @RequestBody UsuarioDTO usuarioDTO) {
         try {
-            // Si se proporciona una nueva contraseña, encriptarla
-            if (usuarioDTO.getPassword() != null && !usuarioDTO.getPassword().isEmpty()) {
-                String passwordEncriptada = passwordEncoder.encode(usuarioDTO.getPassword());
-                usuarioDTO.setPassword(passwordEncriptada);
+            UsuarioDTO usuarioParaActualizar = usuarioDTO;
+            
+            if (usuarioDTO.password() != null && !usuarioDTO.password().isEmpty()) {
+                String passwordEncriptada = passwordEncoder.encode(usuarioDTO.password());
+                usuarioParaActualizar = new UsuarioDTO(
+                    usuarioDTO.id(),
+                    usuarioDTO.email(),
+                    passwordEncriptada,
+                    usuarioDTO.contacto()
+                );
             }
 
-            UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(id, usuarioDTO);
+            UsuarioDTO usuarioActualizado = usuarioService.actualizarUsuario(id, usuarioParaActualizar);
             
-            // Limpiar contraseña en la respuesta
-            usuarioActualizado.setPassword(null);
+            UsuarioDTO usuarioRespuesta = new UsuarioDTO(
+                usuarioActualizado.id(),
+                usuarioActualizado.email(),
+                null,
+                usuarioActualizado.contacto()
+            );
 
             return ResponseEntity.ok(
-                ApiResponseDTO.success("Usuario actualizado exitosamente", usuarioActualizado)
+                ApiResponseDTO.success("Usuario actualizado exitosamente", usuarioRespuesta)
             );
 
         } catch (RuntimeException e) {
@@ -294,7 +328,6 @@ public class UsuarioRestController {
             @Parameter(description = "ID del usuario a eliminar", required = true)
             @PathVariable Long id) {
         try {
-            // Verificar que el usuario existe antes de eliminarlo
             usuarioService.obtenerPorId(id);
             
             usuarioService.eliminarUsuario(id);
