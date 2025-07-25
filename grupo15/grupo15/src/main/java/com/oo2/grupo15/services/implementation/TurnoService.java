@@ -65,24 +65,6 @@ public class TurnoService implements ITurnoService {
     }
 
     @Override
-    public List<TurnoDTO> obtenerTurnosPorEmailSolicitante(String email) {
-        // Buscamos todos los turnos del solicitante por su email
-        List<Turno> turnos = turnoRepository.findAllBySolicitante_Email(email);
-
-        // Convertimos la lista de entidades Turno a TurnoDTO
-        return turnos.stream()
-                .map(turno -> new TurnoDTO(
-                        turno.getId(),
-                        turno.getFechaHora(),
-                        turno.isEstado(),
-                        turno.getServicioLugar() != null ? turno.getServicioLugar().getId() : null,
-                        turno.getSolicitante() != null ? turno.getSolicitante().getId() : null
-                ))
-                .collect(Collectors.toList());
-    }
-
-    
-    @Override
     public TurnoDTO crearTurno(TurnoDTO dto) {
         Turno turno = new Turno();
         turno.setFechaHora(dto.fechaHora());
