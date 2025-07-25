@@ -107,4 +107,4 @@ public class LugarRestController {
         lugarService.delete(id);
         return ResponseEntity.noContent().build();
     }
-}
+}//prueba
