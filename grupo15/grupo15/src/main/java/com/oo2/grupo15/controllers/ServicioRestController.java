@@ -48,14 +48,23 @@ public class ServicioRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Servicio creado o actualizado exitosamente")
     })
+
     @PostMapping
     public ResponseEntity<ServicioDTO> saveServicio(@RequestBody ServicioDTO dto) {
-        if (dto.id() != null) {
-            servicioService.update(dto.id(), dto);
-        } else {
-            servicioService.save(dto);
+        try {
+            ServicioDTO savedServicio = (dto.id() != null)
+                    ? servicioService.update(dto.id(), dto)
+                    : servicioService.save(dto);
+
+            if (savedServicio == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+
+            return new ResponseEntity<>(savedServicio, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Eliminar un servicio por ID")

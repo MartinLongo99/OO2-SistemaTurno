@@ -47,8 +47,8 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/turnos/**").permitAll();
 
                     auth.requestMatchers("/usuarios/**").hasRole("ADMIN");
-                    auth.requestMatchers("/SERVICIOS/**").hasRole("ADMIN");
-                    auth.requestMatchers("/LUGARES/**").hasRole("ADMIN");
+                    auth.requestMatchers("/servicios/**").hasRole("ADMIN");
+                    auth.requestMatchers("/lugares/**").hasRole("ADMIN");
 
                     auth.anyRequest().authenticated();
                 })

@@ -6,15 +6,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.validation.constraints.*;
+
 public record ServicioDTO(
         Long id,
-        String nombre,
-        Integer duracionMinutos,
+        @NotBlank String nombre,
+        @NotNull @Min(1) Integer duracionMinutos,
         boolean estado,
-        String horarioInicio,
-        String horarioFin,
+        @NotBlank String horarioInicio,
+        @NotBlank String horarioFin,
         Set<DayOfWeek> diasSemana
-) {
+)  {
     public String getDiasSemanaFormateados() {
         if (diasSemana == null || diasSemana.isEmpty()) {
             return "N/A";

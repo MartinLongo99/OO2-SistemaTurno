@@ -75,3 +75,6 @@ Desde allí, podrás:
 * **Ver listados de datos:** Consultar y visualizar los datos existentes de las diferentes entidades, aplicando diferentes tipos de filtros.
 
 ---
+### 6. Swagger
+Previamente logeado como admin en Turnito. 
+* Url : http://localhost:8080/swagger-ui/index.html#
