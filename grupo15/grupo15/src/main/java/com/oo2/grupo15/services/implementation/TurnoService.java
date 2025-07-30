@@ -173,11 +173,14 @@ public class TurnoService implements ITurnoService {
 
     @Override
     public TurnoDTO crearTurnoConDni(TurnoDTO dto, SolicitanteDTO solicitanteDTO) {
-        Solicitante solicitanteExistente = solicitanteRepository.findByContactoDni(solicitanteDTO.dni());
+        Long dni = solicitanteDTO.dni();
+        System.out.println("Buscando solicitante con DNI: " + dni);
+
+        Solicitante solicitanteExistente = solicitanteRepository.findByContactoDni(dni);
 
         if (solicitanteExistente != null) {
-            System.out.println("Solicitante encontrado con DNI " + solicitanteDTO.dni() + ", ID: " + solicitanteExistente.getId());
-         // Si ya existe el solicitante
+            System.out.println("Solicitante encontrado con ID: " + solicitanteExistente.getId());
+
             dto = new TurnoDTO(
                 dto.id(),
                 dto.fechaHora(),
@@ -188,27 +191,37 @@ public class TurnoService implements ITurnoService {
                 null
             );
         } else {
-            System.out.println("No se encontró solicitante con DNI: " + solicitanteDTO.dni() + ". Creando nuevo solicitante...");
+            System.out.println("No se encontró solicitante con DNI: " + dni + ". Creando nuevo...");
 
             try {
+                // 1. Crear nuevo solicitante
                 Solicitante nuevoSolicitante = new Solicitante(false);
-
                 nuevoSolicitante.setEmail(solicitanteDTO.email());
                 nuevoSolicitante.setPassword("password_temporal");
 
-                Contacto contacto = new Contacto();
-                contacto.setNombre(solicitanteDTO.nombre());
-                contacto.setApellido(solicitanteDTO.apellido());
-                contacto.setDni(solicitanteDTO.dni());
+                // 2. Ver si ya existe un contacto con ese DNI
+                Contacto contactoExistente = contactoRepository.findByDni(dni);
+                Contacto contacto;
 
-                Contacto contactoGuardado = contactoRepository.save(contacto);
+                if (contactoExistente != null) {
+                    System.out.println("Ya existe un contacto con DNI: " + dni + ". Reutilizando...");
+                    contacto = contactoExistente;
+                } else {
+                    // Crear nuevo contacto
+                    contacto = new Contacto();
+                    contacto.setNombre(solicitanteDTO.nombre());
+                    contacto.setApellido(solicitanteDTO.apellido());
+                    contacto.setDni(dni);
+                    contacto = contactoRepository.save(contacto);
+                    System.out.println("Nuevo contacto creado con ID: " + contacto.getId());
+                }
 
-                nuevoSolicitante.setContacto(contactoGuardado);
-
+                // 3. Asociar contacto al solicitante y guardar
+                nuevoSolicitante.setContacto(contacto);
                 Solicitante saved = solicitanteRepository.save(nuevoSolicitante);
+
                 System.out.println("Nuevo solicitante creado con ID: " + saved.getId());
 
-             // Si no existe y lo creás
                 dto = new TurnoDTO(
                     dto.id(),
                     dto.fechaHora(),
@@ -225,9 +238,9 @@ public class TurnoService implements ITurnoService {
         }
 
         System.out.println("Creando turno con solicitanteId: " + dto.solicitanteId());
-
         return crearTurno(dto);
     }
+
 
 	@Override
 	public List<TurnoDTO> obtenerTurnosPorEmailSolicitante(String email) {

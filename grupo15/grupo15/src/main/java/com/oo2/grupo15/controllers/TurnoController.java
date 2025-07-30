@@ -12,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.oo2.grupo15.exceptions.RecursoNoEncontradoException;
@@ -21,6 +22,9 @@ import com.oo2.grupo15.entities.Servicio;
 import com.oo2.grupo15.repositories.ITurnoRepository;
 import com.oo2.grupo15.services.IServicioService;
 import com.oo2.grupo15.services.ITurnoService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -72,7 +76,7 @@ public class TurnoController {
         // Crear un DTO vacío para el formulario usando el constructor canónico de Record Class
         // Se pasan valores por defecto (null, false, 0) para los campos.
         model.addAttribute("turno", new TurnoDTO(null, null, false, null, null, null, null));
-        model.addAttribute("solicitante", new SolicitanteDTO(null, null, null, 0, null, null));
+        model.addAttribute("solicitante", new SolicitanteDTO(null, null, null, null, null, null));
         return "turno/reserva";
     }
     
@@ -175,9 +179,12 @@ public class TurnoController {
     }
     @PostMapping("/guardar")
     public String guardarTurno(
-            @ModelAttribute("turno") TurnoDTO turnoDTO,
-            @ModelAttribute("solicitante") SolicitanteDTO solicitanteDTO,
+            @Valid @ModelAttribute("turno") TurnoDTO turnoDTO,
+            BindingResult resultTurno,
+            @Valid @ModelAttribute("solicitante") SolicitanteDTO solicitanteDTO,
+            BindingResult resultSolicitante,
             RedirectAttributes redirectAttributes) {
+
 
         // Forzá estado activo (en caso de que venga false por defecto)
         TurnoDTO turnoParaGuardar = new TurnoDTO(

@@ -22,7 +22,7 @@ public class ContactoDTO {
     
     @Positive(message = "El DNI debe ser un número positivo")
     @Schema(description = "Documento Nacional de Identidad", example = "12345678", required = true)
-    private long dni;
+    private Long dni;
     
     @Schema(description = "Dirección completa (calle y altura)", example = "Av. Corrientes 1234")
     private String calleYAltura;
