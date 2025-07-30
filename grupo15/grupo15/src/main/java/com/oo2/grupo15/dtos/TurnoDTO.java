@@ -5,11 +5,8 @@ import java.time.LocalDateTime;
 public record TurnoDTO(
     Long id,
     LocalDateTime fechaHora,
-    Boolean estado,
+    boolean estado,
     Long servicioLugarId,
-    Long solicitanteId,
-    
-    String nombreServicio,
-    String nombreLugar
+    Long solicitanteId
 ) {
 }
