@@ -4,7 +4,7 @@ public record SolicitanteDTO(
     Long id,
     String nombre,
     String apellido,
-    Long dni,
+    long dni,
     String email,
     String telefono
 ) {
