@@ -59,9 +59,12 @@ public class TurnoService implements ITurnoService {
                 source.getFechaHora(),
                 source.isEstado(),
                 source.getServicioLugar() != null ? source.getServicioLugar().getId() : null,
-                source.getSolicitante() != null ? source.getSolicitante().getId() : null
+                source.getSolicitante() != null ? source.getSolicitante().getId() : null,
+                source.getServicioLugar() != null ? source.getServicioLugar().getServicio().getNombre() : null,
+                source.getServicioLugar() != null ? source.getServicioLugar().getLugar().getNombre() : null
             );
         });
+
     }
 
     @Override
@@ -156,16 +159,16 @@ public class TurnoService implements ITurnoService {
     public List<TurnoDTO> obtenerTurnosEntreFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         List<Object[]> resultados = turnoRepository.buscarTurnosSimplificados(fechaInicio, fechaFin);
         return resultados.stream()
-                .map(resultado -> {
-                    return new TurnoDTO(
-                        (Long) resultado[0],
-                        (LocalDateTime) resultado[1],
-                        (Boolean) resultado[2],
-                        null,
-                        null
-                    );
-                })
-                .collect(Collectors.toList());
+        	    .map(resultado -> new TurnoDTO(
+        	        (Long) resultado[0],
+        	        (LocalDateTime) resultado[1],
+        	        (Boolean) resultado[2],
+        	        null, // servicioLugarId (no está en resultado)
+        	        null, // solicitanteId (no está en resultado)
+        	        null, // nombreServicio
+        	        null  // nombreLugar
+        	    ))
+        	    .collect(Collectors.toList());
     }
 
     @Override
@@ -174,12 +177,15 @@ public class TurnoService implements ITurnoService {
 
         if (solicitanteExistente != null) {
             System.out.println("Solicitante encontrado con DNI " + solicitanteDTO.dni() + ", ID: " + solicitanteExistente.getId());
+         // Si ya existe el solicitante
             dto = new TurnoDTO(
                 dto.id(),
                 dto.fechaHora(),
                 dto.estado(),
                 dto.servicioLugarId(),
-                solicitanteExistente.getId()
+                solicitanteExistente.getId(),
+                null,
+                null
             );
         } else {
             System.out.println("No se encontró solicitante con DNI: " + solicitanteDTO.dni() + ". Creando nuevo solicitante...");
@@ -202,12 +208,15 @@ public class TurnoService implements ITurnoService {
                 Solicitante saved = solicitanteRepository.save(nuevoSolicitante);
                 System.out.println("Nuevo solicitante creado con ID: " + saved.getId());
 
+             // Si no existe y lo creás
                 dto = new TurnoDTO(
                     dto.id(),
                     dto.fechaHora(),
                     dto.estado(),
                     dto.servicioLugarId(),
-                    saved.getId()
+                    saved.getId(),
+                    null,
+                    null
                 );
             } catch (Exception e) {
                 System.err.println("Error al crear solicitante: " + e.getMessage());
@@ -219,4 +228,10 @@ public class TurnoService implements ITurnoService {
 
         return crearTurno(dto);
     }
+
+	@Override
+	public List<TurnoDTO> obtenerTurnosPorEmailSolicitante(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

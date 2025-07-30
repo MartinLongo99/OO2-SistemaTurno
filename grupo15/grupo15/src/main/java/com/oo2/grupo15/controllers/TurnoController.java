@@ -1,6 +1,7 @@
 // src/main/java/com/oo2/grupo15/controllers/TurnoController.java
 package com.oo2.grupo15.controllers;
 
+import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.oo2.grupo15.exceptions.RecursoNoEncontradoException;
 import com.oo2.grupo15.dtos.SolicitanteDTO;
 import com.oo2.grupo15.dtos.TurnoDTO;
 import com.oo2.grupo15.entities.Servicio;
@@ -41,6 +43,25 @@ public class TurnoController {
         return "turno/index";
     }
     
+    @GetMapping("/misTurnos")
+    public String verMisTurnos(Model model, Principal principal) {
+    	try {
+            String emailUsuario = principal.getName();
+            List<TurnoDTO> turnosDelUsuario = turnoService.obtenerTurnosPorEmailSolicitante(emailUsuario);
+
+            if (turnosDelUsuario == null || turnosDelUsuario.isEmpty()) {
+                throw new RecursoNoEncontradoException("No se encontraron turnos para el usuario con email: " + emailUsuario);
+            }
+
+            model.addAttribute("turnos", turnosDelUsuario);
+            return "turno/mis-turnos";
+
+        } catch (RecursoNoEncontradoException ex) {
+            model.addAttribute("mensaje", ex.getMessage());
+            return "error/500";
+        }
+    }
+    
     @GetMapping("/reserva")
     public String reservaForm(
             @RequestParam Long servicioId,
@@ -50,7 +71,7 @@ public class TurnoController {
         model.addAttribute("fechaHora", fechaHora);
         // Crear un DTO vacío para el formulario usando el constructor canónico de Record Class
         // Se pasan valores por defecto (null, false, 0) para los campos.
-        model.addAttribute("turno", new TurnoDTO(null, null, false, null, null));
+        model.addAttribute("turno", new TurnoDTO(null, null, false, null, null, null, null));
         model.addAttribute("solicitante", new SolicitanteDTO(null, null, null, 0, null, null));
         return "turno/reserva";
     }
@@ -153,40 +174,35 @@ public class TurnoController {
         return ResponseEntity.ok(turnosDisponibles);
     }
     @PostMapping("/guardar")
-    public String guardarTurno(@RequestParam("fechaHora") LocalDateTime fechaHora,
-                               @RequestParam("servicioLugarId") Long servicioLugarId,
-                               @RequestParam("nombre") String nombre,
-                               @RequestParam("apellido") String apellido,
-                               @RequestParam("dni") long dni,
-                               @RequestParam("email") String email,
-                               @RequestParam("telefono") String telefono,
-                               RedirectAttributes redirectAttributes) {
+    public String guardarTurno(
+            @ModelAttribute("turno") TurnoDTO turnoDTO,
+            @ModelAttribute("solicitante") SolicitanteDTO solicitanteDTO,
+            RedirectAttributes redirectAttributes) {
 
-        // Crear DTO para el turno usando el constructor canónico de Record Class
-        // Los valores de 'id' y 'solicitanteId' se establecen en null porque serán manejados por el servicio/BD.
-        TurnoDTO turnoDTO = new TurnoDTO(null, fechaHora, true, servicioLugarId, null);
+        // Forzá estado activo (en caso de que venga false por defecto)
+        TurnoDTO turnoParaGuardar = new TurnoDTO(
+                null,
+                turnoDTO.fechaHora(),
+                true,
+                turnoDTO.servicioLugarId(),
+                null,
+                null,
+                null
+        );
 
-        // Crear DTO para el solicitante usando el constructor canónico de Record Class
-        // El valor de 'id' se establece en null porque será manejado por el servicio/BD.
-        SolicitanteDTO solicitanteDTO = new SolicitanteDTO(null, nombre, apellido, dni, email, telefono);
+        TurnoDTO turnoCreado = turnoService.crearTurnoConDni(turnoParaGuardar, solicitanteDTO);
 
-        // Llamar al servicio para crear el turno con los datos del solicitante
-        TurnoDTO turnoCreado = turnoService.crearTurnoConDni(turnoDTO, solicitanteDTO);
-
-        // Añadir también la fecha y hora al modelo para mostrarla en la confirmación
-        redirectAttributes.addFlashAttribute("fechaHora", fechaHora);
-
-        // Guardar el ID del turno y otros datos para la página de confirmación
-        // Acceder a los campos de Record Class se hace directamente con el nombre del campo (ej. turnoCreado.id())
         redirectAttributes.addFlashAttribute("turnoId", turnoCreado.id());
-        redirectAttributes.addFlashAttribute("nombreSolicitante", nombre);
-        redirectAttributes.addFlashAttribute("apellidoSolicitante", apellido);
-        redirectAttributes.addFlashAttribute("dniSolicitante", dni);
-        redirectAttributes.addFlashAttribute("emailSolicitante", email);
-        redirectAttributes.addFlashAttribute("telefonoSolicitante", telefono);
+        redirectAttributes.addFlashAttribute("fechaHora", turnoCreado.fechaHora());
+        redirectAttributes.addFlashAttribute("nombreSolicitante", solicitanteDTO.nombre());
+        redirectAttributes.addFlashAttribute("apellidoSolicitante", solicitanteDTO.apellido());
+        redirectAttributes.addFlashAttribute("dniSolicitante", solicitanteDTO.dni());
+        redirectAttributes.addFlashAttribute("emailSolicitante", solicitanteDTO.email());
+        redirectAttributes.addFlashAttribute("telefonoSolicitante", solicitanteDTO.telefono());
 
         return "redirect:/turnos/confirmacion";
     }
+
     @GetMapping("/confirmacion")
     public String mostrarConfirmacion(Model model) {
         // Si no hay datos en el modelo, obtenemos el último turno creado

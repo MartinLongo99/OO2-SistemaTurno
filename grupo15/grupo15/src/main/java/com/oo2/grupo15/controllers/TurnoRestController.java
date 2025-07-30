@@ -136,12 +136,16 @@ public class TurnoRestController {
             @RequestBody TurnoReservaDTO bookingRequest) {
         try {
         	TurnoDTO turnoDTO = new TurnoDTO(
-                null, 
-                bookingRequest.fechaHora(), 
-                true, 
-                bookingRequest.servicioLugarId(), 
-                null 
-            );
+        		    null, // id
+        		    bookingRequest.fechaHora(), // fechaHora
+        		    true, // estado
+        		    bookingRequest.servicioLugarId(), // servicioLugarId
+        		    null, // solicitanteId (se completa en el service)
+        		    null, // nombreServicio (opcional o lo asignás después)
+        		    null  // nombreLugar (opcional o lo asignás después)
+        		);
+
+
 
             SolicitanteDTO solicitanteDTO = new SolicitanteDTO(
                 null, 
