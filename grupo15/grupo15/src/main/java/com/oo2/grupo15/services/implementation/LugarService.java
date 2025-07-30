@@ -6,7 +6,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.oo2.grupo15.dtos.DireccionDTO;
 import com.oo2.grupo15.dtos.LugarDTO;
+import com.oo2.grupo15.entities.Direccion;
 import com.oo2.grupo15.entities.Lugar;
 import com.oo2.grupo15.repositories.ILugarRepository;
 import com.oo2.grupo15.services.ILugarService;
@@ -14,12 +16,34 @@ import com.oo2.grupo15.services.ILugarService;
 @Service("LugarService")
 public class LugarService implements ILugarService{
 	
-	private ILugarRepository lugarRepository;
-	private ModelMapper modelMapper = new ModelMapper();
-	
-	public LugarService(ILugarRepository lugarRepository) {
-		this.lugarRepository = lugarRepository;
-	}
+	 private ILugarRepository lugarRepository;
+	    private ModelMapper modelMapper;
+
+	    public LugarService(ILugarRepository lugarRepository) {
+	        this.lugarRepository = lugarRepository;
+	        this.modelMapper = new ModelMapper();
+
+	        // Configuración para que ModelMapper entienda los records
+	        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+
+	        modelMapper.createTypeMap(Lugar.class, LugarDTO.class).setProvider(request -> {
+	            Lugar source = (Lugar) request.getSource();
+	            return new LugarDTO(
+	                source.getId(),
+	                source.getNombre(),
+	                modelMapper.map(source.getDireccion(), DireccionDTO.class)
+	            );
+	        });
+
+	        modelMapper.createTypeMap(LugarDTO.class, Lugar.class).setProvider(request -> {
+	            LugarDTO source = (LugarDTO) request.getSource();
+	            Lugar lugar = new Lugar();
+	            lugar.setId(source.id());
+	            lugar.setNombre(source.nombre());
+	            lugar.setDireccion(modelMapper.map(source.direccion(), Direccion.class));
+	            return lugar;
+	        });
+	    }
 	
 	public List<LugarDTO> getLugaresByLocalidad(int localidadId){
 		return lugarRepository.findByDireccionLocalidadId(localidadId)
