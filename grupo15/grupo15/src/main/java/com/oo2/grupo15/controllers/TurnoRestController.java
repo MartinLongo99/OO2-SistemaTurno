@@ -140,7 +140,7 @@ public class TurnoRestController {
                 bookingRequest.fechaHora(), 
                 true, 
                 bookingRequest.servicioLugarId(), 
-                null 
+                null, null, null 
             );
 
             SolicitanteDTO solicitanteDTO = new SolicitanteDTO(

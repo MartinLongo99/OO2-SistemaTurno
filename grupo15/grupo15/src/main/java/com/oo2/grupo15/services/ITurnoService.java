@@ -14,6 +14,6 @@ public interface ITurnoService {
     TurnoDTO obtenerPorId(Long id);
     List<TurnoDTO> obtenerTurnosEntreFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin);
     boolean tieneTurnosActivos(Long usuarioId);
-
+    List<TurnoDTO> obtenerTurnosPorEmailSolicitante(String email);
 
 }

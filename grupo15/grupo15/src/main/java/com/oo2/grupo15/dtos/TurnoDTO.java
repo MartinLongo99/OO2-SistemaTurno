@@ -7,6 +7,8 @@ public record TurnoDTO(
     LocalDateTime fechaHora,
     boolean estado,
     Long servicioLugarId,
-    Long solicitanteId
+    Long solicitanteId,
+    String servicioNombre,
+    String lugarNombre
 ) {
 }

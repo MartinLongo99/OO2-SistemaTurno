@@ -52,12 +52,12 @@ public class TurnoController {
         model.addAttribute("fechaHora", fechaHora);
         // Crear un DTO vacío para el formulario usando el constructor canónico de Record Class
         // Se pasan valores por defecto (null, false, 0) para los campos.
-        model.addAttribute("turno", new TurnoDTO(null, null, false, null, null));
+        model.addAttribute("turno", new TurnoDTO(null, null, false, null, null, null, null));
         model.addAttribute("solicitante", new SolicitanteDTO(null, null, null, 0, null, null));
         return "turno/reserva";
     }
     
-    @GetMapping("/misTurnos")
+    @GetMapping("/mis-turnos")
     public String verMisTurnos(Model model, Principal principal) {
         try {
             String emailUsuario = principal.getName();
@@ -184,7 +184,7 @@ public class TurnoController {
 
         // Crear DTO para el turno usando el constructor canónico de Record Class
         // Los valores de 'id' y 'solicitanteId' se establecen en null porque serán manejados por el servicio/BD.
-        TurnoDTO turnoDTO = new TurnoDTO(null, fechaHora, true, servicioLugarId, null);
+        TurnoDTO turnoDTO = new TurnoDTO(null, fechaHora, true, servicioLugarId, null, null, null);
 
         // Crear DTO para el solicitante usando el constructor canónico de Record Class
         // El valor de 'id' se establece en null porque será manejado por el servicio/BD.
